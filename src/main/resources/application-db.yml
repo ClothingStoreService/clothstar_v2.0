@@ -1,0 +1,63 @@
+#default 공통설정
+#  jpa:
+#    show-sql: true
+#    properties:
+#      jdbc:
+#        time_zone: Asia/Seoul
+#      hibernate:
+#        format_sql: true
+#    defer-datasource-initialization: true
+sql:
+  init:
+    mode: always
+
+mybatis:
+  mapper-locations: classpath:/mappers/**.xml
+  config-location: classpath:/config/mybatis-config.xml
+
+logging:
+  level:
+    'org.springframework.jdbc': debug
+    'org.store.clothstar': debug
+
+jwt:
+  secret_key: Y2xvdGhzaG9wcGluZ21hbGxjbG90aHN0YXJjbG90aHNob3BwaW5nbWFsbGNsb3Roc3RhcmNsb3Roc2hvcHBpbmdtYWxsY2xvdGhzdGFyY2xvdGhzaG9wcGluZ21hbGxjbG90aHN0YXIK
+  accessTokenValidTimeMillis: 120000
+  refreshTokenValidTimeMillis: 1200000
+
+--- # local
+spring:
+  config:
+    activate:
+      on-profile: "db-local"
+  #  jpa:
+  #    show-sql: true
+  #    database-platform: H2
+  #    hibernate:
+  #      ddl-auto: create
+  datasource:
+    url: jdbc:h2:mem:localdb
+  h2:
+    console:
+      enabled: true
+
+--- #dev
+spring:
+  sql:
+    init:
+      platform: mysql
+  config:
+    activate:
+      on-profile: "db-dev"
+  thymeleaf:
+    cache: false
+  #  jpa:
+  #    database-platform: org.hibernate.dialect.MySQLDialect
+  #    hibernate:
+  #      ddl-auto: create
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://clothstar-v82.cpmu4ewuelxk.ap-northeast-2.rds.amazonaws.com/clothstar82
+    username: admin
+    password: clothstar010101
+

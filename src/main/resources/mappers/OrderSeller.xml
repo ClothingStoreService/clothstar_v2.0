@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.store.clothstar.order.repository.OrderSellerRepository">
+    <select id="SelectWaitingOrders" resultType="org.store.clothstar.order.domain.Order">
+        select * from orders where status = 'WAITING';
+    </select>
+
+    <update id="approveOrder" parameterType="org.store.clothstar.order.domain.Order">
+        UPDATE orders
+        SET status = 'APPROVE'
+        WHERE order_id=#{orderId}
+    </update>
+
+    <update id="cancelOrder" parameterType="org.store.clothstar.order.domain.Order">
+        UPDATE orders
+        SET status = 'CANCEL'
+        WHERE order_id=#{orderId}
+    </update>
+</mapper>

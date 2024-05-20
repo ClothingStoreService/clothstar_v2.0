@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.store.clothstar.member.repository.AddressRepository">
+    <select id="findMemberAllAddress" resultType="org.store.clothstar.member.domain.Address">
+        select * from address where member_id = #{memberId};
+    </select>
+
+    <select id="findById" resultType="org.store.clothstar.member.domain.Address">
+        select * from address where address_id = #{addressId}
+    </select>
+
+    <insert id="save" parameterType="org.store.clothstar.member.domain.Address"
+            useGeneratedKeys="true" keyProperty="addressId" keyColumn="address_id">
+        insert into address (
+        member_id, receiver_name, zip_no, address_basic, address_detail, tel_no, delivery_request, default_address
+        ) values (
+        #{memberId}, #{receiverName}, #{zipNo}, #{addressBasic}, #{addressDetail}, #{telNo}, #{deliveryRequest},
+        #{defaultAddress});
+    </insert>
+</mapper>
