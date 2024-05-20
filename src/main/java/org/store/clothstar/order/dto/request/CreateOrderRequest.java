@@ -12,7 +12,7 @@ import org.store.clothstar.order.domain.type.PaymentMethod;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.utils.GenerateOrderId;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter

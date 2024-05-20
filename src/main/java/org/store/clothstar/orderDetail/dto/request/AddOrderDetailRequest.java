@@ -10,8 +10,8 @@ import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.productLine.domain.ProductLine;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Getter
 @AllArgsConstructor
