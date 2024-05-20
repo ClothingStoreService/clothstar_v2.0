@@ -12,11 +12,11 @@ import org.store.clothstar.member.domain.CustomUserDetails;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.MemberLoginRequest;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j

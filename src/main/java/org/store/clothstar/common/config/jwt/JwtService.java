@@ -2,8 +2,8 @@ package org.store.clothstar.common.config.jwt;
 
 import java.util.Arrays;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 import org.store.clothstar.member.domain.Member;
