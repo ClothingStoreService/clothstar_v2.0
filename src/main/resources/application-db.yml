@@ -61,8 +61,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-    # 테이블 생성 후에 data.sql 실행
-    defer-datasource-initialization: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://clothstar-v82.cpmu4ewuelxk.ap-northeast-2.rds.amazonaws.com/clothstar82
