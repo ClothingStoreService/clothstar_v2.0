@@ -78,8 +78,7 @@ class OrderSellerServiceTest {
     @DisplayName("cancelOrApproveOrder: 판매자 주문 승인 - 메서드 호출 & 반환값 테스트")
     void approveOrder_verify_test() {
         //given
-        Long orderId = mockOrder.getOrderId();
-        given(mockOrder.getOrderId()).willReturn(1L);
+        Long orderId = 1L;
         given(mockOrder.getStatus()).willReturn(Status.WAITING);
         given(mockOrder.getCreatedAt()).willReturn(LocalDateTime.now());
         given(mockOrderSellerRequest.getApprovalStatus()).willReturn(ApprovalStatus.APPROVE);
