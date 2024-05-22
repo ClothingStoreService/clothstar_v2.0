@@ -36,7 +36,7 @@ public class OrderSellerService {
 
         // 주문 유효성 검사
         orderRepository.getOrder(orderId)
-                .filter(o -> o.getStatus() == Status.WAITING)
+                .filter(Order -> Order.getStatus() == Status.WAITING)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문이 존재하지 않거나 상태가 'WAITING'이 아니어서 처리할 수 없습니다."));
 
         return processOrder(orderId, orderSellerRequest);
