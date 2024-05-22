@@ -11,9 +11,11 @@ import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
+import org.store.clothstar.member.repository.MemberJpaRepository;
 import org.store.clothstar.member.repository.MemberRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final MemberJpaRepository memberJpaRepository;
     private final PasswordEncoder passwordEncoder;
 
     public List<MemberResponse> getAllMember() {

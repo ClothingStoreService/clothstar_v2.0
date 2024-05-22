@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.store.clothstar.member.domain.Member;
 
 @Mapper
-public interface MemberRepository {
+public interface MemberRepository extends Repository {
 
 	List<Member> findAll();
 
