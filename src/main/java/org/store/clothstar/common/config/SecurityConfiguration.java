@@ -45,20 +45,21 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.cors().disable()
-//                .csrf().disable()
-//                .httpBasic().disable()
-//                .formLogin().disable();
+        http.cors(cors -> cors.disable())
+                .csrf(csrf -> csrf.disable())
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(formLogin -> formLogin.disable());
 
-        http.authorizeRequests()
+        http.authorizeRequests(auth -> auth.anyRequest().permitAll());
 //                .antMatchers("/", "/login", "/v1/login", "/signup").permitAll()
 //                .antMatchers("/user**").authenticated()
 //                .antMatchers("/admin**").hasRole("ADMIN")
 //                .antMatchers("/seller**").hasRole("SELLER")
-                .anyRequest().permitAll();
+//                .anyRequest().permitAll();
 
-        // JWT 토큰 인증 방식 사용하기에 session 유지 비활성화
-        //http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        //JWT 토큰 인증 방식 사용하기에 session 유지 비활성화
+        http.sessionManagement(sessionManagement
+                -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         //UsernamePasswordAuthenticationFilter 대신에 LoginFilter가 실행된다.
         //LoginFilter 이전에 jwtAhthenticationFilter가 실행된다.
