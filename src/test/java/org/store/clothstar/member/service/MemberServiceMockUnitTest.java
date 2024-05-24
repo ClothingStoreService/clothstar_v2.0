@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.response.MemberResponse;
-import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.repository.MemberMybatisRepository;
 
 import java.util.Optional;
 
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class MemberServiceMockUnitTest {
     @Mock
-    MemberRepository memberRepository;
+    MemberMybatisRepository memberMybatisRepository;
 
     @InjectMocks
     MemberService memberService;
@@ -31,14 +31,14 @@ class MemberServiceMockUnitTest {
     void getMemberTest() {
         //given
         Member member = mock(Member.class);
-        given(memberRepository.findById(anyLong())).willReturn(Optional.of(member));
+        given(memberMybatisRepository.findById(anyLong())).willReturn(Optional.of(member));
         when(member.getMemberId()).thenReturn(1L);
 
         //when
         MemberResponse memberResponse = memberService.getMemberById(1L);
 
         //then
-        verify(memberRepository, times(1))
+        verify(memberMybatisRepository, times(1))
                 .findById(anyLong());
 
         assertThat(memberResponse.getMemberId()).isEqualTo(member.getMemberId());
@@ -50,7 +50,7 @@ class MemberServiceMockUnitTest {
         //given
         String email = "test@test.com";
         Member member = mock(Member.class);
-        given(memberRepository.findByEmail(anyString())).willReturn(Optional.of(member));
+        given(memberMybatisRepository.findByEmail(anyString())).willReturn(Optional.of(member));
 
         //when
         MessageDTO message = memberService.emailCheck(email);
@@ -64,7 +64,7 @@ class MemberServiceMockUnitTest {
     void duplicateEmailCheckTest2() {
         //given
         String email = "test@test.com";
-        given(memberRepository.findByEmail(anyString())).willReturn(Optional.empty());
+        given(memberMybatisRepository.findByEmail(anyString())).willReturn(Optional.empty());
 
         //when
         MessageDTO message = memberService.emailCheck(email);

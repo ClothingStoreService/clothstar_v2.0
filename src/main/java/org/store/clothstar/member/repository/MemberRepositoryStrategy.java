@@ -8,34 +8,29 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class MemberJpaRepositoryAdapter implements MemberRepository {
-    MemberJpaRepository memberJpaRepository;
+public class MemberRepositoryStrategy {
+    private MemberRepository memberRepository;
 
-    MemberJpaRepositoryAdapter(MemberJpaRepository memberJpaRepository) {
-        this.memberJpaRepository = memberJpaRepository;
+    public void setMemberRepositoryStrategy(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
-    @Override
     public List<MemberEntity> findAll() {
-        return memberJpaRepository.findAll();
+        return this.memberRepository.findAll();
     }
 
-    @Override
     public Optional<MemberEntity> findById(Long memberId) {
-        return memberJpaRepository.findById(memberId);
+        return this.memberRepository.findById(memberId);
     }
 
-    @Override
     public Optional<MemberEntity> findByEmail(String email) {
-        return Optional.empty();
+        return this.memberRepository.findByEmail(email);
     }
 
-    @Override
     public int update(Member member) {
-        return 0;
+        return this.memberRepository.update(member);
     }
 
-    @Override
     public int save(Member member) {
         return 0;
     }

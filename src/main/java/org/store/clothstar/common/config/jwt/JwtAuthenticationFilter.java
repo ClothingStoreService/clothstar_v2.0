@@ -1,5 +1,9 @@
 package org.store.clothstar.common.config.jwt;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,12 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.store.clothstar.member.domain.CustomUserDetails;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.repository.MemberMybatisRepository;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
@@ -21,7 +21,7 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
-    private final MemberRepository memberRepository;
+    private final MemberMybatisRepository memberMybatisRepository;
 
     /**
      * 요청이 왔을때 token이 있는지 확인하고 token에 대한 유효성 검사를 진행한다.
@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Long memberId = jwtUtil.getMemberId(token);
         log.info("refresh 토큰 memberId: {}", memberId);
 
-        Member member = memberRepository.findById(memberId)
+        Member member = memberMybatisRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
 
         CustomUserDetails customUserDetails = new CustomUserDetails(member);

@@ -7,7 +7,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @DisplayName("ProductLineRepository 테스트")
 @ExtendWith(MockitoExtension.class)
-class ProductLineRepositoryTest {
+class ProductLineMemberRepositoryTest {
 
     @InjectMocks
     private ProductLineRepository productLineRepository;

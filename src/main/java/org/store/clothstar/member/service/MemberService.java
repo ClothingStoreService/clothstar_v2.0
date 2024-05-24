@@ -1,7 +1,7 @@
 package org.store.clothstar.member.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,23 +11,26 @@ import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
-import org.store.clothstar.member.repository.MemberJpaRepository;
+import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.MemberRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final MemberJpaRepository memberJpaRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public MemberService(@Qualifier("memberMybatisRepositoryAdapter") MemberRepository memberRepository
+            , PasswordEncoder passwordEncoder) {
+        this.memberRepository = memberRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     public List<MemberResponse> getAllMember() {
-        List<Member> memberList = memberRepository.findAll();
+        List<MemberEntity> memberList = memberRepository.findAll();
 
         List<MemberResponse> memberResponseList = memberList.stream()
                 .map(MemberResponse::new)
@@ -44,7 +47,7 @@ public class MemberService {
 
     public MessageDTO emailCheck(String email) {
         boolean emailExists = memberRepository.findByEmail(email).isPresent();
-        
+
         return MessageDTOBuilder.buildMessage(
                 HttpStatus.OK.value(),
                 (emailExists ? "이미 사용중인 이메일 입니다." : "사용 가능한 이메일 입니다."),
