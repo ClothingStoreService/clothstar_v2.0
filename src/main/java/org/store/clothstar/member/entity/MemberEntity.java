@@ -1,7 +1,10 @@
 package org.store.clothstar.member.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.MemberGrade;
@@ -16,7 +19,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity(name = "member")
 public class MemberEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
     @Column(unique = true)
     private String email;
@@ -48,6 +52,10 @@ public class MemberEntity {
         this.createdAt = member.getCreatedAt();
         this.modifiedAt = member.getModifiedAt();
         this.deletedAt = member.getDeletedAt();
+    }
+
+    public void updateDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 }
 

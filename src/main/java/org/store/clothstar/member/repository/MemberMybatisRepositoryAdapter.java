@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @Repository
 public class MemberMybatisRepositoryAdapter implements MemberRepository {
-    private MemberMybatisRepository memberMybatisRepository;
+    private final MemberMybatisRepository memberMybatisRepository;
 
     public MemberMybatisRepositoryAdapter(MemberMybatisRepository memberMybatisRepository) {
         this.memberMybatisRepository = memberMybatisRepository;

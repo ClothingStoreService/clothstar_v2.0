@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class MemberJpaRepositoryAdapter implements MemberRepository {
+public class MemberJpaRepositoryAdapter implements MemberRepository, NewMemberRepository {
     MemberJpaRepository memberJpaRepository;
 
     MemberJpaRepositoryAdapter(MemberJpaRepository memberJpaRepository) {
@@ -38,5 +38,10 @@ public class MemberJpaRepositoryAdapter implements MemberRepository {
     @Override
     public int save(Member member) {
         return 0;
+    }
+
+    @Override
+    public void updateDeleteAt(Long memberId) {
+
     }
 }

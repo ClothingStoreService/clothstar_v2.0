@@ -23,7 +23,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public MemberService(@Qualifier("memberMybatisRepositoryAdapter") MemberRepository memberRepository
+    public MemberService(@Qualifier("memberJpaRepositoryAdapter") MemberRepository memberRepository
             , PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
