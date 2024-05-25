@@ -65,4 +65,8 @@ public class OrderEntity {
         this.totalProductsPrice = totalProductsPrice;
         this.totalPaymentPrice = totalPaymentPrice;
     }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+    }
 }
