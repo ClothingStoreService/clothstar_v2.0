@@ -17,7 +17,6 @@ import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.OrderJpaRepository;
-import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 @Slf4j
 @Service
@@ -27,7 +26,6 @@ public class OrderService {
     private final OrderJpaRepository orderJpaRepository;
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
-    private final OrderDetailService orderDetailService;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -35,7 +33,7 @@ public class OrderService {
     public OrderResponse getOrder(Long orderId) {
 
         return orderJpaRepository.findById(orderId)
-                .map(order -> OrderResponse.fromOrder(order))
+                .map(OrderResponse::fromOrder)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 주문번호입니다."));
     }
 

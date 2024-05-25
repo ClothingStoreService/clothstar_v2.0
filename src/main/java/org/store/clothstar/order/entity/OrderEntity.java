@@ -18,21 +18,7 @@ import java.time.LocalDateTime;
 @Table(name = "orders")
 public class OrderEntity {
     @Id
-//    @Column(name="order_id")
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
-
-//    public static Long generateOrderId() {
-//        return GenerateOrderId.generateOrderId();
-//    }
-//
-//    public OrderEntity(){
-//        this.orderId = generateOrderId();
-//    }
-
-//    @Column(name="order_detail")
-//    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-//    private List<OrderDetail> orderDetails;
 
     @Column(name = "member_id")
     private Long memberId;
