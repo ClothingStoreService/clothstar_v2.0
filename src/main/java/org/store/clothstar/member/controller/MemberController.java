@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
+import org.store.clothstar.member.dto.request.ModifyPasswordRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
 import org.store.clothstar.member.service.MemberService;
 
@@ -46,10 +47,18 @@ public class MemberController {
 
     @Operation(summary = "회원 상세정보 수정", description = "회원 정보를 수정한다.")
     @PutMapping("/{id}")
-    public ResponseEntity<MessageDTO> putModifyMember(@PathVariable("id") Long memberId,
-                                                      @RequestBody ModifyMemberRequest modifyMemberRequest) {
+    public ResponseEntity<MessageDTO> modifyMember(@PathVariable("id") Long memberId,
+                                                   @RequestBody ModifyMemberRequest modifyMemberRequest) {
         log.info("회원수정 요청 데이터 : memberId={}, {}", memberId, modifyMemberRequest.toString());
         return ResponseEntity.ok(memberService.modifyMember(memberId, modifyMemberRequest));
+    }
+
+    @Operation(summary = "회원 비밀번호 수정", description = "회원 비밀번호를 수정한다.")
+    @PatchMapping("/{id}")
+    public ResponseEntity<MessageDTO> modifyPassword(@PathVariable("id") Long memberId,
+                                                     @Validated @RequestBody ModifyPasswordRequest modifyPasswordRequest) {
+        log.info("회원 비밀번호 요청 데이터 : memberId={}, password={}", memberId, modifyPasswordRequest);
+        return ResponseEntity.ok(memberService.modifyPassword(memberId, modifyPasswordRequest.getPassword()));
     }
 
     @Operation(summary = "회원 삭제", description = "회원 삭제시간을 현재시간으로 업데이트 합니다.")

@@ -1,10 +1,7 @@
 package org.store.clothstar.member.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.MemberGrade;
@@ -12,7 +9,7 @@ import org.store.clothstar.member.domain.MemberRole;
 
 import java.time.LocalDateTime;
 
-
+@ToString
 @Getter
 @Builder
 @NoArgsConstructor
@@ -54,16 +51,17 @@ public class MemberEntity {
         this.deletedAt = member.getDeletedAt();
     }
 
-    public void updateMember(Member member) {
-        this.name = member.getName();
-        this.role = member.getRole();
+    public void updateMember(Member member, MemberEntity memberEntity) {
+        this.name = (member.getName() == null || member.getName() == "") ? memberEntity.getName() : member.getName();
+        this.role = (member.getRole() == null) ? memberEntity.getRole() : member.getRole();
         this.modifiedAt = member.getModifiedAt();
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
     }
 
     public void updateDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
     }
 }
-
-
-

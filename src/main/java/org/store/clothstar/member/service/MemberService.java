@@ -75,6 +75,17 @@ public class MemberService {
     }
 
     @Transactional
+    public MessageDTO modifyPassword(Long memberId, String password) {
+        newMemberRepository.updatePassword(memberId, passwordEncoder.encode(password));
+
+        return MessageDTOBuilder.buildMessage(
+                HttpStatus.OK.value(),
+                "memberId : " + memberId + " 의 비밀번호가 변경 되었습니다.",
+                true
+        );
+    }
+
+    @Transactional
     public MessageDTO updateDeleteAt(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));

@@ -30,9 +30,9 @@ class AddressServiceMockUnitTest {
     @Test
     void getMemberAddrUnitTest() {
         //given
-        given(addressRepository.findMemberAllAddress(anyLong())).willReturn(getAddressList());
+        given(addressRepository.findMemberAllAddress(any())).willReturn(getAddressList());
 
-        //when
+        //whenv
         List<AddressResponse> memberAddressResponseList = addressService.getMemberAllAddress(memberId);
 
         //then
