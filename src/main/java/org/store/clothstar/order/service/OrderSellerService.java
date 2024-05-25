@@ -12,9 +12,7 @@ import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.OrderJpaRepository;
-import org.store.clothstar.order.repository.OrderRepository;
 import org.store.clothstar.order.repository.OrderSellerJpaRepository;
-import org.store.clothstar.order.repository.OrderSellerRepository;
 
 import java.util.List;
 import java.util.Optional;

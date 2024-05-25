@@ -13,9 +13,9 @@ import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.repository.AddressRepository;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.order.domain.type.Status;
-import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
+import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.OrderJpaRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 

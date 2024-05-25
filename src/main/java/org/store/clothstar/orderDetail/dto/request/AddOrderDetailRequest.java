@@ -1,6 +1,8 @@
 package org.store.clothstar.orderDetail.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,9 +11,6 @@ import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.productLine.domain.ProductLine;
-
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 @Getter
 @AllArgsConstructor

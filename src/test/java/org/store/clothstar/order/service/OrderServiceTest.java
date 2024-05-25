@@ -3,37 +3,15 @@ package org.store.clothstar.order.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.web.server.ResponseStatusException;
-import org.store.clothstar.member.domain.Address;
-import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.repository.AddressRepository;
 import org.store.clothstar.member.repository.MemberRepository;
-import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.domain.type.PaymentMethod;
-import org.store.clothstar.order.domain.type.Status;
-import org.store.clothstar.order.dto.reponse.OrderResponse;
-import org.store.clothstar.order.dto.request.CreateOrderRequest;
-import org.store.clothstar.order.dto.request.OrderRequestWrapper;
-import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.OrderJpaRepository;
-import org.store.clothstar.order.repository.OrderRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DataJpaTest
