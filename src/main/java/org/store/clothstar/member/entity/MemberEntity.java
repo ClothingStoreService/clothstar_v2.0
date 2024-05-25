@@ -54,6 +54,12 @@ public class MemberEntity {
         this.deletedAt = member.getDeletedAt();
     }
 
+    public void updateMember(Member member) {
+        this.name = member.getName();
+        this.role = member.getRole();
+        this.modifiedAt = member.getModifiedAt();
+    }
+
     public void updateDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
     }

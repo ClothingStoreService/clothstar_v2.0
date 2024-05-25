@@ -1,5 +1,7 @@
 package org.store.clothstar.member.repository;
 
+import org.store.clothstar.member.entity.MemberEntity;
+
 public interface NewMemberRepository {
-    void updateDeleteAt(Long id);
+    void updateDeleteAt(MemberEntity memberEntity);
 }
