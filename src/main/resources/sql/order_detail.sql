@@ -17,6 +17,13 @@ CREATE TABLE `order_detail`
     PRIMARY KEY (`order_detail_id`)
 );
 
+ALTER TABLE `order_detail` ADD CONSTRAINT `FK_orders_TO_order_detail_1` FOREIGN KEY (
+                                                                                     `order_id`
+    )
+    REFERENCES `orders` (
+                         `order_id`
+        );
+
 select *
 from order_detail;
 

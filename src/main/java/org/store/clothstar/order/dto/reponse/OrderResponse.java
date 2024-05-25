@@ -3,7 +3,7 @@ package org.store.clothstar.order.dto.reponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import org.store.clothstar.order.domain.Order;
+import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.domain.type.PaymentMethod;
 import org.store.clothstar.order.domain.type.Status;
 
@@ -42,7 +42,7 @@ public class OrderResponse {
     private int totalPaymentPrice;
 
 
-    public static OrderResponse fromOrder(Order order) {
+    public static OrderResponse fromOrder(OrderEntity order) {
         return OrderResponse.builder()
                 .orderId(order.getOrderId())
                 .memberId(order.getMemberId())

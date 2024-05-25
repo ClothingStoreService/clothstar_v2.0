@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
+import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.productLine.domain.ProductLine;
 
@@ -33,8 +33,8 @@ public class CreateOrderDetailRequest {
     private int quantity;
 
 
-    public OrderDetail toOrderDetail(long orderId, ProductLine productLine, Product product) {
-        return OrderDetail.builder()
+    public OrderDetailEntity toOrderDetail(long orderId, ProductLine productLine, Product product) {
+        return OrderDetailEntity.builder()
                 .orderId(orderId)
                 .productLineId(productLine.getProductLineId())
                 .productId(product.getProductId())
@@ -44,7 +44,7 @@ public class CreateOrderDetailRequest {
                 .name(productLine.getName())
                 .stock(product.getStock())
                 .optionName(product.getName())
-                .extraCharge(product.getExtraCharge())
+//                .extraCharge(product.getExtraCharge())
                 .brandName(productLine.getBrandName())
                 .build();
     }

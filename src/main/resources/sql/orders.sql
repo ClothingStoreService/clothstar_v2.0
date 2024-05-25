@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS orders;
 
 CREATE TABLE orders
 (
-    `order_id`             bigint       NOT NULL,
+    `order_id`             bigint       NOT NULL AUTO_INCREMENT,
     `member_id`            bigint       NOT NULL,
     `address_id`           bigint       NOT NULL,
     `created_at`           timestamp    NOT NULL,

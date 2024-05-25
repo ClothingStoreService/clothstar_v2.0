@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
+//import org.store.clothstar.order.service.OrderApplicationService;
 import org.store.clothstar.order.service.OrderApplicationService;
 import org.store.clothstar.order.service.OrderService;
 import org.store.clothstar.order.utils.URIBuilder;
@@ -27,7 +28,7 @@ public class OrderController {
 
     @Operation(summary = "단일 주문 조회", description = "단일 주문의 정보를 조회한다.")
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderResponse> getOrder(@PathVariable Long orderId) {
+    public ResponseEntity<OrderResponse> getOrder(@PathVariable("orderId") Long orderId) {
 
         OrderResponse orderResponse = orderService.getOrder(orderId);
 
@@ -48,7 +49,7 @@ public class OrderController {
 
     @Operation(summary = "구매 확정", description = "구매자가 구매 확정 시, 주문상태가 '구매확정'으로 변경된다.")
     @PatchMapping("/{orderId}")
-    public ResponseEntity<MessageDTO> deliveredToConfirmOrder(@PathVariable Long orderId) {
+    public ResponseEntity<MessageDTO> deliveredToConfirmOrder(@PathVariable("orderId") Long orderId) {
 
         orderService.deliveredToConfirmOrder(orderId);
 

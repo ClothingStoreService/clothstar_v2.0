@@ -6,12 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.repository.OrderRepository;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
+
+import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.order.repository.OrderJpaRepository;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
-import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
+import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
+import org.store.clothstar.orderDetail.repository.OrderDetailJpaRepository;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.repository.ProductRepository;
 import org.store.clothstar.productLine.domain.ProductLine;
@@ -21,17 +22,18 @@ import org.store.clothstar.productLine.repository.ProductLineRepository;
 @Service
 @RequiredArgsConstructor
 public class OrderDetailService {
-    private final OrderDetailRepository orderDetailRepository;
-    private final OrderRepository orderRepository;
+    private final OrderDetailJpaRepository orderDetailJpaRepository;
+    private final OrderJpaRepository orderJpaRepository;
     private final ProductRepository productRepository;
     private final ProductLineRepository productLineRepository;
+
 
     // 주문 생성시 같이 호출되는 주문 상세 생성 메서드 - 하나의 트랜잭션으로 묶임
     @Transactional
     public void saveOrderDetailWithOrder(CreateOrderDetailRequest createOrderDetailRequest, long orderId) {
 
-        Order order = orderRepository.getOrder(orderId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
+        OrderEntity order = orderJpaRepository.findById(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 정보를 찾을 수 없습니다."));
 
         ProductLine productLine = productLineRepository.selectByProductLineId(createOrderDetailRequest.getProductLineId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
@@ -44,8 +46,8 @@ public class OrderDetailService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 개수가 재고보다 더 많습니다.");
         }
 
-        OrderDetail orderDetail = createOrderDetailRequest.toOrderDetail(orderId, productLine, product);
-        orderDetailRepository.saveOrderDetail(orderDetail);
+        OrderDetailEntity orderDetail = createOrderDetailRequest.toOrderDetail(orderId, productLine, product);
+        orderDetailJpaRepository.save(orderDetail);
 
         // 주문 정보 업데이트: 주문 상세 생성에 따른, 총 상품 금액과 총 결제 금액 업데이트
         int newTotalProductsPrice = order.getTotalProductsPrice() + orderDetail.getOneKindTotalPrice();
@@ -53,7 +55,7 @@ public class OrderDetailService {
                 order.getTotalProductsPrice() + order.getTotalShippingPrice() + orderDetail.getOneKindTotalPrice();
 
         order.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
-        orderRepository.updateOrderPrices(order);
+        orderJpaRepository.save(order);
 
         // 주문 수량만큼 상품 재고 차감
         updateProductStock(product, orderDetail.getQuantity());
@@ -63,7 +65,7 @@ public class OrderDetailService {
     @Transactional
     public Long addOrderDetail(AddOrderDetailRequest addOrderDetailRequest) {
 
-        Order order = orderRepository.getOrder(addOrderDetailRequest.getOrderId())
+        OrderEntity order = orderJpaRepository.findById(addOrderDetailRequest.getOrderId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 정보를 찾을 수 없습니다."));
 
         ProductLine productLine = productLineRepository.selectByProductLineId(addOrderDetailRequest.getProductLineId())
@@ -76,14 +78,14 @@ public class OrderDetailService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 개수가 재고보다 더 많습니다.");
         }
 
-        OrderDetail orderDetail = addOrderDetailRequest.toOrderDetail(order, productLine, product);
-        orderDetailRepository.saveOrderDetail(orderDetail);
+        OrderDetailEntity orderDetail = addOrderDetailRequest.toOrderDetail(order, productLine, product);
+        orderDetailJpaRepository.save(orderDetail);
 
         int newTotalProductsPrice = order.getTotalProductsPrice() + orderDetail.getOneKindTotalPrice();
         int newTotalPaymentPrice =
                 order.getTotalProductsPrice() + order.getTotalShippingPrice() + orderDetail.getOneKindTotalPrice();
         order.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
-        orderRepository.updateOrderPrices(order);
+        orderJpaRepository.save(order);
 
         updateProductStock(product, orderDetail.getQuantity());
 

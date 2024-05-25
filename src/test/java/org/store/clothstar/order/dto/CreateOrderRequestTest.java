@@ -5,9 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.type.PaymentMethod;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
+import org.store.clothstar.order.entity.OrderEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,7 +31,7 @@ class CreateOrderRequestTest {
         given(address.getAddressId()).willReturn(1L);
 
         //when
-        Order order = request.toOrder(member, address);
+        OrderEntity order = request.toOrder(member, address);
 
         //then
         assertEquals(request.getPaymentMethod(), order.getPaymentMethod());
