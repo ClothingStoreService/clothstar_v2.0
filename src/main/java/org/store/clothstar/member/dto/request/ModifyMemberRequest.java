@@ -3,7 +3,6 @@ package org.store.clothstar.member.dto.request;
 import lombok.*;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.MemberRole;
-import org.store.clothstar.member.entity.MemberEntity;
 
 import java.time.LocalDateTime;
 
@@ -21,16 +20,7 @@ public class ModifyMemberRequest {
                 .memberId(memberId)
                 .name(getName())
                 .role(getRole())
-                .modifiedAt(LocalDateTime.now())
-                .build();
-    }
-
-    public MemberEntity toMemberEntity(Long memberId) {
-        return MemberEntity.builder()
-                .memberId(memberId)
-                .name(getName())
-                .role(getRole())
-                .modifiedAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 }

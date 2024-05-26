@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -52,16 +53,15 @@ public class SecurityConfiguration {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(formLogin -> formLogin.disable());
 
-        //http.authorizeRequests(auth -> auth.anyRequest().permitAll());
-//                .antMatchers("/", "/login", "/v1/login", "/signup").permitAll()
-//                .antMatchers("/user**").authenticated()
-//                .antMatchers("/admin**").hasRole("ADMIN")
-//                .antMatchers("/seller**").hasRole("SELLER")
-//                .anyRequest().permitAll();
-
         http.authorizeHttpRequests((auth) -> auth
-                .anyRequest().permitAll()
+                .requestMatchers("/", "/login", "/userPage", "/sellerPage", "/adminPage"
+                        , "/v1/login", "/signup", "/v1/members/email/**", "/v1/access").permitAll()
+                .requestMatchers("/seller/**", "/v1/seller/**").hasRole("SELLER")
+                .requestMatchers("/admin/**", "/v1/admin/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/v1/members").hasRole("ADMIN")
+                .anyRequest().authenticated()
         );
+
         //JWT 토큰 인증 방식 사용하기에 session 유지 비활성화
         http.sessionManagement(sessionManagement
                 -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

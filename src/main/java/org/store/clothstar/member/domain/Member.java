@@ -21,7 +21,7 @@ public class Member {
     private MemberRole role;
     private MemberGrade grade;
     private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
     public Member(MemberEntity memberEntity) {
@@ -35,24 +35,7 @@ public class Member {
         this.role = memberEntity.getRole();
         this.grade = memberEntity.getGrade();
         this.createdAt = memberEntity.getCreatedAt();
-        this.modifiedAt = memberEntity.getModifiedAt();
+        this.updatedAt = memberEntity.getUpdatedAt();
         this.deletedAt = memberEntity.getDeletedAt();
-    }
-
-    public MemberEntity toMemberEntity(Member member) {
-        return MemberEntity.builder()
-                .memberId(this.memberId)
-                .email(this.email)
-                .password(this.password)
-                .name(this.name)
-                .telNo(this.telNo)
-                .totalPaymentPrice(this.totalPaymentPrice)
-                .point(this.point)
-                .role(this.role)
-                .grade(this.grade)
-                .createdAt(this.createdAt)
-                .modifiedAt(this.modifiedAt)
-                .deletedAt(this.deletedAt)
-                .build();
     }
 }

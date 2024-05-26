@@ -3,6 +3,9 @@ package org.store.clothstar.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.store.clothstar.common.entity.BaseEntity;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.MemberGrade;
 import org.store.clothstar.member.domain.MemberRole;
@@ -15,7 +18,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "member")
-public class MemberEntity {
+public class MemberEntity extends BaseEntity {
+    private static final Logger log = LoggerFactory.getLogger(MemberEntity.class);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
@@ -32,9 +36,6 @@ public class MemberEntity {
     private MemberRole role;
     @Enumerated(EnumType.STRING)
     private MemberGrade grade;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
-    private LocalDateTime deletedAt;
 
     public MemberEntity(Member member) {
         this.memberId = member.getMemberId();
@@ -47,14 +48,12 @@ public class MemberEntity {
         this.role = member.getRole();
         this.grade = member.getGrade();
         this.createdAt = member.getCreatedAt();
-        this.modifiedAt = member.getModifiedAt();
-        this.deletedAt = member.getDeletedAt();
     }
 
     public void updateMember(Member member, MemberEntity memberEntity) {
         this.name = (member.getName() == null || member.getName() == "") ? memberEntity.getName() : member.getName();
         this.role = (member.getRole() == null) ? memberEntity.getRole() : member.getRole();
-        this.modifiedAt = member.getModifiedAt();
+        log.info("name : {}, role : {}", name, role);
     }
 
     public void updatePassword(String password) {

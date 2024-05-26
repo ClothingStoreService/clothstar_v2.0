@@ -100,6 +100,8 @@ from address
 where member_id = 1;
 
 select *
-from member;$2a$10$I5ogwMVMg/hs8UnjO405n.EU9sAsLSIHQ7MwL1o4AnkM5o.bbZ3mO
+from member;
 
-$2a$10$I5ogwMVMg/hs8UnjO405n.EU9sAsLSIHQ7MwL1o4AnkM5o.bbZ3mO
+
+alter table member
+    change modified_at updated_at timestamp;

@@ -2,6 +2,8 @@ package org.store.clothstar.common.config.jwt;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -9,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.store.clothstar.common.dto.AccessTokenResponse;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Tag(name = "Jwt", description = "Jwt와 관련된 API 입니다.")
 @RestController
@@ -42,7 +41,7 @@ public class JwtController {
 
         String accessToken = jwtService.getAccessTokenByRefreshToken(refreshToken);
         response.addHeader("Authorization", "Bearer " + accessToken);
-        log.info("access 토큰이 갱신 되었습니다.");
+        log.info("access 토큰이 갱신 되었습니다. {}", accessToken);
 
         return ResponseEntity.ok(getAccessTokenResponse(accessToken, "access 토큰이 생성 되었습니다.", true));
     }

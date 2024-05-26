@@ -18,7 +18,7 @@
 
     <update id="update" parameterType="org.store.clothstar.member.domain.Member">
         update member
-        set role = #{role}, modified_at = #{modifiedAt}
+        set role = #{role}, updated_at = #{updatedAt}
         where member_id = #{memberId}
     </update>
 
