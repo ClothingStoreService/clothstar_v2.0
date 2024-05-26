@@ -1,12 +1,14 @@
 spring:
   profiles:
     active:
-      - local
+      - local, mybatis
     group:
       local:
         - db-local
+        - db-local-mybatis  # 또는 db-local-jpa
       dev:
         - db-dev
+        - db-dev-mybatis  # 또는 db-dev-jpa
     include:
       - db
 
