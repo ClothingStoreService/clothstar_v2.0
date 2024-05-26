@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.store.clothstar.member.domain.CustomUserDetails;
 import org.store.clothstar.member.domain.Member;
 
 @Tag(name = "index", description = "회원가입, 로그인, 로그아웃 기능과 user, seller, admin 페이지로 이동하기 위한 API 입니다.")
@@ -23,7 +24,8 @@ public class MemberViewController {
     @GetMapping("/user")
     @ResponseBody
     public Member userPage() {
-        return (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomUserDetails member = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return member.getMember();
     }
 
     @GetMapping("/userPage")
@@ -34,7 +36,8 @@ public class MemberViewController {
     @GetMapping("/seller")
     @ResponseBody
     public Member sellerPage() {
-        return (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomUserDetails member = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return member.getMember();
     }
 
     @GetMapping("/sellerPage")
@@ -45,7 +48,8 @@ public class MemberViewController {
     @GetMapping("/admin")
     @ResponseBody
     public Member adminPage() {
-        return (Member) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomUserDetails member = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return member.getMember();
     }
 
     @GetMapping("/adminPage")

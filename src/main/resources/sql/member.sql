@@ -101,3 +101,7 @@ where member_id = 1;
 
 select *
 from member;
+
+
+alter table member
+    change modified_at updated_at timestamp;

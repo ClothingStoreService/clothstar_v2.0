@@ -9,7 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.repository.AddressRepository;
-import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.repository.MemberMybatisRepository;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
@@ -23,7 +23,7 @@ import org.store.clothstar.orderDetail.service.OrderDetailService;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final MemberRepository memberRepository;
+    private final MemberMybatisRepository memberMybatisRepository;
     private final AddressRepository addressRepository;
     private final OrderDetailService orderDetailService;
 
@@ -38,7 +38,7 @@ public class OrderService {
     @Transactional
     public Long saveOrder(CreateOrderRequest createOrderRequest) {
 
-        Member member = memberRepository.findById(createOrderRequest.getMemberId())
+        Member member = memberMybatisRepository.findById(createOrderRequest.getMemberId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원 정보를 찾을 수 없습니다."));
 
         Address address = addressRepository.findById(createOrderRequest.getAddressId())

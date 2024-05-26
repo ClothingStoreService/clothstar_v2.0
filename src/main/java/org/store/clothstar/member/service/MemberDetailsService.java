@@ -8,18 +8,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.member.domain.CustomUserDetails;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.repository.MemberMybatisRepository;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class MemberDetailsService implements UserDetailsService {
-    private final MemberRepository memberRepository;
+    private final MemberMybatisRepository memberMybatisRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         log.info("loadUserByUsername() 실행");
-        Member member = memberRepository.findByEmail(email)
+        Member member = memberMybatisRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email + " not found"));
 
         return new CustomUserDetails(member);

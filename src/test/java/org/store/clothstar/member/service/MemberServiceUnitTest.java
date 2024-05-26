@@ -22,9 +22,11 @@ public class MemberServiceUnitTest {
     @Test
     void modifyMemberAuthUnitTest() {
         //given
-        Long memberId = 4L;
-        String modifyField = "role";
-        ModifyMemberRequest modifyMemberRequest = new ModifyMemberRequest(MemberRole.SELLER);
+        Long memberId = 54L;
+        ModifyMemberRequest modifyMemberRequest = ModifyMemberRequest.builder()
+                .name("토레스")
+                .role(MemberRole.SELLER)
+                .build();
 
         //when
         MessageDTO messageDTO = memberService.modifyMember(memberId, modifyMemberRequest);
