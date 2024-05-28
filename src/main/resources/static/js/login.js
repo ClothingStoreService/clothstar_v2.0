@@ -12,13 +12,20 @@ if (loginButton) {
                 password: document.getElementById("password").value,
             }),
         }).then((res) => {
-            res.headers.forEach(console.log);
-            alert(res.headers.get("Authorization"));
-            const token = res.headers.get("Authorization");
-            localStorage.setItem("ACCESS_TOKEN", token);
-            location.replace("/");
-        }).catch(() => {
-            alert("ajax 호출 에러")
+            if (res.ok) {
+                const token = res.headers.get("Authorization");
+                localStorage.setItem("ACCESS_TOKEN", token);
+            }
+            return res.json();
+        }).then(res => {
+            console.log(res);
+            if (res.success) {
+                location.replace("/");
+            } else {
+                alert(res.message);
+            }
+        }).catch((error) => {
+            alert(error);
         });
     })
 }

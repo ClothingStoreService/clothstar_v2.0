@@ -1,6 +1,11 @@
 package org.store.clothstar.common.config.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,15 +13,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.store.clothstar.common.dto.MessageDTO;
+import org.store.clothstar.common.util.MessageDTOBuilder;
 import org.store.clothstar.member.domain.CustomUserDetails;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.MemberLoginRequest;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
@@ -80,14 +82,27 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.addHeader("Authorization", "Bearer " + accessToken);
         response.addCookie(createCookie("refreshToken", refreshToken));
         response.setStatus(HttpStatus.OK.value());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+
+        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(HttpServletResponse.SC_OK, "로그인 성공 하였습니다.", true);
+        ObjectMapper om = new ObjectMapper();
+
+        response.getWriter().print(om.writeValueAsString(messageDTO));
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
-
         log.info("로그인 실패");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+
+        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(HttpServletResponse.SC_UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다. 다시 확인해주세요.", false);
+        ObjectMapper om = new ObjectMapper();
+
+        response.getWriter().print(om.writeValueAsString(messageDTO));
     }
 
     public Cookie createCookie(String key, String value) {

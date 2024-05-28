@@ -1,8 +1,7 @@
 package org.store.clothstar.member.repository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.entity.MemberEntity;
@@ -16,9 +15,6 @@ import java.util.stream.Collectors;
 @Repository
 public class MemberJpaRepositoryAdapter implements MemberRepository, NewMemberRepository {
     MemberJpaRepository memberJpaRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     MemberJpaRepositoryAdapter(MemberJpaRepository memberJpaRepository) {
         this.memberJpaRepository = memberJpaRepository;
@@ -40,7 +36,10 @@ public class MemberJpaRepositoryAdapter implements MemberRepository, NewMemberRe
 
     @Override
     public Optional<Member> findByEmail(String email) {
-        return Optional.empty();
+        MemberEntity memberEntity = memberJpaRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 아이디를 찾을 수 없습니다."));
+
+        return Optional.of(new Member(memberEntity));
     }
 
     @Override
@@ -68,6 +67,8 @@ public class MemberJpaRepositoryAdapter implements MemberRepository, NewMemberRe
 
     @Override
     public int save(Member member) {
-        return 0;
+        MemberEntity memberEntity = Member.toMemberEntityByMember(member);
+        memberJpaRepository.save(memberEntity);
+        return 1;
     }
 }
