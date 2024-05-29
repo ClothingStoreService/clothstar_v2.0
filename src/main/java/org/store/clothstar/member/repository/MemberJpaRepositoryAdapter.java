@@ -6,14 +6,13 @@ import org.springframework.stereotype.Repository;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.entity.MemberEntity;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
-public class MemberJpaRepositoryAdapter implements MemberRepository, NewMemberRepository {
+public class MemberJpaRepositoryAdapter implements MemberRepository {
     MemberJpaRepository memberJpaRepository;
 
     MemberJpaRepositoryAdapter(MemberJpaRepository memberJpaRepository) {
@@ -49,20 +48,6 @@ public class MemberJpaRepositoryAdapter implements MemberRepository, NewMemberRe
 
         memberEntity.updateMember(member, memberEntity);
         return 1;
-    }
-
-    @Override
-    public void updatePassword(Long memberId, String password) {
-        MemberEntity memberEntity = memberJpaRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
-
-        log.info("Update member password: {} -> {}", memberEntity.getPassword(), password);
-        memberEntity.updatePassword(password);
-    }
-
-    @Override
-    public void updateDeleteAt(MemberEntity memberEntity) {
-        memberEntity.updateDeletedAt(LocalDateTime.now());
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.Optional;
 
 @Mapper
 public interface SellerRepository {
-    public int save(Seller seller);
+    int save(Seller seller);
 
-    public Optional<Seller> findById(Long memberId);
+    Optional<Seller> findById(Long memberId);
 }

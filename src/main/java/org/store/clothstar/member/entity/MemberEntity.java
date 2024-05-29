@@ -60,7 +60,7 @@ public class MemberEntity extends BaseEntity {
         this.password = password;
     }
 
-    public void updateDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
+    public void updateDeletedAt() {
+        this.deletedAt = LocalDateTime.now();
     }
 }
