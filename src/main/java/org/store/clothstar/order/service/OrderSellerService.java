@@ -1,5 +1,6 @@
 package org.store.clothstar.order.service;
 
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
 import org.store.clothstar.order.repository.OrderRepository;
 import org.store.clothstar.order.repository.OrderSellerRepository;
+import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +24,9 @@ public class OrderSellerService {
 
     private final OrderRepository orderRepository;
     private final OrderSellerRepository orderSellerRepository;
+    private final OrderDetailService orderDetailService;
 
+    @PermitAll
     @Transactional(readOnly = true)
     public List<OrderResponse> getWaitingOrder() {
 
@@ -31,6 +35,7 @@ public class OrderSellerService {
                 .collect(Collectors.toList());
     }
 
+    @PermitAll
     @Transactional
     public MessageDTO cancelOrApproveOrder(Long orderId, OrderSellerRequest orderSellerRequest) {
 
@@ -42,6 +47,7 @@ public class OrderSellerService {
         return processOrder(orderId, orderSellerRequest);
     }
 
+    @PermitAll
     // 주문 처리
     @Transactional
     public MessageDTO processOrder(Long orderId, OrderSellerRequest orderSellerRequest) {
@@ -53,7 +59,8 @@ public class OrderSellerService {
             messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.");
         } else if (orderSellerRequest.getApprovalStatus() == ApprovalStatus.CANCEL) {
             orderSellerRepository.cancelOrder(orderId);
-            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.");
+            orderDetailService.restoreStockByOrder(orderId);
+            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.", null);
         }
 
         orderRepository.getOrder(orderId)

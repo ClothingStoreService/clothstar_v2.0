@@ -17,6 +17,7 @@ import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
 import org.store.clothstar.order.repository.OrderRepository;
 import org.store.clothstar.order.repository.OrderSellerRepository;
+import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,6 +46,9 @@ class OrderSellerServiceApplicationTest {
 
     @Mock
     private OrderRepository orderRepository;
+
+    @Mock
+    private OrderDetailService orderDetailService;
 
     @Test
     @DisplayName("getWaitingOrders: '승인대기' 주문 조회 - 메서드 호출 & 반환값 테스트")
@@ -109,7 +113,8 @@ class OrderSellerServiceApplicationTest {
         //then
         then(orderSellerRepository).should(times(1)).cancelOrder(orderId);
         then(orderRepository).should(times(2)).getOrder(orderId);
-        assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
+        then(orderDetailService).should(times(1)).restoreStockByOrder(orderId);
+        assertThat(messageDTO.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 취소 되었습니다.");
     }
 

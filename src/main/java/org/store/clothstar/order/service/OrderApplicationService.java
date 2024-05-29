@@ -1,5 +1,6 @@
 package org.store.clothstar.order.service;
 
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ public class OrderApplicationService {
     private final OrderService orderService;
     private final OrderDetailService orderDetailService;
 
+    @PermitAll
     @Transactional
     public Long saveOrderWithTransaction(OrderRequestWrapper orderRequestWrapper) {
 
