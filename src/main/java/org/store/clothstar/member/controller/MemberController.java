@@ -14,7 +14,7 @@ import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyPasswordRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
-import org.store.clothstar.member.service.MemberServiceApplication;
+import org.store.clothstar.member.application.MemberServiceApplication;
 
 import java.util.List;
 

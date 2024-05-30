@@ -1,9 +1,10 @@
-package org.store.clothstar.member.service;
+package org.store.clothstar.member.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
 import org.store.clothstar.member.dto.response.AddressResponse;
+import org.store.clothstar.member.service.AddressBasicService;
 
 import java.util.List;
 

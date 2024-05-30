@@ -13,7 +13,7 @@ import org.store.clothstar.common.util.MessageDTOBuilder;
 import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
 import org.store.clothstar.member.dto.response.SellerResponse;
-import org.store.clothstar.member.service.SellerServiceApplication;
+import org.store.clothstar.member.application.SellerServiceApplication;
 
 @Tag(name = "Seller", description = "판매자 정보 관리에 대한 API 입니다.")
 @RestController

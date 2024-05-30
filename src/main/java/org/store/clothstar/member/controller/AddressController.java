@@ -12,7 +12,7 @@ import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.common.util.MessageDTOBuilder;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
 import org.store.clothstar.member.dto.response.AddressResponse;
-import org.store.clothstar.member.service.AddressServiceApplication;
+import org.store.clothstar.member.application.AddressServiceApplication;
 
 import java.util.List;
 

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.store.clothstar.member.application.AddressServiceApplication;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.dto.response.AddressResponse;
 import org.store.clothstar.member.repository.AddressMybatisRepository;

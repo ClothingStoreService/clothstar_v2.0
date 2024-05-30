@@ -1,4 +1,4 @@
-package org.store.clothstar.member.service;
+package org.store.clothstar.member.application;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -7,6 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
+import org.store.clothstar.member.service.MemberBasicService;
+import org.store.clothstar.member.service.MemberDeleteService;
+import org.store.clothstar.member.service.MemberPasswordUpdateService;
+import org.store.clothstar.member.service.MemberSignupService;
 
 import java.util.List;
 
