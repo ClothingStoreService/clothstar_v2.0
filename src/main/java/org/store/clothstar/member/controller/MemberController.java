@@ -118,6 +118,5 @@ public class MemberController {
         );
 
         return new ResponseEntity<>(messageDTO, HttpStatus.CREATED);
-
     }
 }

@@ -40,6 +40,7 @@ public class SellerController {
                 HttpStatus.OK.value(),
                 "memberId : " + sellerId + " 가 판매자 가입이 정상적으로 되었습니다."
         );
+        
         return new ResponseEntity<>(messageDTO, HttpStatus.CREATED);
     }
 }

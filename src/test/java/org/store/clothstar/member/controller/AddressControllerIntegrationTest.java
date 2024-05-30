@@ -1,6 +1,7 @@
 package org.store.clothstar.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+import org.store.clothstar.common.config.jwt.JwtUtil;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
+import org.store.clothstar.member.dto.request.CreateMemberRequest;
+import org.store.clothstar.member.repository.MemberJpaRepositoryAdapter;
+import org.store.clothstar.member.service.MemberSignupService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,20 +33,40 @@ class AddressControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    final Long memberId = 1L;
+    @Autowired
+    private MemberSignupService memberSignupService;
+
+    @Autowired
+    private MemberJpaRepositoryAdapter memberJpaRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    private static final String ADDRESS_SAVE_URL = "/v1/members/address/";
+    private Long memberId;
+    private String accessToken;
+
+    @DisplayName("회원가입한 멤버아이디와, 인증에 필요한 access 토큰을 가져옵니다.")
+    @BeforeEach
+    public void getMemberId_getAccessToken() {
+        memberId = memberSignupService.saveByJpa(getCreateMemberRequest());
+        Member member = memberJpaRepository.findById(memberId).get();
+        accessToken = jwtUtil.createAccessToken(member);
+    }
 
     @DisplayName("회원 배송지 저장 통합 테스트")
     @Test
     void saveMemberAddrTest() throws Exception {
         //given
-        final String url = "/v1/members/" + memberId + "/address";
+        final String url = ADDRESS_SAVE_URL + memberId;
         CreateAddressRequest createAddressRequest = getCreateAddressRequest();
-        final String requestBody = objectMapper.writeValueAsString(createAddressRequest);
+        final String addressRequestBody = objectMapper.writeValueAsString(createAddressRequest);
 
         //when
         ResultActions result = mockMvc.perform(post(url)
+                .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody)
+                .content(addressRequestBody)
         );
 
         //then
@@ -59,6 +85,20 @@ class AddressControllerIntegrationTest {
         CreateAddressRequest createAddressRequest = new CreateAddressRequest(
                 receiverName, zipNo, addressBasic, addressDetail, telNo, deliveryRequest, defaultAddress
         );
+
         return createAddressRequest;
+    }
+
+    private CreateMemberRequest getCreateMemberRequest() {
+        String email = "test11@naver.com";
+        String password = "testl122sff";
+        String name = "name";
+        String telNo = "010-1234-1245";
+
+        CreateMemberRequest createMemberRequest = new CreateMemberRequest(
+                email, password, name, telNo
+        );
+
+        return createMemberRequest;
     }
 }

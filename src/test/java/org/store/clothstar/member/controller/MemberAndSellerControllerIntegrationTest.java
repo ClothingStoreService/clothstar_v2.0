@@ -2,17 +2,20 @@ package org.store.clothstar.member.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
 
@@ -21,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@EnableJpaAuditing
 @AutoConfigureMockMvc
 @ActiveProfiles("db-dev")
 @Transactional
@@ -32,16 +34,27 @@ class MemberAndSellerControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private WebApplicationContext context;
+
+    private static final String MEMBER_SIGN_UP_URL = "/v1/members";
+    private static final String SELLER_SIGN_UP_URL = "/v1/sellers/";
+
+    @BeforeEach
+    public void mockMvcSetup() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+    }
+
     @DisplayName("회원가입, 판매자 신청 통합 테스트")
     @Test
     void signUpAndSellerTest() throws Exception {
+        //회원가입 통합 테스트
         //given
         CreateMemberRequest createMemberRequest = getCreateMemberRequest();
-        final String signUpUrl = "/v1/members";
         final String requestBody = objectMapper.writeValueAsString(createMemberRequest);
 
         //when
-        ResultActions actions = mockMvc.perform(post(signUpUrl)
+        ResultActions actions = mockMvc.perform(post(MEMBER_SIGN_UP_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody));
 
@@ -53,8 +66,9 @@ class MemberAndSellerControllerIntegrationTest {
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long memberId = jsonNode.get("id").asLong();
 
+        //회원가입해서 받은 memberId로 판매자 신청 테스트
         //given
-        final String sellerUrl = "/v1/sellers/" + memberId;
+        final String sellerUrl = SELLER_SIGN_UP_URL + memberId;
         CreateSellerRequest createSellerRequest = getCreateSellerRequest(memberId);
         final String sellerRequestBody = objectMapper.writeValueAsString(createSellerRequest);
 
@@ -64,6 +78,7 @@ class MemberAndSellerControllerIntegrationTest {
                 .content(sellerRequestBody));
 
         //then
+        Assertions.assertThat(memberId).isGreaterThan(0);
         sellerActions.andDo(print())
                 .andExpect(status().isCreated());
     }

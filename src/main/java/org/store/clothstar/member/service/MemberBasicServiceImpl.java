@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
 import org.store.clothstar.member.repository.MemberRepository;
@@ -57,16 +56,5 @@ public class MemberBasicServiceImpl implements MemberBasicService {
         memberRepository.update(member);
     }
 
-    @Override
-    public Long save(CreateMemberRequest createMemberDTO) {
-        String encryptedPassword = passwordEncoder.encode(createMemberDTO.getPassword());
-        Member member = createMemberDTO.toMember(encryptedPassword);
 
-        int result = memberRepository.save(member);
-        if (result == 0) {
-            throw new IllegalArgumentException("회원 가입이 되지 않았습니다.");
-        }
-
-        return member.getMemberId();
-    }
 }

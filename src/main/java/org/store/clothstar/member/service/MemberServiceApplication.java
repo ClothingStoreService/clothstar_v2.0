@@ -1,7 +1,7 @@
 package org.store.clothstar.member.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
@@ -12,11 +12,21 @@ import java.util.List;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class MemberServiceApplication {
     private final MemberBasicService memberBasicService;
     private final MemberPasswordUpdateService memberPasswordUpdateService;
+    private final MemberSignupService memberSignupService;
     private final MemberDeleteService memberDeleteService;
+
+    public MemberServiceApplication(MemberBasicService memberBasicService,
+                                    MemberPasswordUpdateService memberPasswordUpdateService,
+                                    @Qualifier("memberSignupJpaServiceImpl") MemberSignupService memberSignupService,
+                                    MemberDeleteService memberDeleteService) {
+        this.memberBasicService = memberBasicService;
+        this.memberPasswordUpdateService = memberPasswordUpdateService;
+        this.memberSignupService = memberSignupService;
+        this.memberDeleteService = memberDeleteService;
+    }
 
     public List<MemberResponse> getAllMember() {
         return memberBasicService.findAll();
@@ -47,6 +57,6 @@ public class MemberServiceApplication {
 
     @Transactional
     public Long signup(CreateMemberRequest createMemberDTO) {
-        return memberBasicService.save(createMemberDTO);
+        return memberSignupService.signUp(createMemberDTO);
     }
 }
