@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
 import org.store.clothstar.member.dto.response.AddressResponse;
-import org.store.clothstar.member.repository.AddressMybatisRepository;
 import org.store.clothstar.member.repository.AddressRepository;
-import org.store.clothstar.member.repository.SellerRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +17,7 @@ public class AddressBasicServiceImpl implements AddressBasicService {
     private final AddressRepository addressRepository;
 
     public AddressBasicServiceImpl(
-            @Qualifier("addressJpaRepository") AddressRepository addressRepository) {
+            @Qualifier("addressJpaRepositoryAdapter") AddressRepository addressRepository) {
         //@Qualifier("addressMybatisRepository") AddressRepository addressRepository) {
         this.addressRepository = addressRepository;
     }
@@ -39,7 +37,7 @@ public class AddressBasicServiceImpl implements AddressBasicService {
         if (result == 0) {
             throw new IllegalArgumentException("회원 배송지 주소가 저장되지 않았습니다.");
         }
-        
+
         return address.getAddressId();
     }
 }

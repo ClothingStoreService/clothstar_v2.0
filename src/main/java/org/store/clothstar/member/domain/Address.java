@@ -1,11 +1,15 @@
 package org.store.clothstar.member.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.store.clothstar.member.entity.AddressEntity;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Address {
     private Long addressId;
     private Long memberId;
