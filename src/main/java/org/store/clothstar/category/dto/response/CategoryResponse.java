@@ -16,4 +16,11 @@ public class CategoryResponse {
                 .categoryType(category.getCategoryType())
                 .build();
     }
+
+    public static CategoryResponse from(org.store.clothstar.category.domain.Category category) {
+        return CategoryResponse.builder()
+                .categoryId(category.getCategoryId())
+                .categoryType(category.getCategoryType())
+                .build();
+    }
 }

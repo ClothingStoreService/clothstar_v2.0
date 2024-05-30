@@ -6,10 +6,10 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 import org.store.clothstar.category.dto.response.CategoryResponse;
 import org.store.clothstar.category.entity.Category;
-import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.dto.response.MemberSimpleResponse;
 import org.store.clothstar.member.dto.response.SellerSimpleResponse;
 import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.entity.SellerEntity;
 import org.store.clothstar.product.entity.Product;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.entity.ProductLine;
@@ -41,7 +41,7 @@ public class ProductLineWithProductsJPAResponse {
 //    private LocalDateTime deletedAt;
 
     @QueryProjection
-    public ProductLineWithProductsResponse(ProductLine productLine, Category category, Seller seller, MemberEntity member) {
+    public ProductLineWithProductsJPAResponse(ProductLine productLine, Category category, SellerEntity seller, MemberEntity member) {
         this.productLineId = productLine.getProductLineId();
         this.category = CategoryResponse.from(category);
         this.name = productLine.getName();

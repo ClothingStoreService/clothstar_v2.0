@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 import org.store.clothstar.category.entity.Category;
 import org.store.clothstar.common.entity.BaseTimeEntity;
 import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.entity.SellerEntity;
 import org.store.clothstar.product.entity.Product;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
+import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class ProductLine extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private MemberEntity member;
+    private SellerEntity seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)

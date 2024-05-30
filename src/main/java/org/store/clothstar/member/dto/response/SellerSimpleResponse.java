@@ -1,7 +1,7 @@
 package org.store.clothstar.member.dto.response;
 
 import lombok.*;
-import org.store.clothstar.member.domain.Seller;
+import org.store.clothstar.member.entity.SellerEntity;
 
 @Builder
 @Getter
@@ -13,7 +13,7 @@ public class SellerSimpleResponse {
     private String brandName;
     private String bizNo;
 
-    public static SellerSimpleResponse from(Seller seller) {
+    public static SellerSimpleResponse from(SellerEntity seller) {
         return SellerSimpleResponse.builder()
                 .memberId(seller.getMemberId())
                 .brandName(seller.getBrandName())
