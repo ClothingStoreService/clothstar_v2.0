@@ -34,16 +34,8 @@ class MemberAndSellerControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private WebApplicationContext context;
-
     private static final String MEMBER_SIGN_UP_URL = "/v1/members";
     private static final String SELLER_SIGN_UP_URL = "/v1/sellers/";
-
-    @BeforeEach
-    public void mockMvcSetup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-    }
 
     @DisplayName("회원가입, 판매자 신청 통합 테스트")
     @Test

@@ -1,11 +1,13 @@
 package org.store.clothstar.member.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.store.clothstar.member.application.MemberServiceApplication;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.response.MemberResponse;
@@ -26,7 +28,8 @@ class MemberServiceApplicationMockUnitTest {
     @InjectMocks
     MemberServiceApplication memberServiceApplication;
 
-    @DisplayName("회원아이디로 회원 조회 테스트")
+
+    @DisplayName("회원아이디로 회원 조회 테스트(마이바티스 사용)")
     @Test
     void getMemberTest() {
         //given
@@ -44,7 +47,7 @@ class MemberServiceApplicationMockUnitTest {
         assertThat(memberResponse.getMemberId()).isEqualTo(member.getMemberId());
     }
 
-    @DisplayName("이메일이 중복된 경우의 단위 테스트")
+    @DisplayName("이메일이 중복된 경우의 단위 테스트(마이바티스 사용)")
     @Test
     void duplicateEmailCheckTest() {
         //given
@@ -59,7 +62,7 @@ class MemberServiceApplicationMockUnitTest {
         //assertThat(message.getMessage()).isEqualTo("이미 사용중인 이메일 입니다.");
     }
 
-    @DisplayName("이메일이 중복되지 않은 경우의 단위 테스트")
+    @DisplayName("이메일이 중복되지 않은 경우의 단위 테스트(마이바티스 사용)")
     @Test
     void duplicateEmailCheckTest2() {
         //given

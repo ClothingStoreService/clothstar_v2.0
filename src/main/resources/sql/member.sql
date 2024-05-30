@@ -100,7 +100,7 @@ from address
 where member_id = 1;
 
 select *
-from member;
+from address;
 
 
 alter table member
