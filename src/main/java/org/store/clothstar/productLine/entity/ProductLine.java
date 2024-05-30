@@ -8,7 +8,10 @@ import lombok.NoArgsConstructor;
 import org.store.clothstar.category.entity.Category;
 import org.store.clothstar.common.entity.BaseTimeEntity;
 import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.product.entity.Product;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -41,4 +44,22 @@ public class ProductLine extends BaseTimeEntity {
     private ProductLineStatus status;
 
     private Long saleCount;
+
+    @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Product> products;
+
+    public void updateProductLine(UpdateProductLineRequest updateProductLineRequest) {
+        this.name = updateProductLineRequest.getName();
+        this.content = updateProductLineRequest.getContent();
+        this.price = updateProductLineRequest.getPrice();
+        this.status = updateProductLineRequest.getStatus();
+    }
+
+    public void changeProductStatus(ProductLineStatus productLineStatus) {
+        this.status = productLineStatus;
+    }
+
+//    public void setDeletedAt() {
+//        this.deletedAt = LocalDateTime.now();
+//    }
 }

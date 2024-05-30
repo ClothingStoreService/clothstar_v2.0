@@ -17,6 +17,7 @@ import org.store.clothstar.category.repository.CategoryMybatisRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -98,7 +99,7 @@ class CategoryServiceTest {
                 .categoryType("OUTER")
                 .build();
 
-        BDDMockito.given(categoryMybatisRepository.selectCategoryById(anyLong())).willReturn(category);
+        BDDMockito.given(categoryMybatisRepository.selectCategoryById(anyLong())).willReturn(Optional.ofNullable(category));
 
         // when
         CategoryDetailResponse response = categoryService.getCategory(categoryId);

@@ -2,7 +2,7 @@ package org.store.clothstar.category.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.store.clothstar.category.domain.Category;
+import org.store.clothstar.category.entity.Category;
 
 @Getter
 @Builder
