@@ -6,7 +6,7 @@ import org.store.clothstar.member.domain.Seller;
 import java.util.Optional;
 
 @Mapper
-public interface SellerRepository {
+public interface SellerMybatisRepository {
     int save(Seller seller);
 
     Optional<Seller> findById(Long memberId);

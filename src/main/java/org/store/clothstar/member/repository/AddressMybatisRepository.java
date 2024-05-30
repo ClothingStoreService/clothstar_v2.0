@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Mapper
-public interface AddressRepository {
+public interface AddressMybatisRepository {
     List<Address> findMemberAllAddress(Long memberId);
 
     int save(Address address);

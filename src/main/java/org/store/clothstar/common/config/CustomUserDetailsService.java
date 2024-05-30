@@ -1,4 +1,4 @@
-package org.store.clothstar.member.service;
+package org.store.clothstar.common.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

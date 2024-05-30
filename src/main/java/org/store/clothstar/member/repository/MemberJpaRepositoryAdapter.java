@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * 기존 MyBatis의 반환타입과 맞추기 위한 JpaRepository의 어댑터 클래스 입니다.
+ */
 @Slf4j
 @Repository
 public class MemberJpaRepositoryAdapter implements MemberRepository {
