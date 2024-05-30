@@ -26,7 +26,7 @@ public class OrderDetail {
     // 상품 옵션 정보
     private Long stock; // 옵션 상품 재고
     private String optionName;
-    private int extraCharge;
+//    private int extraCharge;
 
     // 판매자 정보
     private String brandName;
