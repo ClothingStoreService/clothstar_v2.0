@@ -17,7 +17,7 @@ import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.repository.MemberJpaRepositoryAdapter;
-import org.store.clothstar.member.service.MemberSignupService;
+import org.store.clothstar.member.service.MemberSignupJpaServiceImpl;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,7 +34,7 @@ class AddressControllerIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private MemberSignupService memberSignupService;
+    private MemberSignupJpaServiceImpl memberSignupJpaService;
 
     @Autowired
     private MemberJpaRepositoryAdapter memberJpaRepository;
@@ -49,7 +49,7 @@ class AddressControllerIntegrationTest {
     @DisplayName("회원가입한 멤버아이디와, 인증에 필요한 access 토큰을 가져옵니다.")
     @BeforeEach
     public void getMemberId_getAccessToken() {
-        memberId = memberSignupService.saveByJpa(getCreateMemberRequest());
+        memberId = memberSignupJpaService.signUp(getCreateMemberRequest());
         Member member = memberJpaRepository.findById(memberId).get();
         accessToken = jwtUtil.createAccessToken(member);
     }
