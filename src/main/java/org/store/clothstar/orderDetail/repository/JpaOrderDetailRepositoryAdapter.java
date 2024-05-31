@@ -14,7 +14,6 @@ public class JpaOrderDetailRepositoryAdapter implements UpperOrderDetailReposito
 
     @Override
     public void saveOrderDetail(OrderDetail orderDetail) {
-        //도메인을 엔티티로 변환
         OrderDetailEntity orderDetailEntity = convertToOrderEntity(orderDetail);
         jpaOrderDetailRepository.save(orderDetailEntity);
     }

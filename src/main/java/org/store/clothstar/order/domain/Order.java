@@ -39,5 +39,6 @@ public class Order {
         this.totalShippingPrice = orderEntity.getTotalShippingPrice();
         this.totalProductsPrice = orderEntity.getTotalProductsPrice();
         this.paymentMethod = orderEntity.getPaymentMethod();
+        this.totalPaymentPrice = orderEntity.getTotalPaymentPrice();
     }
 }

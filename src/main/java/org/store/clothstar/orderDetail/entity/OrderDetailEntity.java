@@ -26,7 +26,6 @@ public class OrderDetailEntity {
     @Column(name="product_id")
     private Long productId;
 
-    @Column(name="quantity")
     private int quantity;
 
     @Column(name="fixed_price")
@@ -36,11 +35,9 @@ public class OrderDetailEntity {
     private int oneKindTotalPrice; // 상품 종류 하나당 총 가격
 
     // 상품 정보
-    @Column(name="name")
     private String name; // 상품명
 
     // 상품 옵션 정보
-    @Column(name="stock")
     private Long stock; // 옵션 상품 재고
     @Column(name="option_name")
     private String optionName;

@@ -7,7 +7,7 @@ import org.store.clothstar.orderDetail.repository.UpperOrderDetailRepository;
 import java.util.Optional;
 
 @Mapper
-public interface MybatisOrderRepository extends UpperOrderDetailRepository {
+public interface MybatisOrderRepository extends UpperOrderRepository {
 
     Optional<Order> getOrder(Long orderId);
 
