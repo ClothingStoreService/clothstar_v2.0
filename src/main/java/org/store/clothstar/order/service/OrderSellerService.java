@@ -27,9 +27,9 @@ public class OrderSellerService {
     public OrderSellerService(
             @Qualifier("jpaOrderSellerRepositoryAdapter") UpperOrderSellerRepository upperOrderSellerRepository
 //            @Qualifier("mybatisOrderSellerRepository") UpperOrderSellerRepository upperOrderSellerRepository
-            ,OrderRepository orderRepository
-            ,MybatisOrderSellerRepository mybatisOrderSellerRepository
-    ){
+            , OrderRepository orderRepository
+            , MybatisOrderSellerRepository mybatisOrderSellerRepository
+    ) {
         this.upperOrderSellerRepository = upperOrderSellerRepository;
         this.orderRepository = orderRepository;
         this.mybatisOrderSellerRepository = mybatisOrderSellerRepository;

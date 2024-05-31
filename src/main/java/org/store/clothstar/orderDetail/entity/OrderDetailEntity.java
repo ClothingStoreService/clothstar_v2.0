@@ -5,10 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.store.clothstar.order.domain.type.PaymentMethod;
-import org.store.clothstar.order.domain.type.Status;
-
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor

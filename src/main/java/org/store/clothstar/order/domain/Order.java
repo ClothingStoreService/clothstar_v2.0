@@ -31,13 +31,13 @@ public class Order {
     }
 
     public Order(OrderEntity orderEntity) {
-        this.orderId=orderEntity.getOrderId();
-        this.memberId=orderEntity.getMemberId();
-        this.addressId=orderEntity.getAddressId();
-        this.createdAt=orderEntity.getCreatedAt();
-        this.status=orderEntity.getStatus();
-        this.totalShippingPrice=orderEntity.getTotalShippingPrice();
-        this.totalProductsPrice=orderEntity.getTotalProductsPrice();
-        this.paymentMethod=orderEntity.getPaymentMethod();
+        this.orderId = orderEntity.getOrderId();
+        this.memberId = orderEntity.getMemberId();
+        this.addressId = orderEntity.getAddressId();
+        this.createdAt = orderEntity.getCreatedAt();
+        this.status = orderEntity.getStatus();
+        this.totalShippingPrice = orderEntity.getTotalShippingPrice();
+        this.totalProductsPrice = orderEntity.getTotalProductsPrice();
+        this.paymentMethod = orderEntity.getPaymentMethod();
     }
 }

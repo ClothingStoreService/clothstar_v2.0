@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-public class JpaOrderSellerRepositoryAdapter implements UpperOrderSellerRepository{
+public class JpaOrderSellerRepositoryAdapter implements UpperOrderSellerRepository {
     JpaOrderSellerRepository jpaOrderSellerRepository;
 
     JpaOrderSellerRepositoryAdapter(JpaOrderSellerRepository jpaOrderSellerRepository) {
