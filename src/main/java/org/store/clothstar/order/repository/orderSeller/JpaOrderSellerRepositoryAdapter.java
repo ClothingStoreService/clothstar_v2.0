@@ -28,11 +28,11 @@ public class JpaOrderSellerRepositoryAdapter implements UpperOrderSellerReposito
 
     @Override
     public void approveOrder(Long orderId) {
-
+        jpaOrderSellerRepository.approveOrder(orderId);
     }
 
     @Override
     public void cancelOrder(Long orderId) {
-
+        jpaOrderSellerRepository.cancelOrder(orderId);
     }
 }
