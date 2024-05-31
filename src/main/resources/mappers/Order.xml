@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.store.clothstar.order.repository.order.OrderRepository">
+<mapper namespace="org.store.clothstar.order.repository.order.MybatisOrderRepository">
     <select id="getOrder" resultType="org.store.clothstar.order.domain.Order">
         select * from orders where order_id = #{orderId}
     </select>

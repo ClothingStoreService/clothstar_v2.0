@@ -15,7 +15,7 @@ import org.store.clothstar.order.domain.type.ApprovalStatus;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
-import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.repository.order.MybatisOrderRepository;
 import org.store.clothstar.order.repository.orderSeller.UpperOrderSellerRepository;
 
 import java.time.LocalDateTime;
@@ -44,7 +44,7 @@ class OrderSellerServiceApplicationTest {
     private UpperOrderSellerRepository upperOrderSellerRepository;
 
     @Mock
-    private OrderRepository orderRepository;
+    private MybatisOrderRepository orderRepository;
 
     @Mock
     private OrderDetailService orderDetailService;

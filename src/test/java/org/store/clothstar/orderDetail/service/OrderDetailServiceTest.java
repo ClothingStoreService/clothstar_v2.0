@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.repository.order.MybatisOrderRepository;
 import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
@@ -32,7 +32,7 @@ class OrderDetailServiceTest {
     private OrderDetailService orderDetailService;
 
     @Mock
-    private OrderRepository orderRepository;
+    private MybatisOrderRepository orderRepository;
 
     @Mock
     private ProductLineMybatisRepository productLineMybatisRepository;

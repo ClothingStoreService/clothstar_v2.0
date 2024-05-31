@@ -10,7 +10,7 @@ import org.store.clothstar.order.domain.type.ApprovalStatus;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
-import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.repository.order.MybatisOrderRepository;
 import org.store.clothstar.order.repository.orderSeller.MybatisOrderSellerRepository;
 import org.store.clothstar.order.repository.orderSeller.UpperOrderSellerRepository;
 
@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
 public class OrderSellerService {
 
     private final UpperOrderSellerRepository upperOrderSellerRepository;
-    private final OrderRepository orderRepository;
+    private final MybatisOrderRepository orderRepository;
     private final MybatisOrderSellerRepository mybatisOrderSellerRepository;
 
     public OrderSellerService(
             @Qualifier("jpaOrderSellerRepositoryAdapter") UpperOrderSellerRepository upperOrderSellerRepository
 //            @Qualifier("mybatisOrderSellerRepository") UpperOrderSellerRepository upperOrderSellerRepository
-            , OrderRepository orderRepository
+            , MybatisOrderRepository orderRepository
             , MybatisOrderSellerRepository mybatisOrderSellerRepository
     ) {
         this.upperOrderSellerRepository = upperOrderSellerRepository;

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.repository.order.MybatisOrderRepository;
 import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
@@ -24,16 +24,16 @@ import java.util.List;
 //@RequiredArgsConstructor
 public class OrderDetailService{
     private final UpperOrderDetailRepository upperOrderDetailRepository;
-    private final OrderRepository orderRepository;
+    private final MybatisOrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final ProductLineMybatisRepository productLineMybatisRepository;
 
     public OrderDetailService(
             @Qualifier("jpaOrderDetailRepositoryAdapter") UpperOrderDetailRepository upperOrderDetailRepository
 //            @Qualifier("mybatisOrderDetailRepository") UpperOrderDetailRepository upperOrderDetailRepository
-            ,OrderRepository orderRepository
-            ,ProductRepository productRepository
-            ,ProductLineRepository productLineRepository
+            , MybatisOrderRepository orderRepository
+            , ProductRepository productRepository
+            , ProductLineRepository productLineRepository
     ){
         this.upperOrderDetailRepository = upperOrderDetailRepository;
         this.orderRepository  = orderRepository;
