@@ -16,7 +16,7 @@ import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.repository.ProductRepository;
 import org.store.clothstar.productLine.domain.ProductLine;
-import org.store.clothstar.productLine.repository.ProductLineRepository;
+import org.store.clothstar.productLine.repository.ProductLineMybatisRepository;
 
 import java.util.Optional;
 
@@ -35,7 +35,7 @@ class OrderDetailServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
-    private ProductLineRepository productLineRepository;
+    private ProductLineMybatisRepository productLineMybatisRepository;
 
     @Mock
     private ProductRepository productRepository;
@@ -55,7 +55,7 @@ class OrderDetailServiceTest {
         Order mockOrder = mock(Order.class);
 
         given(orderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
-        given(productLineRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
+        given(productLineMybatisRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productRepository.selectByProductId(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.toOrderDetail(orderId, mockProductLine, mockProduct)).willReturn(mockOrderDetail);
 
@@ -64,7 +64,7 @@ class OrderDetailServiceTest {
 
         //then
         then(orderRepository).should().getOrder(orderId);
-        then(productLineRepository).should().selectByProductLineId(mockRequest.getProductLineId());
+        then(productLineMybatisRepository).should().selectByProductLineId(mockRequest.getProductLineId());
         then(productRepository).should().selectByProductId(mockRequest.getProductId());
     }
 
@@ -80,7 +80,7 @@ class OrderDetailServiceTest {
 
         given(mockOrderDetail.getOrderDetailId()).willReturn(1L);
         given(orderRepository.getOrder(mockRequest.getOrderId())).willReturn(Optional.of(mockOrder));
-        given(productLineRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
+        given(productLineMybatisRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productRepository.selectByProductId(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.toOrderDetail(mockOrder, mockProductLine, mockProduct)).willReturn(mockOrderDetail);
 
@@ -102,7 +102,7 @@ class OrderDetailServiceTest {
         Order mockOrder = mock(Order.class);
 
         given(orderRepository.getOrder(mockRequest.getOrderId())).willReturn(Optional.of(mockOrder));
-        given(productLineRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
+        given(productLineMybatisRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productRepository.selectByProductId(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.toOrderDetail(mockOrder, mockProductLine, mockProduct)).willReturn(mockOrderDetail);
 
@@ -111,7 +111,7 @@ class OrderDetailServiceTest {
 
         //then
         then(orderRepository).should().getOrder(mockRequest.getOrderId());
-        then(productLineRepository).should().selectByProductLineId(mockRequest.getProductLineId());
+        then(productLineMybatisRepository).should().selectByProductLineId(mockRequest.getProductLineId());
         then(productRepository).should().selectByProductId(mockRequest.getProductId());
     }
 
@@ -125,7 +125,7 @@ class OrderDetailServiceTest {
         Product mockProduct = mock(Product.class);
 
         given(orderRepository.getOrder(mockRequest.getOrderId())).willReturn(Optional.of(mockOrder));
-        given(productLineRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
+        given(productLineMybatisRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productRepository.selectByProductId(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.getQuantity()).willReturn(10);
         given(mockProduct.getStock()).willReturn(1L);
@@ -150,7 +150,7 @@ class OrderDetailServiceTest {
         OrderDetail mockOrderDetail = mock(OrderDetail.class);
 
         given(orderRepository.getOrder(mockRequest.getOrderId())).willReturn(Optional.of(mockOrder));
-        given(productLineRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
+        given(productLineMybatisRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productRepository.selectByProductId(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.getQuantity()).willReturn(1);
         given(mockProduct.getStock()).willReturn(10L);

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 import org.store.clothstar.category.dto.response.CategoryResponse;
-import org.store.clothstar.category.entity.Category;
+import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.member.dto.response.MemberSimpleResponse;
 import org.store.clothstar.member.dto.response.SellerSimpleResponse;
 import org.store.clothstar.member.entity.MemberEntity;
@@ -41,9 +41,9 @@ public class ProductLineWithProductsJPAResponse {
 //    private LocalDateTime deletedAt;
 
     @QueryProjection
-    public ProductLineWithProductsJPAResponse(ProductLine productLine, Category category, SellerEntity seller, MemberEntity member) {
+    public ProductLineWithProductsJPAResponse(ProductLine productLine, CategoryEntity categoryEntity, SellerEntity seller, MemberEntity member) {
         this.productLineId = productLine.getProductLineId();
-        this.category = CategoryResponse.from(category);
+        this.category = CategoryResponse.from(categoryEntity);
         this.name = productLine.getName();
         this.price = productLine.getPrice();
         this.totalStock = productLine.getTotalStock();

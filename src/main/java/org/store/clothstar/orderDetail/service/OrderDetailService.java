@@ -15,7 +15,7 @@ import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.repository.ProductRepository;
 import org.store.clothstar.productLine.domain.ProductLine;
-import org.store.clothstar.productLine.repository.ProductLineRepository;
+import org.store.clothstar.productLine.repository.ProductLineMybatisRepository;
 
 @Slf4j
 @Service
@@ -24,7 +24,7 @@ public class OrderDetailService {
     private final OrderDetailRepository orderDetailRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
-    private final ProductLineRepository productLineRepository;
+    private final ProductLineMybatisRepository productLineMybatisRepository;
 
     // 주문 생성시 같이 호출되는 주문 상세 생성 메서드 - 하나의 트랜잭션으로 묶임
     @Transactional
@@ -33,7 +33,7 @@ public class OrderDetailService {
         Order order = orderRepository.getOrder(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
 
-        ProductLine productLine = productLineRepository.selectByProductLineId(createOrderDetailRequest.getProductLineId())
+        ProductLine productLine = productLineMybatisRepository.selectByProductLineId(createOrderDetailRequest.getProductLineId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
 
         Product product = productRepository.selectByProductId(createOrderDetailRequest.getProductId())
@@ -66,7 +66,7 @@ public class OrderDetailService {
         Order order = orderRepository.getOrder(addOrderDetailRequest.getOrderId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 정보를 찾을 수 없습니다."));
 
-        ProductLine productLine = productLineRepository.selectByProductLineId(addOrderDetailRequest.getProductLineId())
+        ProductLine productLine = productLineMybatisRepository.selectByProductLineId(addOrderDetailRequest.getProductLineId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
 
         Product product = productRepository.selectByProductId(addOrderDetailRequest.getProductId())

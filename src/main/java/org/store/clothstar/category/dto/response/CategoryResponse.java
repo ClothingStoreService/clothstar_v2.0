@@ -2,7 +2,8 @@ package org.store.clothstar.category.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.store.clothstar.category.entity.Category;
+import org.store.clothstar.category.domain.Category;
+import org.store.clothstar.category.entity.CategoryEntity;
 
 @Getter
 @Builder
@@ -17,7 +18,7 @@ public class CategoryResponse {
                 .build();
     }
 
-    public static CategoryResponse from(org.store.clothstar.category.domain.Category category) {
+    public static CategoryResponse from(CategoryEntity category) {
         return CategoryResponse.builder()
                 .categoryId(category.getCategoryId())
                 .categoryType(category.getCategoryType())

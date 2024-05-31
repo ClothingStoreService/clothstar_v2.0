@@ -1,4 +1,4 @@
-package org.store.clothstar.product.repository;
+package org.store.clothstar.productLine.repository;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import org.store.clothstar.category.entity.QCategory;
+import org.store.clothstar.category.entity.QCategoryEntity;
 import org.store.clothstar.member.entity.QMemberEntity;
 import org.store.clothstar.member.entity.QSellerEntity;
 import org.store.clothstar.product.entity.QProduct;
@@ -27,14 +27,14 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
     private final JPAQueryFactory jpaQueryFactory;
 
     QProductLine qProductLine = QProductLine.productLine;
-    QCategory qCategory = QCategory.category;
+    QCategoryEntity qCategory = QCategoryEntity.categoryEntity;
     QProduct qProduct = QProduct.product;
     QSellerEntity qSeller = QSellerEntity.sellerEntity;
     QMemberEntity qMember = QMemberEntity.memberEntity;
 
 
     @Override
-    public Page<ProductLineWithProductsJPAResponse> findProductLineWithOptions(Pageable pageable) {
+    public Page<ProductLineWithProductsJPAResponse> getProductLinesWithOptions(Pageable pageable) {
 
         List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable.getSort());
 
@@ -61,6 +61,20 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
 //                .fetchCount();
 
         return PageableExecutionUtils.getPage(content, pageable, totalCount::fetchOne);
+    }
+
+    @Override
+    public ProductLineWithProductsJPAResponse findProductLineWithOptionsById(Long productLineId) {
+
+        return jpaQueryFactory
+                .select(new QProductLineWithProductsJPAResponse(qProductLine, qCategory, qSeller, qMember))
+                .from(qProductLine)
+                .leftJoin(qProductLine.seller)
+                .leftJoin(qSeller.member)
+                .leftJoin(qProductLine.products)
+                .where(qProductLine.productLineId.eq(productLineId)
+                        .and(qProductLine.deletedAt.isNull()))
+                .fetchOne();
     }
 
     private List<OrderSpecifier<?>> getOrderSpecifiers(Sort sort) {

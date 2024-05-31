@@ -12,7 +12,7 @@ import org.store.clothstar.category.dto.request.UpdateCategoryRequest;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Category {
+public class CategoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

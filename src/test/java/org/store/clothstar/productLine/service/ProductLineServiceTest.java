@@ -14,7 +14,7 @@ import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineResponse;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
-import org.store.clothstar.productLine.repository.ProductLineRepository;
+import org.store.clothstar.productLine.repository.ProductLineMybatisRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ class ProductLineServiceTest {
     private ProductLineService productLineService;
 
     @Mock
-    private ProductLineRepository productLineRepository;
+    private ProductLineMybatisRepository productLineMybatisRepository;
 
     @DisplayName("상품 리스트 조회에 성공한다.")
     @Test
@@ -57,13 +57,13 @@ class ProductLineServiceTest {
         when(productLine3.getStatus()).thenReturn(ProductLineStatus.SOLD_OUT);
 
         List<ProductLine> productLines = List.of(productLine1, productLine2, productLine3);
-        when(productLineRepository.selectAllProductLinesNotDeleted()).thenReturn(productLines);
+        when(productLineMybatisRepository.selectAllProductLinesNotDeleted()).thenReturn(productLines);
 
         // when
         List<ProductLineResponse> response = productLineService.getAllProductLines();
 
         // then
-        verify(productLineRepository, times(1))
+        verify(productLineMybatisRepository, times(1))
                 .selectAllProductLinesNotDeleted();
         assertThat(response).isNotNull();
         assertThat(response.size()).isEqualTo(3);
@@ -84,7 +84,7 @@ class ProductLineServiceTest {
         when(productLine.getPrice()).thenReturn(69000);
         when(productLine.getStatus()).thenReturn(ProductLineStatus.ON_SALE);
 
-        given(productLineRepository.selectByProductLineId(anyLong())).willReturn(Optional.ofNullable(productLine));
+        given(productLineMybatisRepository.selectByProductLineId(anyLong())).willReturn(Optional.ofNullable(productLine));
 
         // when
         Optional<ProductLineResponse> response = productLineService.getProductLine(productLine.getProductLineId());
@@ -153,7 +153,7 @@ class ProductLineServiceTest {
                 .productList(productList)
                 .build();
 
-        given(productLineRepository.selectProductLineWithOptions(anyLong())).willReturn(Optional.ofNullable(productLineWithProductsResponse));
+        given(productLineMybatisRepository.selectProductLineWithOptions(anyLong())).willReturn(Optional.ofNullable(productLineWithProductsResponse));
 
         // when
         ProductLineWithProductsResponse response = productLineService.getProductLineWithProducts(productLineId);
@@ -177,13 +177,13 @@ class ProductLineServiceTest {
                 .status(ProductLineStatus.ON_SALE)
                 .build();
 
-        given(productLineRepository.save(any(ProductLine.class))).willReturn(1);
+        given(productLineMybatisRepository.save(any(ProductLine.class))).willReturn(1);
 
         // when
         Long responseProductLineId = productLineService.createProductLine(createProductLineRequest);
 
         // then
-        verify(productLineRepository, times(1))
+        verify(productLineMybatisRepository, times(1))
                 .save(any(ProductLine.class));
     }
 
@@ -214,16 +214,16 @@ class ProductLineServiceTest {
                 .biz_no("232-05-02861")
                 .build();
 
-        given(productLineRepository.selectByProductLineId(anyLong())).willReturn(Optional.ofNullable(productLine));
-        given(productLineRepository.updateProductLine(any(ProductLine.class))).willReturn(1);
+        given(productLineMybatisRepository.selectByProductLineId(anyLong())).willReturn(Optional.ofNullable(productLine));
+        given(productLineMybatisRepository.updateProductLine(any(ProductLine.class))).willReturn(1);
 
         // when
         productLineService.updateProductLine(productLineId, updateProductLineRequest);
 
         // then
-        verify(productLineRepository, times(1))
+        verify(productLineMybatisRepository, times(1))
                 .selectByProductLineId(anyLong());
-        verify(productLineRepository, times(1))
+        verify(productLineMybatisRepository, times(1))
                 .updateProductLine(any(ProductLine.class));
     }
 
@@ -248,16 +248,16 @@ class ProductLineServiceTest {
                 .biz_no("232-05-02861")
                 .build();
 
-        given(productLineRepository.selectByProductLineId(anyLong())).willReturn(Optional.ofNullable(productLine));
-        given(productLineRepository.setDeletedAt(any(ProductLine.class))).willReturn(1);
+        given(productLineMybatisRepository.selectByProductLineId(anyLong())).willReturn(Optional.ofNullable(productLine));
+        given(productLineMybatisRepository.setDeletedAt(any(ProductLine.class))).willReturn(1);
 
         // when
         productLineService.setDeletedAt(productLineId);
 
         // then
-        verify(productLineRepository, times(2))
+        verify(productLineMybatisRepository, times(2))
                 .selectByProductLineId(anyLong());
-        verify(productLineRepository, times(1))
+        verify(productLineMybatisRepository, times(1))
                 .setDeletedAt(any(ProductLine.class));
     }
 }
