@@ -12,7 +12,7 @@ import org.store.clothstar.order.repository.OrderRepository;
 import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
-import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
+import org.store.clothstar.orderDetail.repository.MybatisOrderDetailRepository;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.repository.ProductRepository;
 import org.store.clothstar.productLine.domain.ProductLine;
@@ -41,7 +41,7 @@ class OrderDetailServiceTest {
     private ProductRepository productRepository;
 
     @Mock
-    private OrderDetailRepository orderDetailRepository;
+    private MybatisOrderDetailRepository orderDetailRepository;
 
     @DisplayName("saveOrderDetailWithOrder: 주문상세 생성 - 메서드 호출 테스트")
     @Test

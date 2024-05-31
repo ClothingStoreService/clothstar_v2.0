@@ -5,9 +5,9 @@ import org.store.clothstar.orderDetail.domain.OrderDetail;
 
 @Repository
 public class MybatisOrderDetailRepositoryAdapter implements UpperOrderDetailRepository{
-    private final OrderDetailRepository orderDetailRepository;
+    private final MybatisOrderDetailRepository orderDetailRepository;
 
-    public MybatisOrderDetailRepositoryAdapter(OrderDetailRepository orderDetailRepository) {
+    public MybatisOrderDetailRepositoryAdapter(MybatisOrderDetailRepository orderDetailRepository) {
         this.orderDetailRepository = orderDetailRepository;
     }
 

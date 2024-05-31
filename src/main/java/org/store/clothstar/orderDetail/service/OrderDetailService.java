@@ -33,8 +33,8 @@ public class OrderDetailService{
     private final ProductLineMybatisRepository productLineMybatisRepository;
 
     public OrderDetailService(
-            @Qualifier("jpaOrderDetailRepositoryAdapter") UpperOrderDetailRepository upperOrderDetailRepository
-//            @Qualifier("mybatisOrderDetailRepositoryAdapter") UpperOrderDetailRepository upperOrderDetailRepository
+//            @Qualifier("jpaOrderDetailRepositoryAdapter") UpperOrderDetailRepository upperOrderDetailRepository
+            @Qualifier("mybatisOrderDetailRepository") UpperOrderDetailRepository upperOrderDetailRepository
             ,OrderRepository orderRepository
             ,ProductRepository productRepository
             ,ProductLineRepository productLineRepository
