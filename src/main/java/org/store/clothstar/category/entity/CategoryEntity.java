@@ -7,11 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.category.dto.request.UpdateCategoryRequest;
 
-@Entity
+@Entity(name = "category")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+//@Table(name = "category")
 public class CategoryEntity {
 
     @Id

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Mapper
-public interface ProductLineMybatisRepository {
+public interface ProductLineMybatisRepository{
 
     List<ProductLine> selectAllProductLinesNotDeleted();
     

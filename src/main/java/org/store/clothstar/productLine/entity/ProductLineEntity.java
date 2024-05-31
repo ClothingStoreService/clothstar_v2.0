@@ -5,21 +5,23 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.store.clothstar.category.entity.CategoryEntity;
+import org.store.clothstar.category.domain.Category;
 import org.store.clothstar.common.entity.BaseTimeEntity;
 import org.store.clothstar.member.entity.SellerEntity;
-import org.store.clothstar.product.entity.Product;
+import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductLine extends BaseTimeEntity {
+@Entity(name = "product_line")
+//@Table(name = "product_line")
+public class ProductLineEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +33,7 @@ public class ProductLine extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
-    private CategoryEntity categoryEntity;
+    private Category category;
 
     private String name;
 
@@ -47,7 +49,7 @@ public class ProductLine extends BaseTimeEntity {
     private Long saleCount;
 
     @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Product> products;
+    private List<ProductEntity> products;
 
     public void updateProductLine(UpdateProductLineRequest updateProductLineRequest) {
         this.name = updateProductLineRequest.getName();
@@ -60,7 +62,7 @@ public class ProductLine extends BaseTimeEntity {
         this.status = productLineStatus;
     }
 
-//    public void setDeletedAt() {
-//        this.deletedAt = LocalDateTime.now();
-//    }
+    public void delete() {
+        this.setDeletedAt(LocalDateTime.now());
+    }
 }

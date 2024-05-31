@@ -5,10 +5,10 @@ spring:
     group:
       local:
         - db-local
-        - db-local-mybatis  # 또는 db-local-jpa
+        - db-local-jpa  # 또는 db-local-jpa
       dev:
         - db-dev
-        - db-dev-mybatis  # 또는 db-dev-jpa
+        - db-dev-jpa  # 또는 db-dev-jpa
     include:
       - db
 

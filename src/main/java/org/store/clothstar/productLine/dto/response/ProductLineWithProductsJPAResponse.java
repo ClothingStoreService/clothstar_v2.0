@@ -4,15 +4,16 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
+import org.store.clothstar.category.domain.Category;
 import org.store.clothstar.category.dto.response.CategoryResponse;
 import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.member.dto.response.MemberSimpleResponse;
 import org.store.clothstar.member.dto.response.SellerSimpleResponse;
 import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.entity.SellerEntity;
-import org.store.clothstar.product.entity.Product;
+import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
-import org.store.clothstar.productLine.entity.ProductLine;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +32,7 @@ public class ProductLineWithProductsJPAResponse {
     private int price;
     private Long totalStock;
     private ProductLineStatus status;
-    private List<Product> productList;
+    private List<ProductEntity> productList;
     private Long saleCount;  // ~개 판매중
     private MemberSimpleResponse member;
     private SellerSimpleResponse seller;
@@ -41,12 +42,12 @@ public class ProductLineWithProductsJPAResponse {
 //    private LocalDateTime deletedAt;
 
     @QueryProjection
-    public ProductLineWithProductsJPAResponse(ProductLine productLine, CategoryEntity categoryEntity, SellerEntity seller, MemberEntity member) {
+    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Category category, SellerEntity seller, MemberEntity member, Long totalStock) {
         this.productLineId = productLine.getProductLineId();
-        this.category = CategoryResponse.from(categoryEntity);
+        this.category = CategoryResponse.from(category);
         this.name = productLine.getName();
         this.price = productLine.getPrice();
-        this.totalStock = productLine.getTotalStock();
+        this.totalStock = totalStock;
         this.status = productLine.getStatus();
         this.productList = productLine.getProducts();
         this.saleCount = productLine.getSaleCount();

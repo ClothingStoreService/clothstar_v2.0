@@ -7,9 +7,9 @@
 #      hibernate:
 #        format_sql: true
 #    defer-datasource-initialization: true
-sql:
-  init:
-    mode: always
+#sql:
+#  init:
+#    mode: always
 
 mybatis:
   mapper-locations: classpath:/mappers/**.xml
@@ -54,8 +54,6 @@ jwt:
 #    cache: false
 #  #  jpa:
 #  #    database-platform: org.hibernate.dialect.MySQLDialect
-#  #    hibernate:
-#  #      ddl-auto: create
 #  jpa:
 #    #전송 쿼리 확인
 #    show-sql: true
@@ -98,8 +96,8 @@ spring:
   jpa:
     show-sql: true
     database-platform: H2
-    hibernate:
-      ddl-auto: create
+#    hibernate:
+#      ddl-auto: create
 
 --- # dev 공통 설정
 spring:
@@ -131,5 +129,5 @@ spring:
   jpa:
     show-sql: true
     database-platform: org.hibernate.dialect.MySQLDialect
-    hibernate:
-      ddl-auto: create
+#    hibernate:
+#      ddl-auto: create
