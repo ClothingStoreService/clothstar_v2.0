@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.store.clothstar.member.domain.Address;
-import org.store.clothstar.member.entity.AddressEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,11 +24,5 @@ public class AddressJpaRepositoryAdapter implements AddressRepository {
     @Override
     public Optional<Address> findById(Long addressId) {
         return addressJpaRepository.findById(addressId).map(Address::new);
-    }
-
-    @Override
-    public int save(Address address) {
-        addressJpaRepository.save(new AddressEntity(address));
-        return 1;
     }
 }

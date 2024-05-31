@@ -2,8 +2,6 @@ package org.store.clothstar.member.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +11,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
+import org.store.clothstar.common.config.jwt.JwtUtil;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
+import org.store.clothstar.member.repository.MemberJpaRepositoryAdapter;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -33,6 +32,12 @@ class MemberAndSellerControllerIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    MemberJpaRepositoryAdapter memberJpaRepository;
 
     private static final String MEMBER_SIGN_UP_URL = "/v1/members";
     private static final String SELLER_SIGN_UP_URL = "/v1/sellers/";
@@ -57,6 +62,8 @@ class MemberAndSellerControllerIntegrationTest {
         String responseBody = actions.andReturn().getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long memberId = jsonNode.get("id").asLong();
+        Member member = memberJpaRepository.findById(memberId).get();
+        final String accessToken = jwtUtil.createAccessToken(member);
 
         //회원가입해서 받은 memberId로 판매자 신청 테스트
         //given
@@ -66,20 +73,20 @@ class MemberAndSellerControllerIntegrationTest {
 
         //when
         ResultActions sellerActions = mockMvc.perform(post(sellerUrl)
+                .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(sellerRequestBody));
 
         //then
-        Assertions.assertThat(memberId).isGreaterThan(0);
         sellerActions.andDo(print())
                 .andExpect(status().isCreated());
     }
 
     private CreateMemberRequest getCreateMemberRequest() {
-        String email = "test11@naver.com";
-        String password = "testl122sff";
-        String name = "name";
-        String telNo = "010-1234-1245";
+        String email = "testtttt@test.com";
+        String password = "test1234";
+        String name = "test";
+        String telNo = "010-1234-1244";
 
         CreateMemberRequest createMemberRequest = new CreateMemberRequest(
                 email, password, name, telNo

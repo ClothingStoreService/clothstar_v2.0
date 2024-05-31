@@ -22,8 +22,8 @@ logging:
 
 jwt:
   secret_key: Y2xvdGhzaG9wcGluZ21hbGxjbG90aHN0YXJjbG90aHNob3BwaW5nbWFsbGNsb3Roc3RhcmNsb3Roc2hvcHBpbmdtYWxsY2xvdGhzdGFyY2xvdGhzaG9wcGluZ21hbGxjbG90aHN0YXIK
-  accessTokenValidTimeMillis: 120000
-  refreshTokenValidTimeMillis: 1200000
+  accessTokenValidTimeMillis: 1200000
+  refreshTokenValidTimeMillis: 12000000
 
 --- # local
 spring:

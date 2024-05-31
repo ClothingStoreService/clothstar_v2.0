@@ -30,11 +30,12 @@ class JwtUnitTest {
         Member member = getMember();
 
         //when
-        String refreshToken = jwtUtil.createAccessToken(getMember());
-        String tokenType = jwtUtil.getTokenType(refreshToken);
-
+        String accessToken = jwtUtil.createAccessToken(getMember());
+        String tokenType = jwtUtil.getTokenType(accessToken);
+        System.out.println("accessToken = " + accessToken);
+        
         //then
-        Assertions.assertThat(refreshToken).isNotNull();
+        Assertions.assertThat(accessToken).isNotNull();
         Assertions.assertThat(tokenType).isEqualTo("ACCESS_TOKEN");
     }
 

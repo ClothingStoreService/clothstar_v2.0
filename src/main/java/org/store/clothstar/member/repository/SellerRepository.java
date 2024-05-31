@@ -6,5 +6,4 @@ import java.util.Optional;
 
 public interface SellerRepository {
     Optional<Seller> findById(Long memberId);
-    int save(Seller seller);
 }

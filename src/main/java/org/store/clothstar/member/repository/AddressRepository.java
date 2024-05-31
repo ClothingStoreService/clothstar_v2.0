@@ -9,6 +9,4 @@ public interface AddressRepository {
     List<Address> findMemberAllAddress(Long memberId);
 
     Optional<Address> findById(Long addressId);
-
-    int save(Address address);
 }

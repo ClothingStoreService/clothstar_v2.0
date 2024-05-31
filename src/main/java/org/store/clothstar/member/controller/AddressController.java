@@ -10,9 +10,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.common.util.MessageDTOBuilder;
+import org.store.clothstar.member.application.AddressServiceApplication;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
 import org.store.clothstar.member.dto.response.AddressResponse;
-import org.store.clothstar.member.application.AddressServiceApplication;
 
 import java.util.List;
 
@@ -39,6 +39,7 @@ public class AddressController {
         Long addressId = addressServiceApplication.addrSave(memberId, createAddressRequest);
 
         MessageDTO messageDTO = MessageDTOBuilder.buildMessage(
+                addressId,
                 HttpStatus.OK.value(),
                 "addressId : " + addressId + " 회원 배송지 주소가 정상적으로 저장 되었습니다."
         );

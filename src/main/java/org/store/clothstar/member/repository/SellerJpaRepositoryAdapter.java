@@ -22,10 +22,4 @@ public class SellerJpaRepositoryAdapter implements SellerRepository {
 
         return Optional.of(new Seller(sellerEntity));
     }
-
-    @Override
-    public int save(Seller seller) {
-        sellerJpaRepository.save(new SellerEntity(seller));
-        return 1;
-    }
 }
