@@ -1,5 +1,7 @@
 package org.store.clothstar.productLine.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,6 +51,8 @@ public class ProductLineEntity extends BaseTimeEntity {
     private Long saleCount;
 
     @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JsonBackReference
+    @JsonIgnore
     private List<ProductEntity> products;
 
     public void updateProductLine(UpdateProductLineRequest updateProductLineRequest) {

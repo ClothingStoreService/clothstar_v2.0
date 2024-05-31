@@ -46,13 +46,15 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
                 .select(new QProductLineWithProductsJPAResponse(
                         qProductLine, qCategory, qSeller, qMember, qProduct.stock.sum()))
                 .from(qProductLine)
-                .leftJoin(qProductLine.seller, qSeller)
-                .leftJoin(qSeller.member, qMember)
-                .leftJoin(qProductLine.products)
+                .innerJoin(qProductLine.seller, qSeller)
+                .innerJoin(qSeller.member, qMember)
+                .innerJoin(qProductLine.products, qProduct)
+//                .innerJoin(qProduct).on()
                 .where(qProductLine.deletedAt.isNull())
                 .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .groupBy(qProductLine.productLineId)
                 .fetch();
 
         JPAQuery<Long> totalCount = jpaQueryFactory
@@ -71,9 +73,9 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
         return Optional.ofNullable(jpaQueryFactory
                 .select(new QProductLineWithProductsJPAResponse(qProductLine, qCategory, qSeller, qMember, totalStockExpression))
                 .from(qProductLine)
-                .leftJoin(qProductLine.seller)
-                .leftJoin(qSeller.member)
-                .leftJoin(qProductLine.products, qProduct)
+                .innerJoin(qProductLine.seller)
+                .innerJoin(qSeller.member)
+                .innerJoin(qProductLine.products, qProduct)
                 .where(qProductLine.productLineId.eq(productLineId)
                         .and(qProductLine.deletedAt.isNull()))
                 .fetchOne());

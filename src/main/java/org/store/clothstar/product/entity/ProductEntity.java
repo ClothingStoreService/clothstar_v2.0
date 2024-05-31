@@ -1,5 +1,6 @@
 package org.store.clothstar.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,7 @@ public class ProductEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_line_id", nullable = false)
+//    @JsonManagedReference
     private ProductLineEntity productLine;
     private String name;
     private int extraCharge;
