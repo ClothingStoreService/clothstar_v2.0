@@ -1,7 +1,6 @@
 package org.store.clothstar.order.service;
 
-import jakarta.annotation.security.PermitAll;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,26 +10,35 @@ import org.store.clothstar.order.domain.type.ApprovalStatus;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
-import org.store.clothstar.order.repository.OrderRepository;
-import org.store.clothstar.order.repository.OrderSellerRepository;
-import org.store.clothstar.orderDetail.service.OrderDetailService;
+import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.repository.orderSeller.MybatisOrderSellerRepository;
+import org.store.clothstar.order.repository.orderSeller.UpperOrderSellerRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class OrderSellerService {
 
+    private final UpperOrderSellerRepository upperOrderSellerRepository;
     private final OrderRepository orderRepository;
-    private final OrderSellerRepository orderSellerRepository;
-    private final OrderDetailService orderDetailService;
+    private final MybatisOrderSellerRepository mybatisOrderSellerRepository;
 
-    @PermitAll
+    public OrderSellerService(
+            @Qualifier("jpaOrderSellerRepositoryAdapter") UpperOrderSellerRepository upperOrderSellerRepository
+//            @Qualifier("mybatisOrderSellerRepository") UpperOrderSellerRepository upperOrderSellerRepository
+            ,OrderRepository orderRepository
+            ,MybatisOrderSellerRepository mybatisOrderSellerRepository
+    ){
+        this.upperOrderSellerRepository = upperOrderSellerRepository;
+        this.orderRepository = orderRepository;
+        this.mybatisOrderSellerRepository = mybatisOrderSellerRepository;
+    }
+
     @Transactional(readOnly = true)
     public List<OrderResponse> getWaitingOrder() {
 
-        return orderSellerRepository.SelectWaitingOrders().stream()
+        return upperOrderSellerRepository.SelectWaitingOrders().stream()
                 .map(OrderResponse::fromOrder)
                 .collect(Collectors.toList());
     }
@@ -55,11 +63,10 @@ public class OrderSellerService {
         MessageDTO messageDTO = null;
 
         if (orderSellerRequest.getApprovalStatus() == ApprovalStatus.APPROVE) {
-            orderSellerRepository.approveOrder(orderId);
-            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.");
+            upperOrderSellerRepository.approveOrder(orderId);
+            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.", null);
         } else if (orderSellerRequest.getApprovalStatus() == ApprovalStatus.CANCEL) {
-            orderSellerRepository.cancelOrder(orderId);
-            orderDetailService.restoreStockByOrder(orderId);
+            upperOrderSellerRepository.cancelOrder(orderId);
             messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.", null);
         }
 

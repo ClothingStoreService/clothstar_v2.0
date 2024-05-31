@@ -1,4 +1,4 @@
-package org.store.clothstar.order.repository;
+package org.store.clothstar.order.repository.order;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.store.clothstar.order.domain.Order;

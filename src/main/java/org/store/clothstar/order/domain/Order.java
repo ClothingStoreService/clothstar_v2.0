@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.order.domain.type.PaymentMethod;
 import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.entity.OrderEntity;
 
 import java.time.LocalDateTime;
 
@@ -27,5 +28,16 @@ public class Order {
     public void updatePrices(int totalProductsPrice, int totalPaymentPrice) {
         this.totalProductsPrice = totalProductsPrice;
         this.totalPaymentPrice = totalPaymentPrice;
+    }
+
+    public Order(OrderEntity orderEntity) {
+        this.orderId=orderEntity.getOrderId();
+        this.memberId=orderEntity.getMemberId();
+        this.addressId=orderEntity.getAddressId();
+        this.createdAt=orderEntity.getCreatedAt();
+        this.status=orderEntity.getStatus();
+        this.totalShippingPrice=orderEntity.getTotalShippingPrice();
+        this.totalProductsPrice=orderEntity.getTotalProductsPrice();
+        this.paymentMethod=orderEntity.getPaymentMethod();
     }
 }

@@ -1,17 +1,13 @@
 package org.store.clothstar.orderDetail.service;
 
-import jakarta.annotation.security.PermitAll;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.repository.OrderRepository;
+import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
@@ -33,8 +29,8 @@ public class OrderDetailService{
     private final ProductLineMybatisRepository productLineMybatisRepository;
 
     public OrderDetailService(
-//            @Qualifier("jpaOrderDetailRepositoryAdapter") UpperOrderDetailRepository upperOrderDetailRepository
-            @Qualifier("mybatisOrderDetailRepository") UpperOrderDetailRepository upperOrderDetailRepository
+            @Qualifier("jpaOrderDetailRepositoryAdapter") UpperOrderDetailRepository upperOrderDetailRepository
+//            @Qualifier("mybatisOrderDetailRepository") UpperOrderDetailRepository upperOrderDetailRepository
             ,OrderRepository orderRepository
             ,ProductRepository productRepository
             ,ProductLineRepository productLineRepository
