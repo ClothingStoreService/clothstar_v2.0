@@ -1,4 +1,4 @@
-package org.store.clothstar.category.domain;
+package org.store.clothstar.category.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,12 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.category.dto.request.UpdateCategoryRequest;
 
-@Entity
+@Entity(name = "category")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Category {
+//@Table(name = "category")
+public class CategoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

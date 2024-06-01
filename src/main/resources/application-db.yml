@@ -7,9 +7,9 @@
 #      hibernate:
 #        format_sql: true
 #    defer-datasource-initialization: true
-sql:
-  init:
-    mode: always
+#sql:
+#  init:
+#    mode: always
 
 mybatis:
   mapper-locations: classpath:/mappers/**.xml
@@ -25,44 +25,109 @@ jwt:
   accessTokenValidTimeMillis: 1200000
   refreshTokenValidTimeMillis: 12000000
 
---- # local
+#--- # local
+#spring:
+#  config:
+#    activate:
+#      on-profile: "db-local"
+#  #  jpa:
+#  #    show-sql: true
+#  #    database-platform: H2
+#  #    hibernate:
+#  #      ddl-auto: create
+#  datasource:
+#    url: jdbc:h2:mem:localdb
+#  h2:
+#    console:
+#      enabled: true
+
+
+#--- #dev
+#spring:
+#  sql:
+#    init:
+#      platform: mysql
+#  config:
+#    activate:
+#      on-profile: "db-dev"
+#  thymeleaf:
+#    cache: false
+#  #  jpa:
+#  #    database-platform: org.hibernate.dialect.MySQLDialect
+#  jpa:
+#    #전송 쿼리 확인
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: ${DB_URL}
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
+
+--- # local 공통 설정
 spring:
   config:
     activate:
       on-profile: "db-local"
-  #  jpa:
-  #    show-sql: true
-  #    database-platform: H2
-  #    hibernate:
-  #      ddl-auto: create
   datasource:
     url: jdbc:h2:mem:localdb
   h2:
     console:
       enabled: true
+  thymeleaf:
+    cache: false
 
---- #dev
+--- # local - MyBatis 활성화
 spring:
-  sql:
-    init:
-      platform: mysql
+  config:
+    activate:
+      on-profile: "db-local-mybatis"
+  mybatis:
+    mapper-locations: classpath:/mappers/**.xml
+    config-location: classpath:/config/mybatis-config.xml
+
+--- # local - JPA 활성화
+spring:
+  config:
+    activate:
+      on-profile: "db-local-jpa"
+  jpa:
+    show-sql: true
+    database-platform: H2
+#    hibernate:
+#      ddl-auto: create
+
+--- # dev 공통 설정
+spring:
   config:
     activate:
       on-profile: "db-dev"
-  thymeleaf:
-    cache: false
-  #  jpa:
-  #    database-platform: org.hibernate.dialect.MySQLDialect
-  #    hibernate:
-  #      ddl-auto: create
-  jpa:
-    #전송 쿼리 확인
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+  thymeleaf:
+    cache: false
+
+--- # dev - MyBatis 활성화
+spring:
+  config:
+    activate:
+      on-profile: "db-dev-mybatis"
+  mybatis:
+    mapper-locations: classpath:/mappers/**.xml
+    config-location: classpath:/config/mybatis-config.xml
+
+--- # dev - JPA 활성화
+spring:
+  config:
+    activate:
+      on-profile: "db-dev-jpa"
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
+#    hibernate:
+#      ddl-auto: create

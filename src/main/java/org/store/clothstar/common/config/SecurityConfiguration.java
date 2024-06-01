@@ -55,8 +55,9 @@ public class SecurityConfiguration {
                 .formLogin(formLogin -> formLogin.disable());
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/", "/login", "/userPage", "/sellerPage", "/adminPage", "/signup"
-                        , "/v1/login", "/v1/members/email/**", "/v1/access").permitAll()
+                .requestMatchers("/", "/login", "/userPage", "/sellerPage", "/adminPage"
+                        , "/v1/login", "/signup", "/v1/members/email/**", "/v1/access",
+                        "/v1/categories/**", "/v1/products/**", "/v1/productLines/**", "/v2/productLines/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/v1/members").permitAll()
                 .requestMatchers("/seller/**", "/v1/seller/**").hasRole("SELLER")
                 .requestMatchers("/admin/**", "/v1/admin/**").hasRole("ADMIN")
