@@ -36,7 +36,7 @@ public class ProductLineController_v2 {
 
     @Operation(summary = "상품 상세 조회", description = "productLineId로 상품과 하위 옵션들을 상세 조회한다.")
     @GetMapping("/{productLineId}")
-    public ResponseEntity<ProductLineWithProductsJPAResponse> getProductLine(@PathVariable Long productLineId) {
+    public ResponseEntity<ProductLineWithProductsJPAResponse> getProductLine(@PathVariable("productLineId") Long productLineId) {
         ProductLineWithProductsJPAResponse productLineWithProducts = productLineApplicationService.getProductLineWithProductsById(productLineId);
         return ResponseEntity.ok().body(productLineWithProducts);
     }

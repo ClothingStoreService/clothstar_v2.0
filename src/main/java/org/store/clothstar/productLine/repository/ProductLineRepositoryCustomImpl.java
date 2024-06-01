@@ -48,7 +48,7 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
                 .from(qProductLine)
                 .innerJoin(qProductLine.seller, qSeller)
                 .innerJoin(qSeller.member, qMember)
-                .innerJoin(qProductLine.products, qProduct)
+                .leftJoin(qProductLine.products, qProduct)
 //                .innerJoin(qProduct).on()
                 .where(qProductLine.deletedAt.isNull())
                 .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
