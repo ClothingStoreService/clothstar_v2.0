@@ -15,7 +15,7 @@ public interface MemberMybatisRepository extends MemberRepository {
 
     Optional<Member> findByEmail(String email);
 
-    int update(Member member);
+    void update(Member member);
 
     int save(Member member);
 }

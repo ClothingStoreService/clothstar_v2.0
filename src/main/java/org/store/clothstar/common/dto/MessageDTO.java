@@ -11,14 +11,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MessageDTO {
     private Long id;
-    private int status;
+    private int statusCode;
     private String message;
-    private String redirectURI;
-    private boolean success;
 
-    public MessageDTO(int status, String message, String redirectURI) {
-        this.status = status;
+    public MessageDTO(int statusCode, String message) {
+        this.statusCode = statusCode;
         this.message = message;
-        this.redirectURI = redirectURI;
     }
 }

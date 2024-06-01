@@ -88,7 +88,7 @@ class OrderSellerServiceApplicationTest {
         //then
         then(orderSellerRepository).should(times(1)).approveOrder(orderId);
         then(orderRepository).should(times(2)).getOrder(orderId);
-        assertThat(messageDTO.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 승인 되었습니다.");
     }
 
@@ -109,7 +109,7 @@ class OrderSellerServiceApplicationTest {
         //then
         then(orderSellerRepository).should(times(1)).cancelOrder(orderId);
         then(orderRepository).should(times(2)).getOrder(orderId);
-        assertThat(messageDTO.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 취소 되었습니다.");
     }
 

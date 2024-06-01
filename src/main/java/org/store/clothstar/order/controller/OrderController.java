@@ -55,8 +55,7 @@ public class OrderController {
         return ResponseEntity.ok()
                 .body(new MessageDTO(
                         HttpStatus.OK.value(),
-                        "주문이 정상적으로 구매 확정 되었습니다.",
-                        null));
+                        "주문이 정상적으로 구매 확정 되었습니다."));
     }
 }
 

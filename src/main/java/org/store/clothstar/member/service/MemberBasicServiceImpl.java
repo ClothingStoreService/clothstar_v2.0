@@ -55,6 +55,4 @@ public class MemberBasicServiceImpl implements MemberBasicService {
         Member member = modifyMemberRequest.toMember(memberId);
         memberRepository.update(member);
     }
-
-
 }

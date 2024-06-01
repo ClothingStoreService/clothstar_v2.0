@@ -17,6 +17,10 @@ public class MemberSignupJpaServiceImpl implements MemberSignupService {
 
     @Override
     public Long signUp(CreateMemberRequest createMemberDTO) {
+        memberJpaRepository.findByEmail(createMemberDTO.getEmail()).ifPresent(m -> {
+            throw new IllegalArgumentException("이미 존재하는 아이디 입니다.");
+        });
+
         String encodedPassword = passwordEncoder.encode(createMemberDTO.getPassword());
         MemberEntity memberEntity = createMemberDTO.toMemberEntity(encodedPassword);
         memberEntity = memberJpaRepository.save(memberEntity);

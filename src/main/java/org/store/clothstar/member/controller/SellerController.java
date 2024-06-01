@@ -10,10 +10,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.common.util.MessageDTOBuilder;
+import org.store.clothstar.member.application.SellerServiceApplication;
 import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
 import org.store.clothstar.member.dto.response.SellerResponse;
-import org.store.clothstar.member.application.SellerServiceApplication;
 
 @Tag(name = "Seller", description = "판매자 정보 관리에 대한 API 입니다.")
 @RestController
@@ -37,10 +37,11 @@ public class SellerController {
         Long sellerId = sellerServiceApplication.sellerSave(memberId, createSellerRequest);
 
         MessageDTO messageDTO = MessageDTOBuilder.buildMessage(
+                sellerId,
                 HttpStatus.OK.value(),
                 "memberId : " + sellerId + " 가 판매자 가입이 정상적으로 되었습니다."
         );
-        
+
         return new ResponseEntity<>(messageDTO, HttpStatus.CREATED);
     }
 }

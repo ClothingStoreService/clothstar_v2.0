@@ -85,7 +85,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
 
-        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(HttpServletResponse.SC_OK, "로그인 성공 하였습니다.", true);
+        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(HttpServletResponse.SC_OK, "로그인 성공 하였습니다.");
         ObjectMapper om = new ObjectMapper();
 
         response.getWriter().print(om.writeValueAsString(messageDTO));
@@ -99,7 +99,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
 
-        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(HttpServletResponse.SC_UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다. 다시 확인해주세요.", false);
+        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(HttpServletResponse.SC_UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다. 다시 확인해주세요.");
         ObjectMapper om = new ObjectMapper();
 
         response.getWriter().print(om.writeValueAsString(messageDTO));

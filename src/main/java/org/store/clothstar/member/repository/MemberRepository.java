@@ -12,5 +12,5 @@ public interface MemberRepository {
 
     Optional<Member> findByEmail(String email);
 
-    int update(Member member);
+    void update(Member member);
 }

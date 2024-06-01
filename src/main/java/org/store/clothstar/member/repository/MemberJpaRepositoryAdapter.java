@@ -45,12 +45,10 @@ public class MemberJpaRepositoryAdapter implements MemberRepository {
     }
 
     @Override
-    public int update(Member member) {
+    public void update(Member member) {
         MemberEntity memberEntity = memberJpaRepository.findById(member.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + member.getMemberId()));
 
         memberEntity.updateMember(member, memberEntity);
-        //업데이트 완료 되면 1반환
-        return 1;
     }
 }

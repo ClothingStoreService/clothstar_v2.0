@@ -60,7 +60,7 @@ public class ProductController {
 
         productService.updateProduct(productId, updateProductRequest);
 
-        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "Product updated successfully", null));
+        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "Product updated successfully"));
     }
 
     @Operation(summary = "상품 옵션 삭제", description = "상품 옵션 id로 상품 옵션을 삭제한다.")
