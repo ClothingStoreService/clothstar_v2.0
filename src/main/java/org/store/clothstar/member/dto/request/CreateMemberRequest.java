@@ -1,5 +1,9 @@
 package org.store.clothstar.member.dto.request;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,11 +11,8 @@ import lombok.ToString;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.MemberGrade;
 import org.store.clothstar.member.domain.MemberRole;
+import org.store.clothstar.member.entity.MemberEntity;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter
@@ -42,6 +43,19 @@ public class CreateMemberRequest {
                 .role(MemberRole.USER)
                 .grade(MemberGrade.BRONZE)
                 .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public MemberEntity toMemberEntity(String encryptedPassword) {
+        return MemberEntity.builder()
+                .email(email)
+                .password(encryptedPassword)
+                .name(name)
+                .telNo(telNo)
+                .totalPaymentPrice(0)
+                .point(0)
+                .role(MemberRole.USER)
+                .grade(MemberGrade.BRONZE)
                 .build();
     }
 }

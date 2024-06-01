@@ -1,24 +1,22 @@
 package org.store.clothstar.member.repository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.entity.MemberEntity;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * 기존 MyBatis의 반환타입과 맞추기 위한 JpaRepository의 어댑터 클래스 입니다.
+ */
 @Slf4j
 @Repository
-public class MemberJpaRepositoryAdapter implements MemberRepository, NewMemberRepository {
+public class MemberJpaRepositoryAdapter implements MemberRepository {
     MemberJpaRepository memberJpaRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     MemberJpaRepositoryAdapter(MemberJpaRepository memberJpaRepository) {
         this.memberJpaRepository = memberJpaRepository;
@@ -40,7 +38,10 @@ public class MemberJpaRepositoryAdapter implements MemberRepository, NewMemberRe
 
     @Override
     public Optional<Member> findByEmail(String email) {
-        return Optional.empty();
+        MemberEntity memberEntity = memberJpaRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 아이디를 찾을 수 없습니다."));
+
+        return Optional.of(new Member(memberEntity));
     }
 
     @Override
@@ -49,25 +50,7 @@ public class MemberJpaRepositoryAdapter implements MemberRepository, NewMemberRe
                 .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + member.getMemberId()));
 
         memberEntity.updateMember(member, memberEntity);
+        //업데이트 완료 되면 1반환
         return 1;
-    }
-
-    @Override
-    public void updatePassword(Long memberId, String password) {
-        MemberEntity memberEntity = memberJpaRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
-
-        log.info("Update member password: {} -> {}", memberEntity.getPassword(), password);
-        memberEntity.updatePassword(password);
-    }
-
-    @Override
-    public void updateDeleteAt(MemberEntity memberEntity) {
-        memberEntity.updateDeletedAt(LocalDateTime.now());
-    }
-
-    @Override
-    public int save(Member member) {
-        return 0;
     }
 }

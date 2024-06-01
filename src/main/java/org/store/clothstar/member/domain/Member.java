@@ -38,4 +38,18 @@ public class Member {
         this.updatedAt = memberEntity.getUpdatedAt();
         this.deletedAt = memberEntity.getDeletedAt();
     }
+
+    public static MemberEntity toMemberEntityByMember(Member member) {
+        return MemberEntity.builder()
+                .memberId(member.getMemberId())
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .name(member.getName())
+                .telNo(member.getTelNo())
+                .totalPaymentPrice(member.getTotalPaymentPrice())
+                .point(member.getPoint())
+                .role(member.getRole())
+                .grade(member.getGrade())
+                .build();
+    }
 }

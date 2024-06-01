@@ -28,6 +28,7 @@ public class SecurityConfiguration {
     private static final Logger log = LoggerFactory.getLogger(SecurityConfiguration.class);
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final JwtUtil jwtUtil;
 
     @Bean
@@ -57,11 +58,15 @@ public class SecurityConfiguration {
                 .requestMatchers("/", "/login", "/userPage", "/sellerPage", "/adminPage"
                         , "/v1/login", "/signup", "/v1/members/email/**", "/v1/access",
                         "/v1/categories/**", "/v1/products/**", "/v1/productLines/**", "/v2/productLines/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/v1/members").permitAll()
                 .requestMatchers("/seller/**", "/v1/seller/**").hasRole("SELLER")
                 .requestMatchers("/admin/**", "/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/v1/members").hasRole("ADMIN")
                 .anyRequest().authenticated()
         );
+//
+        http.exceptionHandling(exceptionHandling ->
+                exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint));
 
         //JWT 토큰 인증 방식 사용하기에 session 유지 비활성화
         http.sessionManagement(sessionManagement

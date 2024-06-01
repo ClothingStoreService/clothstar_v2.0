@@ -6,9 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.store.clothstar.member.application.AddressServiceApplication;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.dto.response.AddressResponse;
-import org.store.clothstar.member.repository.AddressRepository;
+import org.store.clothstar.member.repository.AddressMybatisRepository;
 
 import java.util.List;
 
@@ -17,12 +18,12 @@ import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-class AddressServiceMockUnitTest {
+class AddressBasicServiceApplicationMockUnitTest {
     @Mock
-    AddressRepository addressRepository;
+    AddressMybatisRepository addressMybatisRepository;
 
     @InjectMocks
-    AddressService addressService;
+    AddressServiceApplication addressServiceApplication;
 
     private Long memberId = 1L;
 
@@ -30,13 +31,13 @@ class AddressServiceMockUnitTest {
     @Test
     void getMemberAddrUnitTest() {
         //given
-        given(addressRepository.findMemberAllAddress(any())).willReturn(getAddressList());
+        given(addressMybatisRepository.findMemberAllAddress(any())).willReturn(getAddressList());
 
         //whenv
-        List<AddressResponse> memberAddressResponseList = addressService.getMemberAllAddress(memberId);
+        List<AddressResponse> memberAddressResponseList = addressServiceApplication.getMemberAllAddress(memberId);
 
         //then
-        verify(addressRepository, times(1)).findMemberAllAddress((anyLong()));
+        verify(addressMybatisRepository, times(1)).findMemberAllAddress((anyLong()));
         assertThat(memberAddressResponseList.size()).isEqualTo(2);
     }
 

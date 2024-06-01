@@ -4,6 +4,15 @@ const adminPageButton = document.getElementById("adminPage-btn");
 const logoutButton = document.getElementById("logout-btn");
 const refreshButton = document.getElementById("refresh-btn");
 
+function pageClick(res, successURL) {
+    if (!res.memberId) {
+        alert(res.message);
+    } else {
+        alert(JSON.stringify(res));
+        location.href = successURL;
+    }
+}
+
 if (userPageButton) {
     userPageButton.addEventListener("click", (event) => {
         const accessToken = localStorage.getItem("ACCESS_TOKEN");
@@ -18,13 +27,9 @@ if (userPageButton) {
             method: "GET",
             headers: headersObj,
         }).then((res) => {
-            if (!res.ok) {
-                throw new Error(`${res.status}`);
-            }
             return res.json();
         }).then((res) => {
-            alert(JSON.stringify(res));
-            location.href = "/userPage";
+            pageClick(res, "/userPage")
         }).catch((error) => {
             alert(error);
         });
@@ -45,13 +50,9 @@ if (sellerPageButton) {
             method: "GET",
             headers: headersObj,
         }).then((res) => {
-            if (!res.ok) {
-                throw new Error(`${res.status}`);
-            }
             return res.json();
         }).then((res) => {
-            alert(JSON.stringify(res));
-            location.href = "/sellerPage";
+            pageClick(res, "/sellerPage");
         }).catch((error) => {
             alert(error);
         });
@@ -73,13 +74,9 @@ if (adminPageButton) {
             method: "GET",
             headers: headersObj,
         }).then((res) => {
-            if (!res.ok) {
-                throw new Error(`${res.status}`);
-            }
             return res.json();
         }).then((res) => {
-            alert(JSON.stringify(res));
-            location.href = "/adminPage";
+            pageClick(res, "/adminPage");
         }).catch((error) => {
             alert(error);
         });

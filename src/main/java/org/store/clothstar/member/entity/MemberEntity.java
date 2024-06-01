@@ -2,6 +2,8 @@ package org.store.clothstar.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.One;
 import org.hibernate.annotations.ColumnDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,15 +13,16 @@ import org.store.clothstar.member.domain.MemberGrade;
 import org.store.clothstar.member.domain.MemberRole;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @ToString
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 @Entity(name = "member")
 public class MemberEntity extends BaseEntity {
-    private static final Logger log = LoggerFactory.getLogger(MemberEntity.class);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
@@ -60,7 +63,7 @@ public class MemberEntity extends BaseEntity {
         this.password = password;
     }
 
-    public void updateDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
+    public void updateDeletedAt() {
+        this.deletedAt = LocalDateTime.now();
     }
 }
