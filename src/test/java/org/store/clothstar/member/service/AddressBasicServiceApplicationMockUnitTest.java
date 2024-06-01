@@ -33,7 +33,7 @@ class AddressBasicServiceApplicationMockUnitTest {
         //given
         given(addressMybatisRepository.findMemberAllAddress(any())).willReturn(getAddressList());
 
-        //whenv
+        //when
         List<AddressResponse> memberAddressResponseList = addressServiceApplication.getMemberAllAddress(memberId);
 
         //then
