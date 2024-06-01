@@ -16,7 +16,6 @@ import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
-import org.store.clothstar.order.repository.order.MybatisOrderRepository;
 import org.store.clothstar.order.repository.order.UpperOrderRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 
@@ -33,12 +32,12 @@ public class OrderService {
             @Qualifier("jpaOrderRepositoryAdapter") UpperOrderRepository upperOrderRepository
 //            @Qualifier("mybatisOrderRepository") UpperOrderRepository upperOrderRepository
             , MemberMybatisRepository memberMybatisRepository
-            , AddressRepository addressRepository
+            , AddressMybatisRepository addressMybatisRepository
             , OrderDetailService orderDetailService
     ){
         this.upperOrderRepository = upperOrderRepository;
         this.memberMybatisRepository = memberMybatisRepository;
-        this.addressRepository = addressRepository;
+        this.addressMybatisRepository = addressMybatisRepository;
         this.orderDetailService = orderDetailService;
     }
 

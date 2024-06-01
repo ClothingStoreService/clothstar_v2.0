@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.store.clothstar.member.entity.AddressEntity;
+import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.order.domain.type.PaymentMethod;
 import org.store.clothstar.order.domain.type.Status;
 
@@ -18,12 +20,6 @@ import java.time.LocalDateTime;
 public class OrderEntity {
     @Id
     private Long orderId;
-
-    @Column(name = "member_id")
-    private Long memberId;
-
-    @Column(name = "address_id")
-    private Long addressId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
@@ -45,6 +41,14 @@ public class OrderEntity {
     @Column(name = "total_payment_price")
     private int totalPaymentPrice;
 
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private MemberEntity member;
+
+    @OneToOne
+    @JoinColumn(name = "address_id")
+    private AddressEntity address;
+
     public void setTotalProductsPrice(int totalProductsPrice) {
         this.totalProductsPrice = totalProductsPrice;
     }
@@ -52,5 +56,6 @@ public class OrderEntity {
     public void setTotalPaymentPrice(int totalPaymentPrice) {
         this.totalPaymentPrice = totalPaymentPrice;
     }
+
 
 }

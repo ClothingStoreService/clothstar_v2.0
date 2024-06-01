@@ -32,8 +32,8 @@ public class Order {
 
     public Order(OrderEntity orderEntity) {
         this.orderId = orderEntity.getOrderId();
-        this.memberId = orderEntity.getMemberId();
-        this.addressId = orderEntity.getAddressId();
+        this.memberId = orderEntity.getMember().getMemberId();
+        this.addressId = orderEntity.getAddress().getAddressId();
         this.createdAt = orderEntity.getCreatedAt();
         this.status = orderEntity.getStatus();
         this.totalShippingPrice = orderEntity.getTotalShippingPrice();
