@@ -14,7 +14,7 @@ public class MessageDTO {
     private int status;
     private String message;
     private String redirectURI;
-    private boolean success = true;
+    private boolean success;
 
     public MessageDTO(int status, String message, String redirectURI) {
         this.status = status;

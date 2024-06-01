@@ -12,14 +12,12 @@ import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.type.ApprovalStatus;
-import org.store.clothstar.order.domain.type.PaymentMethod;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
 import org.store.clothstar.order.repository.OrderRepository;
 import org.store.clothstar.order.repository.OrderSellerRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +29,7 @@ import static org.mockito.BDDMockito.*;
 
 @Nested
 @ExtendWith(MockitoExtension.class)
-class OrderSellerServiceTest {
+class OrderSellerServiceApplicationTest {
 
     @InjectMocks
     private OrderSellerService orderSellerService;

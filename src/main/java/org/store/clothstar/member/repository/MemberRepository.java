@@ -13,6 +13,4 @@ public interface MemberRepository {
     Optional<Member> findByEmail(String email);
 
     int update(Member member);
-
-    int save(Member member);
 }

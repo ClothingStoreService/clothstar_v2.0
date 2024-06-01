@@ -96,12 +96,16 @@ INSERT INTO clothstar.seller (member_id, brand_name, biz_no, total_sell_price, c
 VALUES (3, '내셔널지오그래픽키즈 제주점', '232-05-02861', 3000000, '2024-03-29 03:59:07');
 
 select *
-from address
+from address;
 where member_id = 1;
 
 select *
 from member;
 
+select *
+from address;
+
+select * from seller;
 
 alter table member
     change modified_at updated_at timestamp;

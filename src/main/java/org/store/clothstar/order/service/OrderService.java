@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.repository.AddressRepository;
+import org.store.clothstar.member.repository.AddressMybatisRepository;
 import org.store.clothstar.member.repository.MemberMybatisRepository;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.type.Status;
@@ -24,7 +24,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final MemberMybatisRepository memberMybatisRepository;
-    private final AddressRepository addressRepository;
+    private final AddressMybatisRepository addressMybatisRepository;
     private final OrderDetailService orderDetailService;
 
     @Transactional(readOnly = true)
@@ -41,7 +41,7 @@ public class OrderService {
         Member member = memberMybatisRepository.findById(createOrderRequest.getMemberId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원 정보를 찾을 수 없습니다."));
 
-        Address address = addressRepository.findById(createOrderRequest.getAddressId())
+        Address address = addressMybatisRepository.findById(createOrderRequest.getAddressId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "배송지 정보를 찾을 수 없습니다."));
 
         Order order = createOrderRequest.toOrder(member, address);

@@ -2,6 +2,7 @@ package org.store.clothstar.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.store.clothstar.member.domain.Address;
 
 @ToString
 @Getter
@@ -24,4 +25,15 @@ public class AddressEntity {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private MemberEntity member;
+
+    public AddressEntity(Address address) {
+        this.addressId = address.getAddressId();
+        this.receiverName = address.getReceiverName();
+        this.zipNo = address.getZipNo();
+        this.addressBasic = address.getAddressBasic();
+        this.addressDetail = address.getAddressDetail();
+        this.telNo = address.getTelNo();
+        this.deliveryRequest = address.getDeliveryRequest();
+        this.defaultAddress = address.isDefaultAddress();
+    }
 }

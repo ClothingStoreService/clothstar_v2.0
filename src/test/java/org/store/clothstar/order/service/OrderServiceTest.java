@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.repository.AddressRepository;
+import org.store.clothstar.member.repository.AddressMybatisRepository;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.type.Status;
@@ -40,7 +40,7 @@ class OrderServiceTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private AddressRepository addressRepository;
+    private AddressMybatisRepository addressMybatisRepository;
 
     @Mock
     private OrderDetailService orderDetailService;
@@ -94,7 +94,7 @@ class OrderServiceTest {
         given(createOrderRequest.getAddressId()).willReturn(2L);
 
         given(memberRepository.findById(createOrderRequest.getMemberId())).willReturn(Optional.of(mockmember));
-        given(addressRepository.findById(createOrderRequest.getAddressId())).willReturn(Optional.of(mockAddress));
+        given(addressMybatisRepository.findById(createOrderRequest.getAddressId())).willReturn(Optional.of(mockAddress));
         given(createOrderRequest.toOrder(mockmember, mockAddress)).willReturn(order);
 
         //when
@@ -102,7 +102,7 @@ class OrderServiceTest {
 
         //then
         then(memberRepository).should(times(1)).findById(createOrderRequest.getMemberId());
-        then(addressRepository).should(times(1)).findById(createOrderRequest.getAddressId());
+        then(addressMybatisRepository).should(times(1)).findById(createOrderRequest.getAddressId());
         then(orderRepository).should(times(1)).saveOrder(order);
         verify(order).getOrderId();
     }
@@ -125,7 +125,7 @@ class OrderServiceTest {
         given(createOrderRequest.getAddressId()).willReturn(2L);
 
         given(memberRepository.findById(1L)).willReturn(Optional.of(mockmember));
-        given(addressRepository.findById(2L)).willReturn(Optional.of(mockAddress));
+        given(addressMybatisRepository.findById(2L)).willReturn(Optional.of(mockAddress));
         given(createOrderRequest.toOrder(mockmember, mockAddress)).willReturn(order);
 
         //when
@@ -171,7 +171,7 @@ class OrderServiceTest {
         given(createOrderRequest.getMemberId()).willReturn(1L);
         given(createOrderRequest.getAddressId()).willReturn(2L);
         given(memberRepository.findById(1L)).willReturn(Optional.of(mockmember));
-        given(addressRepository.findById(2L)).willReturn(Optional.empty());
+        given(addressMybatisRepository.findById(2L)).willReturn(Optional.empty());
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
