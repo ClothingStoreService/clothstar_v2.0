@@ -10,11 +10,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.common.util.MessageDTOBuilder;
+import org.store.clothstar.member.application.MemberServiceApplication;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyPasswordRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
-import org.store.clothstar.member.application.MemberServiceApplication;
 
 import java.util.List;
 
@@ -47,8 +47,7 @@ public class MemberController {
 
         MessageDTO messageDTO = MessageDTOBuilder.buildMessage(
                 HttpStatus.OK.value(),
-                (emailExists ? "이미 사용중인 이메일 입니다." : "사용 가능한 이메일 입니다."),
-                emailExists
+                (emailExists ? "이미 사용중인 이메일 입니다." : "사용 가능한 이메일 입니다.")
         );
 
         return ResponseEntity.ok(messageDTO);
@@ -64,8 +63,7 @@ public class MemberController {
 
         MessageDTO messageDTO = MessageDTOBuilder.buildMessage(
                 HttpStatus.OK.value(),
-                "memberId : " + memberId + " 가 정상적으로 수정 되었습니다.",
-                true
+                "memberId : " + memberId + " 가 정상적으로 수정 되었습니다."
         );
 
         return ResponseEntity.ok(messageDTO);
@@ -81,8 +79,7 @@ public class MemberController {
 
         MessageDTO messageDTO = MessageDTOBuilder.buildMessage(
                 HttpStatus.OK.value(),
-                "memberId : " + memberId + " 의 비밀번호가 변경 되었습니다.",
-                true
+                "memberId : " + memberId + " 의 비밀번호가 변경 되었습니다."
         );
 
         return ResponseEntity.ok(messageDTO);
@@ -97,8 +94,7 @@ public class MemberController {
 
         MessageDTO messageDTO = MessageDTOBuilder.buildMessage(
                 HttpStatus.OK.value(),
-                "memberId : " + memberId + " 가 정상적으로 삭제 되었습니다.",
-                true
+                "memberId : " + memberId + " 가 정상적으로 삭제 되었습니다."
         );
 
         return ResponseEntity.ok(messageDTO);

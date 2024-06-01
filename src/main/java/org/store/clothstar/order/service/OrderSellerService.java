@@ -50,10 +50,10 @@ public class OrderSellerService {
 
         if (orderSellerRequest.getApprovalStatus() == ApprovalStatus.APPROVE) {
             orderSellerRepository.approveOrder(orderId);
-            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.", null);
+            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.");
         } else if (orderSellerRequest.getApprovalStatus() == ApprovalStatus.CANCEL) {
             orderSellerRepository.cancelOrder(orderId);
-            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.", null);
+            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.");
         }
 
         orderRepository.getOrder(orderId)

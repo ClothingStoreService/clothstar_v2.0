@@ -57,7 +57,7 @@ public class ProductLineController {
 
         productLineService.updateProductLine(productLineId, updateProductLineRequest);
 
-        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "ProductLine updated successfully", null));
+        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "ProductLine updated successfully"));
     }
 
     @DeleteMapping("/{productLineId}")
