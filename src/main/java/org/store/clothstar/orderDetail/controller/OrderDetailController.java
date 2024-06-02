@@ -2,7 +2,6 @@ package org.store.clothstar.orderDetail.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +23,6 @@ public class OrderDetailController {
 
     private final OrderDetailService orderdetailService;
 
-    @PermitAll
     @Operation(summary = "주문상세 추가 저장", description = "개별 상품에 대한 주문상세(상품명, 가격, 개수...)를 특정 주문에 추가 저장한다.")
     @PostMapping
     public ResponseEntity<URI> addOrderDetail(

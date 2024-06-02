@@ -1,12 +1,10 @@
 package org.store.clothstar.order.repository.order;
 
-import org.apache.ibatis.annotations.Mapper;
 import org.store.clothstar.order.domain.Order;
 
 import java.util.Optional;
 
-@Mapper
-public interface OrderRepository {
+public interface UpperOrderRepository {
 
     Optional<Order> getOrder(Long orderId);
 

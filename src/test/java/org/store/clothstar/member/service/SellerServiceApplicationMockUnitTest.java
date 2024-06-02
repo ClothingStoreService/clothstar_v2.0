@@ -8,10 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.store.clothstar.member.application.SellerServiceApplication;
 import org.store.clothstar.member.domain.Seller;
-import org.store.clothstar.member.dto.response.SellerResponse;
 import org.store.clothstar.member.repository.SellerMybatisRepository;
-
-import java.util.Optional;
 
 import static org.mockito.BDDMockito.*;
 

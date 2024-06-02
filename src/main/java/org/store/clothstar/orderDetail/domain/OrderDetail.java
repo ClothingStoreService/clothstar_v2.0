@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 
 @Getter
 @AllArgsConstructor
@@ -30,4 +31,18 @@ public class OrderDetail {
 
     // 판매자 정보
     private String brandName;
+
+    public OrderDetail(OrderDetailEntity orderDetailEntity) {
+        this.orderDetailId = orderDetailEntity.getOrderDetailId();
+        this.orderId = orderDetailEntity.getOrder().getOrderId();
+        this.productLineId = orderDetailEntity.getProductLine().getProductLineId();
+        this.productId = orderDetailEntity.getProduct().getProductId();
+        this.quantity = orderDetailEntity.getQuantity();
+        this.fixedPrice = orderDetailEntity.getFixedPrice();
+        this.oneKindTotalPrice = orderDetailEntity.getOneKindTotalPrice();
+        this.name = orderDetailEntity.getProductLine().getName();
+        this.stock = orderDetailEntity.getStock();
+        this.optionName = orderDetailEntity.getOptionName();
+        this.brandName = orderDetailEntity.getBrandName();
+    }
 }

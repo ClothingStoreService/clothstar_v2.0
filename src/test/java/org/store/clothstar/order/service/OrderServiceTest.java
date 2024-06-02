@@ -16,7 +16,7 @@ import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
-import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.repository.order.UpperOrderRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 import java.time.LocalDateTime;
@@ -34,7 +34,7 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Mock
-    private OrderRepository orderRepository;
+    private UpperOrderRepository upperOrderRepository;
 
     @Mock
     private MemberMybatisRepository memberMybatisRepository;
@@ -52,13 +52,13 @@ class OrderServiceTest {
         Order order = mock(Order.class);
         given(order.getOrderId()).willReturn(1L);
         given(order.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(orderRepository.getOrder(order.getOrderId())).willReturn(Optional.of(order));
+        given(upperOrderRepository.getOrder(order.getOrderId())).willReturn(Optional.of(order));
 
         //when
         OrderResponse orderResponse = orderService.getOrder(order.getOrderId());
 
         //then
-        then(orderRepository).should(times(1)).getOrder(1L);
+        then(upperOrderRepository).should(times(1)).getOrder(1L);
         assertThat(orderResponse.getOrderId()).isEqualTo(order.getOrderId());
     }
 
@@ -68,7 +68,7 @@ class OrderServiceTest {
         //given
         Order order = mock(Order.class);
         given(order.getOrderId()).willReturn(1L);
-        given(orderRepository.getOrder(order.getOrderId())).willReturn(Optional.empty());
+        given(upperOrderRepository.getOrder(order.getOrderId())).willReturn(Optional.empty());
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
@@ -103,7 +103,7 @@ class OrderServiceTest {
         //then
         then(memberMybatisRepository).should(times(1)).findById(createOrderRequest.getMemberId());
         then(addressMybatisRepository).should(times(1)).findById(createOrderRequest.getAddressId());
-        then(orderRepository).should(times(1)).saveOrder(order);
+        then(upperOrderRepository).should(times(1)).saveOrder(order);
         verify(order).getOrderId();
     }
 
@@ -190,15 +190,15 @@ class OrderServiceTest {
         Order order = mock(Order.class);
         mock(OrderResponse.class);
 
-        given(orderRepository.getOrder(1L)).willReturn(Optional.of(order));
+        given(upperOrderRepository.getOrder(1L)).willReturn(Optional.of(order));
         given(order.getStatus()).willReturn(Status.DELIVERED);
 
         //when
         orderService.deliveredToConfirmOrder(orderId);
 
         //then
-        then(orderRepository).should(times(1)).getOrder(orderId);
-        then(orderRepository).should().deliveredToConfirmOrder(orderId);
+        then(upperOrderRepository).should(times(1)).getOrder(orderId);
+        then(upperOrderRepository).should().deliveredToConfirmOrder(orderId);
     }
 
     @Test
@@ -209,7 +209,7 @@ class OrderServiceTest {
         Order mockOrder = mock(Order.class);
 
         given(mockOrder.getStatus()).willReturn(Status.APPROVE);
-        given(orderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
+        given(upperOrderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {

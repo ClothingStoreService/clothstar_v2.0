@@ -57,7 +57,9 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/", "/login", "/userPage", "/sellerPage", "/adminPage"
                         , "/v1/login", "/signup", "/v1/members/email/**", "/v1/access",
-                        "/v1/categories/**", "/v1/products/**", "/v1/productLines/**", "/v2/productLines/**").permitAll()
+                        "/v1/categories/**", "/v1/products/**", "/v1/productLines/**", "/v2/productLines/**",
+                        "/v1/orderdetails",
+                        "/v1/seller/orders/**", "/v1/seller/orders", "/v1/orders/**", "/v1/orders").permitAll()
                 .requestMatchers(HttpMethod.POST, "/v1/members").permitAll()
                 .requestMatchers("/seller/**", "/v1/seller/**").hasRole("SELLER")
                 .requestMatchers("/admin/**", "/v1/admin/**").hasRole("ADMIN")
