@@ -1,7 +1,6 @@
 package org.store.clothstar.productLine.repository;
 
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -12,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.store.clothstar.category.domain.QCategory;
-import org.store.clothstar.category.entity.QCategoryEntity;
 import org.store.clothstar.member.entity.QMemberEntity;
 import org.store.clothstar.member.entity.QSellerEntity;
 import org.store.clothstar.product.entity.QProductEntity;

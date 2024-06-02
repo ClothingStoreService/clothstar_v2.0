@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Mapper
-public interface ProductLineMybatisRepository{
+public interface ProductLineMybatisRepository {
 
     List<ProductLine> selectAllProductLinesNotDeleted();
-    
+
     Optional<ProductLine> selectByProductLineId(Long productId);
 
     Optional<ProductLineWithProductsResponse> selectProductLineWithOptions(Long productId);

@@ -1,13 +1,11 @@
 package org.store.clothstar.member.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.store.clothstar.member.application.MemberServiceApplication;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.response.MemberResponse;

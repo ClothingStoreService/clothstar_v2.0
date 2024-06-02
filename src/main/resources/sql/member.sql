@@ -105,7 +105,8 @@ from member;
 select *
 from address;
 
-select * from seller;
+select *
+from seller;
 
 alter table member
     change modified_at updated_at timestamp;

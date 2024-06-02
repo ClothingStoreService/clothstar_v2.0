@@ -11,7 +11,6 @@ import org.store.clothstar.member.dto.response.SellerSimpleResponse;
 import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.entity.SellerEntity;
 import org.store.clothstar.product.dto.response.ProductResponse;
-import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 
@@ -32,7 +31,7 @@ public class ProductLineWithProductsJPAResponse {
     private int price;
     private Long totalStock;
     private ProductLineStatus status;
-//    private List<ProductEntity> productList;
+    //    private List<ProductEntity> productList;
     private List<ProductResponse> productList;
     private Long saleCount;  // ~개 판매중
     private MemberSimpleResponse member;

@@ -3,17 +3,13 @@ package org.store.clothstar.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.One;
 import org.hibernate.annotations.ColumnDefault;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.store.clothstar.common.entity.BaseEntity;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.MemberGrade;
 import org.store.clothstar.member.domain.MemberRole;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @ToString
 @Getter

@@ -1,7 +1,6 @@
 package org.store.clothstar.member.repository;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.data.repository.CrudRepository;
 import org.store.clothstar.member.domain.Address;
 
 import java.util.List;

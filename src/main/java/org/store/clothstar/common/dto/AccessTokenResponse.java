@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class AccessTokenResponse {
-	String accessToken;
-	String message;
-	Boolean success;
+    String accessToken;
+    String message;
+    Boolean success;
 }
