@@ -33,7 +33,7 @@ class JwtUnitTest {
         String accessToken = jwtUtil.createAccessToken(getMember());
         String tokenType = jwtUtil.getTokenType(accessToken);
         System.out.println("accessToken = " + accessToken);
-        
+
         //then
         Assertions.assertThat(accessToken).isNotNull();
         Assertions.assertThat(tokenType).isEqualTo("ACCESS_TOKEN");

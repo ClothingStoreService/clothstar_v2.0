@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Mapper
-public interface CategoryMybatisRepository extends CategoryRepository{
+public interface CategoryMybatisRepository extends CategoryRepository {
     List<Category> selectAllCategory();
 
     Optional<Category> selectCategoryById(Long categoryId);

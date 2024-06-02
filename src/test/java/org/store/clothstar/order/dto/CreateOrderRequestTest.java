@@ -24,8 +24,8 @@ class CreateOrderRequestTest {
     @DisplayName("toOrder: 반환값 테스트")
     void toOrder_test() {
         //given
-        Member member =mock(Member.class);
-        Address address =mock(Address.class);
+        Member member = mock(Member.class);
+        Address address = mock(Address.class);
 
         given(member.getMemberId()).willReturn(1L);
 

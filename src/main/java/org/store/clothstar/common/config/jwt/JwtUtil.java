@@ -1,13 +1,13 @@
 package org.store.clothstar.common.config.jwt;
 
 import io.jsonwebtoken.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.store.clothstar.member.domain.Member;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Slf4j

@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.category.domain.Category;
-import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.member.entity.SellerEntity;
 import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;

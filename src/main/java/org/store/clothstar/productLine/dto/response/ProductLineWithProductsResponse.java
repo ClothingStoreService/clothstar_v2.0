@@ -1,12 +1,7 @@
 package org.store.clothstar.productLine.dto.response;
 
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
-import org.store.clothstar.category.domain.Category;
-import org.store.clothstar.member.domain.Seller;
-import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.product.domain.Product;
-import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 
 import java.time.LocalDateTime;

@@ -15,7 +15,6 @@ import org.store.clothstar.productLine.application.ProductLineApplicationService
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
 
 import java.net.URI;
 
@@ -58,7 +57,7 @@ public class ProductLineController_v2 {
 
         productLineApplicationService.updateProductLine(productLineId, updateProductLineRequest);
 
-        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "ProductLine updated successfully", null));
+        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "ProductLine updated successfully"));
     }
 
     @DeleteMapping("/{productLineId}")

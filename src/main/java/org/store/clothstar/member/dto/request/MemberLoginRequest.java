@@ -1,11 +1,10 @@
 package org.store.clothstar.member.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import jakarta.validation.constraints.NotBlank;
 
 @Getter
 @AllArgsConstructor

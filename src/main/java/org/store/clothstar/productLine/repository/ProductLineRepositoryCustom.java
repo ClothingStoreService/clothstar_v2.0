@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface ProductLineRepositoryCustom {
     Page<ProductLineWithProductsJPAResponse> getProductLinesWithOptions(Pageable pageable);
+
     Optional<ProductLineWithProductsJPAResponse> findProductLineWithOptionsById(Long productLineId);
 
 }
