@@ -6,13 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity(name="order_detail")
-//@Table(name="order_detail")
 public class OrderDetailEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,10 +43,12 @@ public class OrderDetailEntity {
     @JoinColumn(name="order_id")
     private OrderEntity order;
 
-    @Column(name="product_line_id")
-    private Long productLineId;
+    @ManyToOne
+    @JoinColumn(name="product_line_id")
+    private ProductLineEntity productLine;
 
-    @Column(name="product_id")
-    private Long productId;
+    @ManyToOne
+    @JoinColumn(name="product_id")
+    private ProductEntity product;
 }
 

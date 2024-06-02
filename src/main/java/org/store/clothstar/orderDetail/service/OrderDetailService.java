@@ -1,6 +1,6 @@
 package org.store.clothstar.orderDetail.service;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.annotation.security.PermitAll;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.repository.order.MybatisOrderRepository;
 import org.store.clothstar.order.repository.order.UpperOrderRepository;
 import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
+import org.store.clothstar.orderDetail.repository.MybatisOrderDetailRepository;
 import org.store.clothstar.orderDetail.repository.UpperOrderDetailRepository;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.repository.ProductRepository;
@@ -32,15 +32,15 @@ public class OrderDetailService{
     public OrderDetailService(
             @Qualifier("jpaOrderDetailRepositoryAdapter") UpperOrderDetailRepository upperOrderDetailRepository,
             @Qualifier("jpaOrderRepositoryAdapter") UpperOrderRepository upperOrderRepository
-//            @Qualifier("mybatisOrderDetailRepository") UpperOrderDetailRepository upperOrderDetailRepository
+//            @Qualifier("mybatisOrderDetailRepository") UpperOrderDetailRepository upperOrderDetailRepository,
 //            @Qualifier("mybatisOrderRepository") UpperOrderRepository upperOrderRepository
             , ProductRepository productRepository
-            , ProductLineRepository productLineRepository
+            , ProductLineMybatisRepository productLineMybatisRepository
     ){
         this.upperOrderRepository = upperOrderRepository;
         this.upperOrderDetailRepository = upperOrderDetailRepository;
         this.productRepository  = productRepository;
-        this.productLineRepository  = productLineRepository;
+        this.productLineMybatisRepository  = productLineMybatisRepository;
     }
 
 
@@ -49,7 +49,7 @@ public class OrderDetailService{
     public void saveOrderDetailWithOrder(CreateOrderDetailRequest createOrderDetailRequest, long orderId) {
 
         Order order = upperOrderRepository.getOrder(orderId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 정보를 찾을 수 없습니다."));
 
         ProductLine productLine = productLineMybatisRepository.selectByProductLineId(createOrderDetailRequest.getProductLineId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
@@ -119,7 +119,7 @@ public class OrderDetailService{
     }
 
     public void restoreStockByOrder(Long orderId) {
-        List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
+        List<OrderDetail> orderDetails = upperOrderDetailRepository.findByOrderId(orderId);
 
         orderDetails.stream()
                 .map(orderDetail -> {

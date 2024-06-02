@@ -7,16 +7,39 @@ import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.JpaOrderRepository;
 import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
+import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.product.repository.ProductJPARepository;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
+import org.store.clothstar.productLine.repository.ProductLineJPARepository;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class JpaOrderDetailRepositoryAdapter implements UpperOrderDetailRepository {
     private final JpaOrderDetailRepository jpaOrderDetailRepository;
-    JpaOrderRepository jpaOrderRepository;
+    private final ProductLineJPARepository productLineJPARepository;
+    private final JpaOrderRepository jpaOrderRepository;
+    private final ProductJPARepository productJPARepository;
 
     public JpaOrderDetailRepositoryAdapter(JpaOrderDetailRepository jpaOrderDetailRepository,
-                                           JpaOrderRepository jpaOrderRepository){
+                                           JpaOrderRepository jpaOrderRepository,
+                                           ProductLineJPARepository productLineJPARepository,
+                                           ProductJPARepository productJPARepository
+                                           ){
         this.jpaOrderDetailRepository = jpaOrderDetailRepository;
         this.jpaOrderRepository = jpaOrderRepository;
+        this.productLineJPARepository = productLineJPARepository;
+        this.productJPARepository = productJPARepository;
+    }
+
+    @Override
+    public List<OrderDetail> findByOrderId(Long orderId) {
+        return jpaOrderDetailRepository.findByOrderId(orderId)
+                .stream()
+                .map(OrderDetail::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -29,11 +52,17 @@ public class JpaOrderDetailRepositoryAdapter implements UpperOrderDetailReposito
         OrderEntity order = jpaOrderRepository.findById(orderDetail.getOrderId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 정보를 찾을 수 없습니다."));
 
+        ProductLineEntity productLine = productLineJPARepository.findById(orderDetail.getProductLineId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
+
+        ProductEntity product = productJPARepository.findById(orderDetail.getProductId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
+
         return OrderDetailEntity.builder()
                 .orderDetailId(orderDetail.getOrderDetailId())
                 .order(order)
-                .productLineId(orderDetail.getProductLineId())
-                .productId(orderDetail.getProductId())
+                .productLine(productLine)
+                .product(product)
                 .quantity(orderDetail.getQuantity())
                 .fixedPrice(orderDetail.getFixedPrice())
                 .oneKindTotalPrice(orderDetail.getOneKindTotalPrice())

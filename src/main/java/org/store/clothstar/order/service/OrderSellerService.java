@@ -22,17 +22,14 @@ public class OrderSellerService {
 
     private final UpperOrderSellerRepository upperOrderSellerRepository;
     private final MybatisOrderRepository orderRepository;
-    private final MybatisOrderSellerRepository mybatisOrderSellerRepository;
 
     public OrderSellerService(
             @Qualifier("jpaOrderSellerRepositoryAdapter") UpperOrderSellerRepository upperOrderSellerRepository
 //            @Qualifier("mybatisOrderSellerRepository") UpperOrderSellerRepository upperOrderSellerRepository
             , MybatisOrderRepository orderRepository
-            , MybatisOrderSellerRepository mybatisOrderSellerRepository
     ) {
         this.upperOrderSellerRepository = upperOrderSellerRepository;
         this.orderRepository = orderRepository;
-        this.mybatisOrderSellerRepository = mybatisOrderSellerRepository;
     }
 
     @Transactional(readOnly = true)
@@ -43,7 +40,6 @@ public class OrderSellerService {
                 .collect(Collectors.toList());
     }
 
-    @PermitAll
     @Transactional
     public MessageDTO cancelOrApproveOrder(Long orderId, OrderSellerRequest orderSellerRequest) {
 
@@ -55,7 +51,6 @@ public class OrderSellerService {
         return processOrder(orderId, orderSellerRequest);
     }
 
-    @PermitAll
     // 주문 처리
     @Transactional
     public MessageDTO processOrder(Long orderId, OrderSellerRequest orderSellerRequest) {
@@ -64,10 +59,10 @@ public class OrderSellerService {
 
         if (orderSellerRequest.getApprovalStatus() == ApprovalStatus.APPROVE) {
             upperOrderSellerRepository.approveOrder(orderId);
-            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.", null);
+            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.");
         } else if (orderSellerRequest.getApprovalStatus() == ApprovalStatus.CANCEL) {
             upperOrderSellerRepository.cancelOrder(orderId);
-            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.", null);
+            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.");
         }
 
         orderRepository.getOrder(orderId)

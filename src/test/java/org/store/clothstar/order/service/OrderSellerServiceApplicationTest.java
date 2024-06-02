@@ -46,9 +46,6 @@ class OrderSellerServiceApplicationTest {
     @Mock
     private MybatisOrderRepository orderRepository;
 
-    @Mock
-    private OrderDetailService orderDetailService;
-
     @Test
     @DisplayName("getWaitingOrders: '승인대기' 주문 조회 - 메서드 호출 & 반환값 테스트")
     void getWaitingOrder_test() {
@@ -91,7 +88,7 @@ class OrderSellerServiceApplicationTest {
         //then
         then(upperOrderSellerRepository).should(times(1)).approveOrder(orderId);
         then(orderRepository).should(times(2)).getOrder(orderId);
-        assertThat(messageDTO.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 승인 되었습니다.");
     }
 
@@ -112,7 +109,7 @@ class OrderSellerServiceApplicationTest {
         //then
         then(upperOrderSellerRepository).should(times(1)).cancelOrder(orderId);
         then(orderRepository).should(times(2)).getOrder(orderId);
-        assertThat(messageDTO.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 취소 되었습니다.");
     }
 
