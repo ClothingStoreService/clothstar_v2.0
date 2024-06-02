@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.store.clothstar.member.application.SellerServiceApplication;
 import org.store.clothstar.member.domain.Seller;
+import org.store.clothstar.member.dto.response.SellerResponse;
 import org.store.clothstar.member.repository.SellerMybatisRepository;
 
 import java.util.Optional;
@@ -19,6 +20,9 @@ class SellerServiceApplicationMockUnitTest {
     @Mock
     SellerMybatisRepository sellerMybatisRepository;
 
+    @Mock
+    SellerBasicService sellerBasicService;
+
     @InjectMocks
     SellerServiceApplication sellerServiceApplication;
 
@@ -28,14 +32,11 @@ class SellerServiceApplicationMockUnitTest {
         //given
         Long memberId = 1L;
         Seller seller = mock(Seller.class);
-        given(sellerMybatisRepository.findById(anyLong())).willReturn(Optional.of(seller));
-        when(seller.getBizNo()).thenReturn("102-121-23323");
 
         //when
-        //SellerResponse sellerResponse = sellerServiceApplication.getSellerById(memberId);
+        Seller sellerResponse = sellerServiceApplication.getSellerById(memberId);
 
         //then
-        verify(sellerMybatisRepository, times(1)).findById(anyLong());
-        //assertThat(sellerResponse.getBizNo()).isEqualTo(seller.getBizNo());
+        verify(sellerBasicService, times(1)).getSellerById(memberId);
     }
 }
