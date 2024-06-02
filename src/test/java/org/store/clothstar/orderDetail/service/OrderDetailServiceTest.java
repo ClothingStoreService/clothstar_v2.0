@@ -18,6 +18,7 @@ import org.store.clothstar.product.repository.ProductRepository;
 import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.repository.ProductLineMybatisRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -160,5 +161,49 @@ class OrderDetailServiceTest {
 
         //then
         verify(productRepository).updateProduct(mockProduct);
+    }
+
+    @Test
+    @DisplayName("restoreStockByOrder: 주문 취소시, 상품 재고 반환 - 메서드 호출 테스트")
+    void restoreStockByOrder_verify_test() {
+        //given
+        long orderId = 1L;
+        OrderDetail mockOrderDetail1 = mock(OrderDetail.class);
+        OrderDetail mockOrderDetail2 = mock(OrderDetail.class);
+        OrderDetail mockOrderDetail3 = mock(OrderDetail.class);
+        Product mockProduct = mock(Product.class);
+        List<OrderDetail> orderDetails = List.of(mockOrderDetail1, mockOrderDetail2, mockOrderDetail3);
+        given(orderDetailRepository.findByOrderId(orderId)).willReturn(orderDetails);
+        given(productRepository.selectByProductId(mockOrderDetail1.getProductId())).willReturn(Optional.of(mockProduct));
+
+        //when
+        orderDetailService.restoreStockByOrder(orderId);
+
+        //then
+        then(orderDetailRepository).should(times(1)).findByOrderId(orderId);
+        then(productRepository).should(times(3)).selectByProductId(mockProduct.getProductId());
+        then(productRepository).should(times(3)).updateProduct(mockProduct);
+
+    }
+
+    @Test
+    @DisplayName("restoreStockByOrder - Product NULL 예외처리 테스트")
+    void restoreStockByOrder_product_null_exception_test() {
+        //given
+        long orderId = 1L;
+        OrderDetail mockOrderDetail1 = mock(OrderDetail.class);
+        OrderDetail mockOrderDetail2 = mock(OrderDetail.class);
+        OrderDetail mockOrderDetail3 = mock(OrderDetail.class);
+        List<OrderDetail> orderDetails = List.of(mockOrderDetail1, mockOrderDetail2, mockOrderDetail3);
+        given(orderDetailRepository.findByOrderId(orderId)).willReturn(orderDetails);
+        given(productRepository.selectByProductId(mockOrderDetail1.getProductId())).willReturn(Optional.empty());
+
+        //when
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
+            orderDetailService.restoreStockByOrder(orderId);
+        });
+
+        //then
+        assertEquals("404 NOT_FOUND \"상품 정보를 찾을 수 없습니다.\"", thrown.getMessage());
     }
 }

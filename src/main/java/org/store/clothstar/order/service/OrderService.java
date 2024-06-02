@@ -1,5 +1,6 @@
 package org.store.clothstar.order.service;
 
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,7 @@ public class OrderService {
     private final AddressMybatisRepository addressMybatisRepository;
     private final OrderDetailService orderDetailService;
 
+    @PermitAll
     @Transactional(readOnly = true)
     public OrderResponse getOrder(Long orderId) {
 
@@ -35,6 +37,7 @@ public class OrderService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 주문번호입니다."));
     }
 
+    @PermitAll
     @Transactional
     public Long saveOrder(CreateOrderRequest createOrderRequest) {
 
@@ -50,6 +53,7 @@ public class OrderService {
         return order.getOrderId();
     }
 
+    @PermitAll
     @Transactional
     public void deliveredToConfirmOrder(Long orderId) {
 

@@ -1,5 +1,6 @@
 package org.store.clothstar.orderDetail.service;
 
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,15 +18,19 @@ import org.store.clothstar.product.repository.ProductRepository;
 import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.repository.ProductLineMybatisRepository;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@PermitAll
 public class OrderDetailService {
     private final OrderDetailRepository orderDetailRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final ProductLineMybatisRepository productLineMybatisRepository;
 
+    @PermitAll
     // 주문 생성시 같이 호출되는 주문 상세 생성 메서드 - 하나의 트랜잭션으로 묶임
     @Transactional
     public void saveOrderDetailWithOrder(CreateOrderDetailRequest createOrderDetailRequest, long orderId) {
@@ -59,6 +64,7 @@ public class OrderDetailService {
         updateProductStock(product, orderDetail.getQuantity());
     }
 
+    @PermitAll
     // 주문 상세 추가 생성
     @Transactional
     public Long addOrderDetail(AddOrderDetailRequest addOrderDetailRequest) {
@@ -94,5 +100,18 @@ public class OrderDetailService {
         long updatedStock = product.getStock() - quantity;
         product.updateStock(updatedStock);
         productRepository.updateProduct(product);
+    }
+
+    public void restoreStockByOrder(Long orderId) {
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
+
+        orderDetails.stream()
+                .map(orderDetail -> {
+                    Product product = productRepository.selectByProductId(orderDetail.getProductId())
+                            .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"상품 정보를 찾을 수 없습니다."));
+                    product.restoreStock(orderDetail.getQuantity());
+                    return product;
+                })
+                .forEach(productRepository::updateProduct);
     }
 }

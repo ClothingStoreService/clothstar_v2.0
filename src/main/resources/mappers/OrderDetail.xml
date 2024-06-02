@@ -14,4 +14,8 @@
         #{oneKindTotalPrice}, #{name}, #{stock}, #{optionName}, #{brandName} )
     </insert>
 
+    <select id="findByOrderId" resultType="org.store.clothstar.orderDetail.domain.OrderDetail">
+        select * from order_detail where order_id = #{orderId}
+    </select>
+
 </mapper>
