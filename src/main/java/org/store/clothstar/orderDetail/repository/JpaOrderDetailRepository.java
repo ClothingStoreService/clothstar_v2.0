@@ -10,7 +10,7 @@ import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import java.util.List;
 
 @Repository
-public interface JpaOrderDetailRepository extends JpaRepository<OrderDetailEntity,Long> {
+public interface JpaOrderDetailRepository extends JpaRepository<OrderDetailEntity, Long> {
     @Modifying
     @Query("SELECT od FROM order_detail od WHERE od.order.orderId = :orderId")
     List<OrderDetailEntity> findByOrderId(@Param("orderId") Long orderId);

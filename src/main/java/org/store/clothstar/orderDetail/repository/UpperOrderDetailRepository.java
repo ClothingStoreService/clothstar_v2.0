@@ -4,7 +4,7 @@ import org.store.clothstar.orderDetail.domain.OrderDetail;
 
 import java.util.List;
 
-public interface UpperOrderDetailRepository{
+public interface UpperOrderDetailRepository {
 
     void saveOrderDetail(OrderDetail orderdetail);
 

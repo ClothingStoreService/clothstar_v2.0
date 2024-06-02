@@ -11,7 +11,6 @@ import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
 import org.store.clothstar.order.repository.order.MybatisOrderRepository;
-import org.store.clothstar.order.repository.orderSeller.MybatisOrderSellerRepository;
 import org.store.clothstar.order.repository.orderSeller.UpperOrderSellerRepository;
 
 import java.util.List;

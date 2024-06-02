@@ -25,5 +25,7 @@ public class Product {
         this.stock = stock;
     }
 
-    public void restoreStock(int quantity) { this.stock += quantity; }
+    public void restoreStock(int quantity) {
+        this.stock += quantity;
+    }
 }

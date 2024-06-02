@@ -21,11 +21,11 @@ public class JpaOrderRepositoryAdapter implements UpperOrderRepository {
     JpaOrderRepository jpaOrderRepository;
 
     JpaOrderRepositoryAdapter(JpaOrderRepository jpaOrderRepository
-            ,MemberJpaRepository memberJpaRepository
-            ,AddressJpaRepository addressJpaRepository) {
-        this.jpaOrderRepository=jpaOrderRepository;
-        this.memberJpaRepository=memberJpaRepository;
-        this.addressJpaRepository=addressJpaRepository;
+            , MemberJpaRepository memberJpaRepository
+            , AddressJpaRepository addressJpaRepository) {
+        this.jpaOrderRepository = jpaOrderRepository;
+        this.memberJpaRepository = memberJpaRepository;
+        this.addressJpaRepository = addressJpaRepository;
     }
 
     @Override
@@ -65,16 +65,16 @@ public class JpaOrderRepositoryAdapter implements UpperOrderRepository {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "배송지 정보를 찾을 수 없습니다."));
 
         return OrderEntity.builder()
-                    .orderId(order.getOrderId())
-                    .member(member)
-                    .address(address)
-                    .createdAt(order.getCreatedAt())
-                    .status(order.getStatus())
-                    .totalShippingPrice(order.getTotalShippingPrice())
-                    .totalProductsPrice(order.getTotalProductsPrice())
-                    .paymentMethod(order.getPaymentMethod())
-                    .totalPaymentPrice(order.getTotalPaymentPrice())
-                    .build();
-        }
-
+                .orderId(order.getOrderId())
+                .member(member)
+                .address(address)
+                .createdAt(order.getCreatedAt())
+                .status(order.getStatus())
+                .totalShippingPrice(order.getTotalShippingPrice())
+                .totalProductsPrice(order.getTotalProductsPrice())
+                .paymentMethod(order.getPaymentMethod())
+                .totalPaymentPrice(order.getTotalPaymentPrice())
+                .build();
     }
+
+}

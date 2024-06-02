@@ -12,7 +12,6 @@ import org.store.clothstar.product.repository.ProductJPARepository;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +26,7 @@ public class JpaOrderDetailRepositoryAdapter implements UpperOrderDetailReposito
                                            JpaOrderRepository jpaOrderRepository,
                                            ProductLineJPARepository productLineJPARepository,
                                            ProductJPARepository productJPARepository
-                                           ){
+    ) {
         this.jpaOrderDetailRepository = jpaOrderDetailRepository;
         this.jpaOrderRepository = jpaOrderRepository;
         this.productLineJPARepository = productLineJPARepository;

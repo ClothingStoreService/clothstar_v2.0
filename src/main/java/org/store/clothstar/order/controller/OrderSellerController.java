@@ -2,7 +2,6 @@ package org.store.clothstar.order.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +21,6 @@ public class OrderSellerController {
 
     private final OrderSellerService orderSellerService;
 
-    @PermitAll
     @Operation(summary = "(판매자) WAITING 주문 리스트 조회", description = "(판매자) 주문상태가 '승인대기'인 주문 리스트를 조회한다.")
     @GetMapping
     public ResponseEntity<List<OrderResponse>> getWaitingOrder() {

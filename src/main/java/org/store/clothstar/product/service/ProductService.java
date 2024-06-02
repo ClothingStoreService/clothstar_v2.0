@@ -1,6 +1,5 @@
 package org.store.clothstar.product.service;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.repository.ProductRepository;
 
-@PermitAll
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -36,6 +34,7 @@ public class ProductService {
                         HttpStatus.BAD_REQUEST,
                         "productId :" + productId + "인 상품 옵션 정보를 찾을 수 없습니다."));
     }
+
     @Transactional
     public Long createProduct(@Validated @RequestBody CreateProductRequest createProductRequest) {
         Product product = createProductRequest.toProduct();
@@ -43,6 +42,7 @@ public class ProductService {
 
         return product.getProductLineId();
     }
+
     @Transactional
     public void updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
         Product product = productRepository.selectByProductId(productId)

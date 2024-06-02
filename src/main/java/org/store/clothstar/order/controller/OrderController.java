@@ -27,7 +27,6 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderApplicationService orderApplicationService;
 
-    @PermitAll
     @Operation(summary = "단일 주문 조회", description = "단일 주문의 정보를 조회한다.")
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable("orderId") Long orderId) {
@@ -50,7 +49,6 @@ public class OrderController {
         return ResponseEntity.created(location).build();
     }
 
-    @PermitAll
     @Operation(summary = "구매 확정", description = "구매자가 구매 확정 시, 주문상태가 '구매확정'으로 변경된다.")
     @PatchMapping("/{orderId}")
     public ResponseEntity<MessageDTO> deliveredToConfirmOrder(@PathVariable("orderId") Long orderId) {

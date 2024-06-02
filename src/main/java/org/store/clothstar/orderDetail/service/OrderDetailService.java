@@ -12,7 +12,6 @@ import org.store.clothstar.order.repository.order.UpperOrderRepository;
 import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
-import org.store.clothstar.orderDetail.repository.MybatisOrderDetailRepository;
 import org.store.clothstar.orderDetail.repository.UpperOrderDetailRepository;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.repository.ProductRepository;
@@ -23,7 +22,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class OrderDetailService{
+public class OrderDetailService {
     private final UpperOrderRepository upperOrderRepository;
     private final UpperOrderDetailRepository upperOrderDetailRepository;
     private final ProductRepository productRepository;
@@ -36,11 +35,11 @@ public class OrderDetailService{
 //            @Qualifier("mybatisOrderRepository") UpperOrderRepository upperOrderRepository
             , ProductRepository productRepository
             , ProductLineMybatisRepository productLineMybatisRepository
-    ){
+    ) {
         this.upperOrderRepository = upperOrderRepository;
         this.upperOrderDetailRepository = upperOrderDetailRepository;
-        this.productRepository  = productRepository;
-        this.productLineMybatisRepository  = productLineMybatisRepository;
+        this.productRepository = productRepository;
+        this.productLineMybatisRepository = productLineMybatisRepository;
     }
 
 
@@ -71,7 +70,7 @@ public class OrderDetailService{
                 order.getTotalProductsPrice() + order.getTotalShippingPrice() + orderDetail.getOneKindTotalPrice();
 
         order.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
-        log.info("총 주문 가격 ="+order.getTotalPaymentPrice());
+        log.info("총 주문 가격 =" + order.getTotalPaymentPrice());
         upperOrderRepository.updateOrderPrices(order);
 
         // 주문 수량만큼 상품 재고 차감
@@ -104,7 +103,6 @@ public class OrderDetailService{
                 order.getTotalProductsPrice() + order.getTotalShippingPrice() + orderDetail.getOneKindTotalPrice();
 
         order.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
-        log.info("업데이트 된 총 가격은="+order.getTotalPaymentPrice());
         upperOrderRepository.updateOrderPrices(order);
 
         updateProductStock(product, orderDetail.getQuantity());
@@ -124,7 +122,7 @@ public class OrderDetailService{
         orderDetails.stream()
                 .map(orderDetail -> {
                     Product product = productRepository.selectByProductId(orderDetail.getProductId())
-                            .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"상품 정보를 찾을 수 없습니다."));
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
                     product.restoreStock(orderDetail.getQuantity());
                     return product;
                 })
