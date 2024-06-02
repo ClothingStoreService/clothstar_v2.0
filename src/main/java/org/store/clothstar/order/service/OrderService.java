@@ -15,7 +15,7 @@ import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
-import org.store.clothstar.order.repository.OrderRepository;
+import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 @Slf4j

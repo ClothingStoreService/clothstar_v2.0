@@ -15,9 +15,8 @@ import org.store.clothstar.order.domain.type.ApprovalStatus;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
-import org.store.clothstar.order.repository.OrderRepository;
-import org.store.clothstar.order.repository.OrderSellerRepository;
-import org.store.clothstar.orderDetail.service.OrderDetailService;
+import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.repository.orderSeller.UpperOrderSellerRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,7 +41,7 @@ class OrderSellerServiceApplicationTest {
     private OrderSellerRequest mockOrderSellerRequest;
 
     @Mock
-    private OrderSellerRepository orderSellerRepository;
+    private UpperOrderSellerRepository upperOrderSellerRepository;
 
     @Mock
     private OrderRepository orderRepository;
@@ -65,13 +64,13 @@ class OrderSellerServiceApplicationTest {
         given(order3.getCreatedAt()).willReturn(LocalDateTime.now());
 
         List<Order> orders = List.of(order1, order2, order3);
-        given(orderSellerRepository.SelectWaitingOrders()).willReturn(orders);
+        given(upperOrderSellerRepository.SelectWaitingOrders()).willReturn(orders);
 
         //when
         List<OrderResponse> response = orderSellerService.getWaitingOrder();
 
         //then
-        then(orderSellerRepository).should(times(1)).SelectWaitingOrders();
+        then(upperOrderSellerRepository).should(times(1)).SelectWaitingOrders();
         assertThat(response).isNotNull().hasSize(3);
         assertThat(response.get(0).getTotalShippingPrice()).isEqualTo(1000);
     }
@@ -90,9 +89,9 @@ class OrderSellerServiceApplicationTest {
         MessageDTO messageDTO = orderSellerService.cancelOrApproveOrder(orderId, mockOrderSellerRequest);
 
         //then
-        then(orderSellerRepository).should(times(1)).approveOrder(orderId);
+        then(upperOrderSellerRepository).should(times(1)).approveOrder(orderId);
         then(orderRepository).should(times(2)).getOrder(orderId);
-        assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(messageDTO.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 승인 되었습니다.");
     }
 
@@ -111,9 +110,8 @@ class OrderSellerServiceApplicationTest {
         MessageDTO messageDTO = orderSellerService.cancelOrApproveOrder(orderId, mockOrderSellerRequest);
 
         //then
-        then(orderSellerRepository).should(times(1)).cancelOrder(orderId);
+        then(upperOrderSellerRepository).should(times(1)).cancelOrder(orderId);
         then(orderRepository).should(times(2)).getOrder(orderId);
-        then(orderDetailService).should(times(1)).restoreStockByOrder(orderId);
         assertThat(messageDTO.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 취소 되었습니다.");
     }

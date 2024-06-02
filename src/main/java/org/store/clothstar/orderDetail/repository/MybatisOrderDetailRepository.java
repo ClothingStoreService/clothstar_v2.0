@@ -6,7 +6,7 @@ import org.store.clothstar.orderDetail.domain.OrderDetail;
 import java.util.List;
 
 @Mapper
-public interface OrderDetailRepository {
+public interface MybatisOrderDetailRepository extends UpperOrderDetailRepository {
 
     void saveOrderDetail(OrderDetail orderdetail);
 

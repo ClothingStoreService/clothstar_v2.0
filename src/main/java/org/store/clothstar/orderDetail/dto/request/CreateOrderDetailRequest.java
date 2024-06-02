@@ -43,7 +43,7 @@ public class CreateOrderDetailRequest {
                 .name(productLine.getName())
                 .stock(product.getStock())
                 .optionName(product.getName())
-                .extraCharge(product.getExtraCharge())
+//                .extraCharge(product.getExtraCharge())
                 .brandName(productLine.getBrandName())
                 .build();
     }

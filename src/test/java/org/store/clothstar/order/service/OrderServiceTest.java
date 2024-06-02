@@ -11,13 +11,12 @@ import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.repository.AddressMybatisRepository;
 import org.store.clothstar.member.repository.MemberMybatisRepository;
-import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
-import org.store.clothstar.order.repository.OrderRepository;
+import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 import java.time.LocalDateTime;
