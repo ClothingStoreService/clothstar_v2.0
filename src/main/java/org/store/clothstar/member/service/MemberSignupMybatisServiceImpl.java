@@ -1,5 +1,6 @@
 package org.store.clothstar.member.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,6 +11,7 @@ import org.store.clothstar.member.repository.MemberMybatisRepository;
 
 @Service
 @Slf4j
+@Transactional
 @RequiredArgsConstructor
 public class MemberSignupMybatisServiceImpl implements MemberSignupService {
     private final MemberMybatisRepository memberMybatisRepository;

@@ -1,5 +1,6 @@
 package org.store.clothstar.member.service;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@Transactional
 public class MemberBasicServiceImpl implements MemberBasicService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -39,19 +41,19 @@ public class MemberBasicServiceImpl implements MemberBasicService {
     }
 
     @Override
-    public MemberResponse findById(Long memberId) {
+    public MemberResponse getMemberById(Long memberId) {
         return memberRepository.findById(memberId)
                 .map(MemberResponse::new)
                 .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
     }
 
     @Override
-    public boolean findByEmail(String email) {
+    public boolean getMemberByEmail(String email) {
         return memberRepository.findByEmail(email).isPresent();
     }
 
     @Override
-    public void update(Long memberId, ModifyMemberRequest modifyMemberRequest) {
+    public void modifyMember(Long memberId, ModifyMemberRequest modifyMemberRequest) {
         Member member = modifyMemberRequest.toMember(memberId);
         memberRepository.update(member);
     }

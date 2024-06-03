@@ -6,10 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.store.clothstar.member.application.AddressServiceApplication;
+import org.springframework.test.context.ActiveProfiles;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.dto.response.AddressResponse;
-import org.store.clothstar.member.repository.AddressMybatisRepository;
+import org.store.clothstar.member.repository.AddressJpaRepositoryAdapter;
 
 import java.util.List;
 
@@ -17,27 +17,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.mock;
 
+@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
-class AddressBasicServiceApplicationMockUnitTest {
+class AddressBasicServiceJpaMockUnitTest {
     @Mock
-    AddressMybatisRepository addressMybatisRepository;
+    AddressJpaRepositoryAdapter addressJpaRepositoryAdapter;
 
     @InjectMocks
-    AddressServiceApplication addressServiceApplication;
+    AddressBasicServiceImpl addressBasicServiceImpl;
 
     private Long memberId = 1L;
 
-    @DisplayName("회원 배송지 조회 단위 테스트")
+
+    @DisplayName("회원 배송지 조회 단위 테스트(Jpa)")
     @Test
-    void getMemberAddrUnitTest() {
+    void getMemberAddrJpaUnitTest() {
         //given
-        given(addressMybatisRepository.findMemberAllAddress(any())).willReturn(getAddressList());
+        given(addressJpaRepositoryAdapter.findMemberAllAddress(any())).willReturn(getAddressList());
 
         //when
-        List<AddressResponse> memberAddressResponseList = addressServiceApplication.getMemberAllAddress(memberId);
+        List<AddressResponse> memberAddressResponseList = addressBasicServiceImpl.findMemberAllAddress(memberId);
 
         //then
-        verify(addressMybatisRepository, times(1)).findMemberAllAddress((anyLong()));
+        verify(addressJpaRepositoryAdapter, times(1)).findMemberAllAddress((anyLong()));
         assertThat(memberAddressResponseList.size()).isEqualTo(2);
     }
 

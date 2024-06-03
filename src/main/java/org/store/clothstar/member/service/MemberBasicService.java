@@ -8,9 +8,9 @@ import java.util.List;
 public interface MemberBasicService {
     List<MemberResponse> findAll();
 
-    MemberResponse findById(Long memberId);
+    MemberResponse getMemberById(Long memberId);
 
-    boolean findByEmail(String email);
+    boolean getMemberByEmail(String email);
 
-    void update(Long memberId, ModifyMemberRequest modifyMemberRequest);
+    void modifyMember(Long memberId, ModifyMemberRequest modifyMemberRequest);
 }
