@@ -7,16 +7,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.store.clothstar.member.application.SellerServiceApplication;
-import org.store.clothstar.member.domain.Seller;
-import org.store.clothstar.member.repository.SellerMybatisRepository;
 
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class SellerServiceApplicationMockUnitTest {
-    @Mock
-    SellerMybatisRepository sellerMybatisRepository;
-
     @Mock
     SellerBasicService sellerBasicService;
 
@@ -28,10 +24,9 @@ class SellerServiceApplicationMockUnitTest {
     void getSellerUnitTest() {
         //given
         Long memberId = 1L;
-        Seller seller = mock(Seller.class);
 
         //when
-        Seller sellerResponse = sellerServiceApplication.getSellerById(memberId);
+        sellerServiceApplication.getSellerById(memberId);
 
         //then
         verify(sellerBasicService, times(1)).getSellerById(memberId);
