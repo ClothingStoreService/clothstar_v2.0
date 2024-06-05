@@ -1,5 +1,6 @@
 package org.store.clothstar.member.service;
 
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
+@Transactional
 @ActiveProfiles("test")
 public class MemberServiceApplicationUnitTest {
     @Autowired
@@ -30,11 +32,13 @@ public class MemberServiceApplicationUnitTest {
     private Long memberId;
     private MemberEntity memberEntity;
 
-    @DisplayName("회원가입한 멤버아이디와, 인증에 필요한 access 토큰을 가져옵니다.")
+    @DisplayName("회원가입후 memberId를 반환한다.")
     @BeforeEach
     public void getMemberId_getAccessToken() {
         memberId = memberSignupJpaServiceImpl.signUp(getCreateMemberRequest());
         memberEntity = memberJpaRepository.findById(memberId).get();
+
+        assertThat(memberId).isNotNull();
     }
 
     @DisplayName("회원 권한에 대한 수정을 확인 한다.")
@@ -42,6 +46,7 @@ public class MemberServiceApplicationUnitTest {
     void modifyMemberAuthUnitTest() {
         //회원가입시 기본 User 권한으로 적용 되었는지 확인
         assertThat(memberEntity.getRole()).isEqualTo(MemberRole.USER);
+
         //given
         ModifyMemberRequest modifyMemberRequest = ModifyMemberRequest.builder()
                 .role(MemberRole.SELLER)
@@ -67,7 +72,7 @@ public class MemberServiceApplicationUnitTest {
     }
 
     private CreateMemberRequest getCreateMemberRequest() {
-        String email = "test@test.com";
+        String email = "test3@test.com";
         String password = "testl122";
         String name = "현수";
         String telNo = "010-1234-1245";

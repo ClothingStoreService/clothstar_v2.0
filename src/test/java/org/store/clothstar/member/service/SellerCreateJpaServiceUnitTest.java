@@ -42,7 +42,7 @@ class SellerCreateJpaServiceUnitTest {
         entityManager.flush();
         entityManager.clear();
 
-        Long sellerId = sellerCreateJpaService.sellerSave(memberId, getCreateSellerRequest(memberId));
+        Long sellerId = sellerCreateJpaService.sellerSave(memberId, getCreateSellerRequest());
 
         Assertions.assertThat(memberId).isNotEqualTo(null);
         Assertions.assertThat(sellerId).isNotEqualTo(null);
@@ -56,7 +56,7 @@ class SellerCreateJpaServiceUnitTest {
     void sellerSaveDuplicateTest() {
         //given & when
         Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
-            sellerCreateJpaService.sellerSave(memberId, getCreateSellerRequest(memberId));
+            sellerCreateJpaService.sellerSave(memberId, getCreateSellerRequest());
         });
 
         //then
@@ -123,7 +123,7 @@ class SellerCreateJpaServiceUnitTest {
         return createMemberRequest;
     }
 
-    private CreateSellerRequest getCreateSellerRequest(Long memberId) {
+    private CreateSellerRequest getCreateSellerRequest() {
         CreateSellerRequest createSellerRequest = new CreateSellerRequest(
                 brandName, bizNo
         );

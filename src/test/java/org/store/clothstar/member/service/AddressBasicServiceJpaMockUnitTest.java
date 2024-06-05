@@ -28,7 +28,6 @@ class AddressBasicServiceJpaMockUnitTest {
 
     private Long memberId = 1L;
 
-
     @DisplayName("회원 배송지 조회 단위 테스트(Jpa)")
     @Test
     void getMemberAddrJpaUnitTest() {

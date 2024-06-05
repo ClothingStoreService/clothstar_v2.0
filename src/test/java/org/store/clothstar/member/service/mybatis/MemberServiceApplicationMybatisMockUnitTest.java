@@ -24,20 +24,10 @@ class MemberServiceApplicationMybatisMockUnitTest {
     MemberMybatisRepository memberMybatisRepository;
 
     @InjectMocks
-    MemberBasicServiceImpl memberBasicServiceImpl;
+    MemberBasicServiceImpl memberBasicService;
     private String email = "test@test.com";
 
-    @DisplayName("")
-    @Test
-    void test() {
-        //given
-
-        //when
-
-        //then
-    }
-
-    @DisplayName("회원아이디로 회원 조회 테스트(Mybatis)")
+    @DisplayName("회원아이디로 회원울 조회한 테스트 이다.(Mybatis)")
     @Test
     void getMemberTest() {
         //given
@@ -46,7 +36,7 @@ class MemberServiceApplicationMybatisMockUnitTest {
         when(member.getMemberId()).thenReturn(1L);
 
         //when
-        MemberResponse memberResponse = memberBasicServiceImpl.getMemberById(1L);
+        MemberResponse memberResponse = memberBasicService.getMemberById(1L);
 
         //then
         verify(memberMybatisRepository, times(1))
@@ -55,7 +45,7 @@ class MemberServiceApplicationMybatisMockUnitTest {
         assertThat(memberResponse.getMemberId()).isEqualTo(member.getMemberId());
     }
 
-    @DisplayName("회원가입시 이메일 중복 체크 테스트(Mybatis)")
+    @DisplayName("email로 가입된 회원이 있는지 확인한다. 았으면 true를 반환 (Mybatis)")
     @Test
     void duplicateEmailCheckTest() {
         //given
@@ -63,20 +53,20 @@ class MemberServiceApplicationMybatisMockUnitTest {
         given(memberMybatisRepository.findByEmail(anyString())).willReturn(Optional.of(member));
 
         //when
-        boolean isMemberEmail = memberBasicServiceImpl.getMemberByEmail(email);
+        boolean isMemberEmail = memberBasicService.getMemberByEmail(email);
 
         //then
         assertThat(isMemberEmail).isEqualTo(true);
     }
 
-    @DisplayName("회원가입시 이메일 중복 체크 테스트(Mybatis)")
+    @DisplayName("email로 가입된 회원이 있는지 확인한다. 없으면 false를 반환 (Mybatis)")
     @Test
     void duplicateEmailCheckTest2() {
         //given
         given(memberMybatisRepository.findByEmail(anyString())).willReturn(Optional.empty());
 
         //when
-        boolean isMemberEmail = memberBasicServiceImpl.getMemberByEmail(email);
+        boolean isMemberEmail = memberBasicService.getMemberByEmail(email);
 
         //then
         assertThat(isMemberEmail).isEqualTo(false);
