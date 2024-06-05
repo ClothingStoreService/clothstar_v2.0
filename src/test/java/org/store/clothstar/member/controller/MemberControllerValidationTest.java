@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
-public class MemberControllerValidationCheckTest {
+public class MemberControllerValidationTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -135,7 +135,7 @@ public class MemberControllerValidationCheckTest {
     }
 
     @DisplayName("비밀번호 변경 요청시에도 비밀번호는 8자리 이상이여야 한다.")
-    @WithMockUser(username = "kang", roles = "USER")
+    @WithMockUser(username = "현수", roles = "USER")
     @Test
     void modifyPassword_validCheckTest() throws Exception {
         //given

@@ -42,7 +42,7 @@ class MemberAndSellerControllerIntegrationTest {
     private static final String MEMBER_SIGN_UP_URL = "/v1/members";
     private static final String SELLER_SIGN_UP_URL = "/v1/sellers/";
 
-    @DisplayName("회원가입을 완료한 후 memberId와 accessToken을 받아서 판매자 가입 신청한 테스트이다.")
+    @DisplayName("회원가입을 완료한 후 memberId와 accessToken을 받아서 판매자 가입을 신청한 테스트이다.")
     @Test
     void signUpAndSellerTest() throws Exception {
         //회원가입 통합 테스트
