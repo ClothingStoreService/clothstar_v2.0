@@ -1,11 +1,16 @@
 package org.store.clothstar.member.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.store.clothstar.common.dto.MessageDTO;
@@ -16,7 +21,9 @@ import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyPasswordRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Member", description = "회원 정보 관리에 대한 API 입니다.")
 @RestController
@@ -24,6 +31,7 @@ import java.util.List;
 @Slf4j
 public class MemberController {
     private final MemberServiceApplication memberServiceApplication;
+    private final ObjectMapper objectMapper;
 
     @Operation(summary = "전체 회원 조회", description = "전체 회원 리스트를 가져온다.")
     @GetMapping("/v1/members")
@@ -102,7 +110,21 @@ public class MemberController {
 
     @Operation(summary = "회원가입", description = "회원가입시 회원 정보를 저장한다.")
     @PostMapping("/v1/members")
-    public ResponseEntity<MessageDTO> signup(@Validated @RequestBody CreateMemberRequest createMemberDTO) {
+    public ResponseEntity<MessageDTO> signup(@Validated @RequestBody CreateMemberRequest createMemberDTO, BindingResult bindingResult) throws JsonProcessingException {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+
+            bindingResult.getAllErrors().forEach((error) -> {
+                String fieldName = ((FieldError) error).getField();
+                String message = error.getDefaultMessage();
+                errorMap.put(fieldName, message);
+            });
+
+            String errorsJson = objectMapper.writeValueAsString(errorMap);
+
+            throw new ValidationException(errorsJson);
+        }
+
         log.info("회원가입 요청 데이터 : {}", createMemberDTO.toString());
 
         Long memberId = memberServiceApplication.signup(createMemberDTO);

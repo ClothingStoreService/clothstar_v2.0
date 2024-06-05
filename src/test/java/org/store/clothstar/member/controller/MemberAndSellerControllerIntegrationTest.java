@@ -82,10 +82,11 @@ class MemberAndSellerControllerIntegrationTest {
                 .andExpect(status().isCreated());
     }
 
+
     private CreateMemberRequest getCreateMemberRequest() {
-        String email = "testtttt@test.com";
+        String email = "test@naver.com";
         String password = "test1234";
-        String name = "test";
+        String name = "현수";
         String telNo = "010-1234-1244";
 
         CreateMemberRequest createMemberRequest = new CreateMemberRequest(
