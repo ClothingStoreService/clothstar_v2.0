@@ -27,7 +27,7 @@ class MemberServiceApplicationMybatisMockUnitTest {
     MemberBasicServiceImpl memberBasicService;
     private String email = "test@test.com";
 
-    @DisplayName("회원아이디로 회원울 조회한 테스트 이다.(Mybatis)")
+    @DisplayName("회원아이디로 회원울 조회한 테스트 한다.(Mybatis)")
     @Test
     void getMemberTest() {
         //given
@@ -45,7 +45,7 @@ class MemberServiceApplicationMybatisMockUnitTest {
         assertThat(memberResponse.getMemberId()).isEqualTo(member.getMemberId());
     }
 
-    @DisplayName("email로 가입된 회원이 있는지 확인한다. 았으면 true를 반환 (Mybatis)")
+    @DisplayName("email로 가입된 회원이 있는지 확인한다. 았으면 true를 반환한다. (Mybatis)")
     @Test
     void duplicateEmailCheckTest() {
         //given
@@ -59,7 +59,7 @@ class MemberServiceApplicationMybatisMockUnitTest {
         assertThat(isMemberEmail).isEqualTo(true);
     }
 
-    @DisplayName("email로 가입된 회원이 있는지 확인한다. 없으면 false를 반환 (Mybatis)")
+    @DisplayName("email로 가입된 회원이 있는지 확인한다. 없으면 false를 반환한다. (Mybatis)")
     @Test
     void duplicateEmailCheckTest2() {
         //given
