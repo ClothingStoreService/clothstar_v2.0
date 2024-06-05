@@ -1,9 +1,6 @@
 package org.store.clothstar.member.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,9 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Transactional
 @ActiveProfiles("test")
 class SellerCreateJpaServiceUnitTest {
-    @PersistenceContext
-    EntityManager entityManager;
-
     @Autowired
     SellerCreateJpaServiceImpl sellerCreateJpaService;
 
@@ -39,16 +33,14 @@ class SellerCreateJpaServiceUnitTest {
     public void signUp_getMemberId() {
         memberId = memberSignupJpaService.signUp(getCreateMemberRequest());
         memberId2 = memberSignupJpaService.signUp(getCreateMemberRequest2());
-        entityManager.flush();
-        entityManager.clear();
 
         Long sellerId = sellerCreateJpaService.sellerSave(memberId, getCreateSellerRequest());
 
-        Assertions.assertThat(memberId).isNotEqualTo(null);
-        Assertions.assertThat(sellerId).isNotEqualTo(null);
+        assertThat(memberId).isNotEqualTo(null);
+        assertThat(sellerId).isNotEqualTo(null);
 
         //Seller의 키가 memberId이기 때문에 memberId와 sellerId는 같습니다.
-        Assertions.assertThat(memberId).isEqualTo(sellerId);
+        assertThat(memberId).isEqualTo(sellerId);
     }
 
     @DisplayName("판매자 신청을 중복으로 하면 에러메시지를 응답한다.")
@@ -65,9 +57,8 @@ class SellerCreateJpaServiceUnitTest {
 
     @DisplayName("같은 브랜드명으로 판매자 신청하면 에러 메시지를 응답한다.")
     @Test
-    void brandnameDuplicateTest() {
+    void brandNameDuplicateTest() {
         //given & when
-        //브랜드명만 중복
         CreateSellerRequest createSellerRequest = new CreateSellerRequest(
                 brandName, "102-13-13123"
         );
@@ -84,7 +75,6 @@ class SellerCreateJpaServiceUnitTest {
     @Test
     void bizNoDuplicateTest() {
         //given & when
-        //브랜드명만 중복
         CreateSellerRequest createSellerRequest = new CreateSellerRequest(
                 "아디다스", bizNo
         );

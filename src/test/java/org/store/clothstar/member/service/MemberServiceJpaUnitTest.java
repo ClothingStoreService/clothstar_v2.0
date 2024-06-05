@@ -1,7 +1,5 @@
 package org.store.clothstar.member.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,9 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Transactional
 @ActiveProfiles("test")
 public class MemberServiceJpaUnitTest {
-    @PersistenceContext
-    private EntityManager em;
-
     @Autowired
     private MemberBasicServiceImpl memberBasicServiceImpl;
 
@@ -50,8 +45,6 @@ public class MemberServiceJpaUnitTest {
     public void getMemberId_getAccessToken() {
         memberId = memberSignupJpaServiceImpl.signUp(getCreateMemberRequest());
         memberEntity = memberJpaRepository.findById(memberId).get();
-        em.flush();
-        em.clear();
 
         assertThat(memberId).isNotNull();
     }
