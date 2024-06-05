@@ -42,7 +42,7 @@ class MemberAndSellerControllerIntegrationTest {
     private static final String MEMBER_SIGN_UP_URL = "/v1/members";
     private static final String SELLER_SIGN_UP_URL = "/v1/sellers/";
 
-    @DisplayName("회원가입, 판매자 신청 통합 테스트")
+    @DisplayName("회원가입을 완료한 후 memberId와 accessToken을 받아서 판매자 가입 신청한 테스트이다.")
     @Test
     void signUpAndSellerTest() throws Exception {
         //회원가입 통합 테스트
@@ -55,15 +55,13 @@ class MemberAndSellerControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody));
 
-        //then
-        actions.andExpect(status().isCreated())
-                .andDo(print());
+        actions.andExpect(status().isCreated());
 
         String responseBody = actions.andReturn().getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long memberId = jsonNode.get("id").asLong();
         Member member = memberJpaRepository.findById(memberId).get();
-        final String accessToken = jwtUtil.createAccessToken(member);
+        String accessToken = jwtUtil.createAccessToken(member);
 
         //회원가입해서 받은 memberId로 판매자 신청 테스트
         //given

@@ -8,13 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
+import org.store.clothstar.member.dto.request.ModifyPasswordRequest;
 import org.store.clothstar.member.repository.MemberJpaRepositoryAdapter;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
-public class MemberValidationCheckTest {
+public class MemberControllerValidationCheckTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -129,5 +132,24 @@ public class MemberValidationCheckTest {
         Assertions.assertThat(createMemberRequest.getPassword().length()).isLessThan(8);
         actions.andExpect(status().is4xxClientError());
         actions.andExpect(jsonPath("$.errorMap.telNo").value("유효하지 않은 전화번호 형식입니다."));
+    }
+
+    @DisplayName("비밀번호 변경 요청시에도 비밀번호는 8자리 이상이여야 한다.")
+    @WithMockUser(username = "kang", roles = "USER")
+    @Test
+    void modifyPassword_validCheckTest() throws Exception {
+        //given
+        String modifyPasswordURL = "/v1/members/1";
+        ModifyPasswordRequest modifyPasswordRequest = new ModifyPasswordRequest("1");
+        final String requestBody = objectMapper.writeValueAsString(modifyPasswordRequest);
+
+        //when
+        ResultActions actions = mockMvc.perform(patch(modifyPasswordURL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody));
+
+        //then
+        actions.andExpect(status().is4xxClientError());
+        actions.andExpect(jsonPath("$.errorMap.password").value("비밀번호는 최소 8자 이상이어야 합니다."));
     }
 }
