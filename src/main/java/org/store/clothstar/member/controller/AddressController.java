@@ -8,8 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.store.clothstar.common.dto.MessageDTO;
-import org.store.clothstar.common.util.MessageDTOBuilder;
+import org.store.clothstar.common.dto.SaveResponseDTO;
 import org.store.clothstar.member.application.AddressServiceApplication;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
 import org.store.clothstar.member.dto.response.AddressResponse;
@@ -32,18 +31,18 @@ public class AddressController {
 
     @Operation(summary = "회원 배송지 저장", description = "회원 한 명에 대한 배송지를 저장한다.")
     @PostMapping("/v1/members/address/{id}")
-    public ResponseEntity<MessageDTO> addrSave(@Validated @RequestBody CreateAddressRequest createAddressRequest,
-                                               @PathVariable("id") Long memberId) {
+    public ResponseEntity<SaveResponseDTO> addrSave(@Validated @RequestBody CreateAddressRequest createAddressRequest,
+                                                    @PathVariable("id") Long memberId) {
         log.info("회원 배송지 저장 요청 데이터 : {}", createAddressRequest.toString());
 
         Long addressId = addressServiceApplication.addrSave(memberId, createAddressRequest);
 
-        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(
-                addressId,
-                HttpStatus.OK.value(),
-                "addressId : " + addressId + " 회원 배송지 주소가 정상적으로 저장 되었습니다."
-        );
+        SaveResponseDTO saveResponseDTO = SaveResponseDTO.builder()
+                .id(addressId)
+                .statusCode(HttpStatus.OK.value())
+                .message("addressId : " + addressId + " 회원 배송지 주소가 정상적으로 저장 되었습니다.")
+                .build();
 
-        return new ResponseEntity<>(messageDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(saveResponseDTO, HttpStatus.CREATED);
     }
 }

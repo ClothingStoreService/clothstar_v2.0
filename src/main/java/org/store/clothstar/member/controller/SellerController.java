@@ -8,8 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.store.clothstar.common.dto.MessageDTO;
-import org.store.clothstar.common.util.MessageDTOBuilder;
+import org.store.clothstar.common.dto.SaveResponseDTO;
 import org.store.clothstar.member.application.SellerServiceApplication;
 import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
@@ -31,17 +30,17 @@ public class SellerController {
 
     @Operation(summary = "판매자 가입", description = "판매자 정보를 저장된다.")
     @PostMapping("/v1/sellers/{id}")
-    public ResponseEntity<MessageDTO> saveSeller(@Validated @RequestBody CreateSellerRequest createSellerRequest,
-                                                 @PathVariable("id") Long memberId) {
+    public ResponseEntity<SaveResponseDTO> saveSeller(@Validated @RequestBody CreateSellerRequest createSellerRequest,
+                                                      @PathVariable("id") Long memberId) {
         log.info("판매자 가입 요청 데이터 : {}", createSellerRequest.toString());
         Long sellerId = sellerServiceApplication.sellerSave(memberId, createSellerRequest);
 
-        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(
-                sellerId,
-                HttpStatus.OK.value(),
-                "memberId : " + sellerId + " 가 판매자 가입이 정상적으로 되었습니다."
-        );
+        SaveResponseDTO saveResponseDTO = SaveResponseDTO.builder()
+                .id(sellerId)
+                .statusCode(HttpStatus.OK.value())
+                .message("memberId : " + sellerId + " 가 판매자 가입이 정상적으로 되었습니다.")
+                .build();
 
-        return new ResponseEntity<>(messageDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(saveResponseDTO, HttpStatus.CREATED);
     }
 }
