@@ -45,8 +45,7 @@ public class MemberController {
 
     @Operation(summary = "이메일 중복 체크", description = "이메일 중복체크를 한다.")
     @GetMapping("/v1/members/email/{email}")
-    public ResponseEntity<MessageDTO> emailCheck(@PathVariable String email) {
-
+    public ResponseEntity<MessageDTO> emailDuplicationCheck(@PathVariable String email) {
         boolean emailExists = memberServiceApplication.emailCheck(email);
 
         MessageDTO messageDTO = MessageDTOBuilder.buildMessage(
