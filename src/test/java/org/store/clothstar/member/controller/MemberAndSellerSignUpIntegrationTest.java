@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
-class MemberAndSellerControllerIntegrationTest {
+class MemberAndSellerSignUpIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -50,9 +50,10 @@ class MemberAndSellerControllerIntegrationTest {
     MemberJpaRepositoryAdapter memberJpaRepository;
 
     private static final String MEMBER_URL = "/v1/members";
-    private static final String SELLER_URL = "/v1/sellers/";
+    private static final String SELLER_URL = "/v1/sellers";
 
     @DisplayName("회원가입을 완료한 후 memberId와 accessToken을 받아서 판매자 가입을 신청한 테스트이다.")
+    @WithMockUser
     @Test
     void signUpAndSellerTest() throws Exception {
         //회원가입 통합 테스트
@@ -65,6 +66,7 @@ class MemberAndSellerControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody));
 
+        //then
         actions.andExpect(status().isCreated());
 
         String responseBody = actions.andReturn().getResponse().getContentAsString();
@@ -75,7 +77,7 @@ class MemberAndSellerControllerIntegrationTest {
 
         //회원가입해서 받은 memberId로 판매자 신청 테스트
         //given
-        final String sellerUrl = SELLER_URL + memberId;
+        final String sellerUrl = SELLER_URL + "/" + memberId;
         CreateSellerRequest createSellerRequest = getCreateSellerRequest(memberId);
         final String sellerRequestBody = objectMapper.writeValueAsString(createSellerRequest);
 
@@ -86,8 +88,7 @@ class MemberAndSellerControllerIntegrationTest {
                 .content(sellerRequestBody));
 
         //then
-        sellerActions.andDo(print())
-                .andExpect(status().isCreated());
+        sellerActions.andDo(print()).andExpect(status().isCreated());
     }
 
     @DisplayName("전체 회원 조회에 대한 통합테스트")
@@ -215,6 +216,7 @@ class MemberAndSellerControllerIntegrationTest {
         Member deletedMember = memberJpaRepository.findById(memberId).get();
         assertThat(deletedMember.getDeletedAt()).isNotNull();
     }
+
 
     private CreateMemberRequest getCreateMemberRequest(String email) {
         String password = "test1234";

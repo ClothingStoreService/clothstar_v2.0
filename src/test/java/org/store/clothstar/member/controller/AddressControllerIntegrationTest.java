@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -21,10 +22,13 @@ import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.entity.AddressEntity;
 import org.store.clothstar.member.repository.AddressJpaRepository;
 import org.store.clothstar.member.repository.MemberJpaRepositoryAdapter;
+import org.store.clothstar.member.service.AddressCreateJpaServiceImpl;
 import org.store.clothstar.member.service.MemberSignupJpaServiceImpl;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -46,6 +50,9 @@ class AddressControllerIntegrationTest {
 
     @Autowired
     private AddressJpaRepository addressJpaRepository;
+
+    @Autowired
+    private AddressCreateJpaServiceImpl addressCreateJpaService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -72,18 +79,18 @@ class AddressControllerIntegrationTest {
         final String addressRequestBody = objectMapper.writeValueAsString(createAddressRequest);
 
         //when
-        ResultActions result = mockMvc.perform(post(url)
+        ResultActions actions = mockMvc.perform(post(url)
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(addressRequestBody)
         );
 
         //then
-        result.andExpect(status().isCreated())
+        actions.andExpect(status().isCreated())
                 .andDo(print());
 
         //Address를 조회해서 memberId가 잘 들어갔는지 확인
-        String responseBody = result.andReturn().getResponse().getContentAsString();
+        String responseBody = actions.andReturn().getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long addressId = jsonNode.get("id").asLong();
 
@@ -91,6 +98,25 @@ class AddressControllerIntegrationTest {
         System.out.println("addressEntity.toString() " + addressEntity.toString());
         Assertions.assertThat(addressEntity.getAddressId()).isEqualTo(addressId);
         Assertions.assertThat(addressEntity.getMember().getMemberId()).isEqualTo(memberId);
+    }
+
+    @DisplayName("회원 전체 주소 리스트 조회 테스트")
+    @WithMockUser
+    @Test
+    void memberGetAllAddressTest() throws Exception {
+        //given
+        final String getMemberAddressURL = ADDRESS_URL + memberId;
+        for (int i = 0; i < 5; i++) {
+            addressCreateJpaService.addrSave(memberId, getCreateAddressRequest("서울시 공릉동" + i));
+        }
+
+        //when
+        ResultActions actions = mockMvc.perform(get(getMemberAddressURL)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        actions.andExpect(status().isOk());
+        actions.andExpect(jsonPath("$.length()").value(5));
     }
 
     private CreateAddressRequest getCreateAddressRequest() {
@@ -101,6 +127,21 @@ class AddressControllerIntegrationTest {
         final String telNo = "019-1222-2311";
         final String deliveryRequest = "문앞에 놓고 가주세요";
         final boolean defaultAddress = true;
+
+        CreateAddressRequest createAddressRequest = new CreateAddressRequest(
+                receiverName, zipNo, addressBasic, addressDetail, telNo, deliveryRequest, defaultAddress
+        );
+
+        return createAddressRequest;
+    }
+
+    private CreateAddressRequest getCreateAddressRequest(String addressBasic) {
+        final String receiverName = "현수";
+        final String zipNo = "18292";
+        final String addressDetail = "양지빌라";
+        final String telNo = "019-1222-2311";
+        final String deliveryRequest = "문앞에 놓고 가주세요";
+        final boolean defaultAddress = false;
 
         CreateAddressRequest createAddressRequest = new CreateAddressRequest(
                 receiverName, zipNo, addressBasic, addressDetail, telNo, deliveryRequest, defaultAddress

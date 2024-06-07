@@ -61,7 +61,8 @@ public class SecurityConfiguration {
                         "/v1/orderdetails",
                         "/v1/seller/orders/**", "/v1/seller/orders", "/v1/orders/**", "/v1/orders").permitAll()
                 .requestMatchers(HttpMethod.POST, "/v1/members").permitAll()
-                .requestMatchers("/seller/**", "/v1/seller/**").hasRole("SELLER")
+                .requestMatchers(HttpMethod.POST, "/v1/sellers/**").authenticated()
+                .requestMatchers("/seller/**", "/v1/sellers/**").hasRole("SELLER")
                 .requestMatchers("/admin/**", "/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/v1/members").hasRole("ADMIN")
                 .anyRequest().authenticated()
