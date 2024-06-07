@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:test # h2 support in-memory-db
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE # h2 support in-memory-db
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -12,11 +12,17 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
         format_sql: true # log
         show_sql: true
 
 logging.level:
   org.hibernate.SQL: debug
+
+jwt:
+  secret_key: Y2xvdGhzaG9wcGluZ21hbGxjbG90aHN0YXJjbG90aHNob3BwaW5nbWFsbGNsb3Roc3RhcmNsb3Roc2hvcHBpbmdtYWxsY2xvdGhzdGFyY2xvdGhzaG9wcGluZ21hbGxjbG90aHN0YXIK
+  accessTokenValidTimeMillis: 120000
+  refreshTokenValidTimeMillis: 1200000

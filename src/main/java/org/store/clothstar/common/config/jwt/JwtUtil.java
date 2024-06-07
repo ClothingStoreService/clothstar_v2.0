@@ -1,6 +1,7 @@
 package org.store.clothstar.common.config.jwt;
 
 import io.jsonwebtoken.*;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,14 @@ public class JwtUtil {
         }
 
         return null;
+    }
+
+    public Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(60 * 30); //refresh token하고 같은 생명주기 30분으로 세팅
+        cookie.setHttpOnly(true); //자바스크립트로 쿠키 접근 못하게 막음
+
+        return cookie;
     }
 
     public String createAccessToken(Member member) {
