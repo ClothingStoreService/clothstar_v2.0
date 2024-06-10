@@ -1,6 +1,5 @@
 package org.store.clothstar.common.exception;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +17,11 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ValidErrorResponseDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         log.error("handleMethodArgumentNotValidException", ex);
+        ex.fillInStackTrace();
 
         Map<String, String> errorMap = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
@@ -39,20 +37,20 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    private ResponseEntity<ErrorResponseDTO> illegalArgumentHandler(IllegalArgumentException e) {
-        log.error("[IllegalArgument Handler] {}", e.getMessage());
-        e.printStackTrace();
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    private ResponseEntity<ErrorResponseDTO> illegalArgumentHandler(IllegalArgumentException ex) {
+        log.error("[IllegalArgument Handler] {}", ex.getMessage());
+        ex.fillInStackTrace();
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
 
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    private ResponseEntity<ErrorResponseDTO> exHandler(Exception e) {
-        log.error("[Exception Handler] {}", e.getMessage());
-        e.printStackTrace();
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+    private ResponseEntity<ErrorResponseDTO> exHandler(Exception ex) {
+        log.error("[Exception Handler] {}", ex.getMessage());
+        ex.fillInStackTrace();
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
 
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }

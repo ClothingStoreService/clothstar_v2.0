@@ -1,6 +1,5 @@
 package org.store.clothstar.member.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -103,7 +102,7 @@ public class MemberController {
 
     @Operation(summary = "회원가입", description = "회원가입시 회원 정보를 저장한다.")
     @PostMapping("/v1/members")
-    public ResponseEntity<SaveResponseDTO> signup(@Validated @RequestBody CreateMemberRequest createMemberDTO) throws JsonProcessingException {
+    public ResponseEntity<SaveResponseDTO> signup(@Validated @RequestBody CreateMemberRequest createMemberDTO) {
         log.info("회원가입 요청 데이터 : {}", createMemberDTO.toString());
 
         Long memberId = memberServiceApplication.signup(createMemberDTO);
