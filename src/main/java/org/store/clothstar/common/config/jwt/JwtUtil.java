@@ -60,25 +60,29 @@ public class JwtUtil {
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + tokenValidTimeMillis);
 
+        Header jwtHeader = Jwts.header()
+                .type("JWT")
+                .build();
+
         return Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                .setIssuedAt(currentDate)
-                .setExpiration(expireDate)
+                .header().add(jwtHeader).and()
+                .issuedAt(currentDate)
+                .expiration(expireDate)
                 .claim("tokenType", tokenType)
                 .claim("email", memberEmail)
                 .claim("id", memberId)
                 .claim("role", member.getRole())
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(secretKey)
                 .compact();
     }
 
     public Claims getClaims(String token) {
         return Jwts
                 .parser()
-                .setSigningKey(secretKey)
+                .verifyWith(secretKey)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     public Long getMemberId(String token) {
@@ -96,7 +100,7 @@ public class JwtUtil {
             Jwts.parser()
                     .verifyWith(secretKey)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseSignedClaims(token);
             return true;
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT token");
