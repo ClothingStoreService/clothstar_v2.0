@@ -43,9 +43,11 @@ public class MemberServiceJpaUnitTest {
     @DisplayName("회원가입후 memberId를 반환한다.")
     @BeforeEach
     public void getMemberId_getAccessToken() {
+        //given && when
         memberId = memberSignupJpaServiceImpl.signUp(getCreateMemberRequest());
         memberEntity = memberJpaRepository.findById(memberId).get();
 
+        //then
         assertThat(memberId).isNotNull();
     }
 

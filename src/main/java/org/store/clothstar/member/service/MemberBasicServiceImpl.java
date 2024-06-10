@@ -3,7 +3,6 @@ package org.store.clothstar.member.service;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
@@ -23,14 +22,12 @@ import java.util.stream.Collectors;
 @Transactional
 public class MemberBasicServiceImpl implements MemberBasicService {
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public MemberBasicServiceImpl(
             @Qualifier("memberJpaRepositoryAdapter") MemberRepository memberRepository
             //@Qualifier("memberMybatisRepository") MemberRepository memberRepository
-            , PasswordEncoder passwordEncoder) {
+    ) {
         this.memberRepository = memberRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override

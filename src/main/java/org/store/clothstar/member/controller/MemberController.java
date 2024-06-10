@@ -1,7 +1,6 @@
 package org.store.clothstar.member.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ import java.util.List;
 @Slf4j
 public class MemberController {
     private final MemberServiceApplication memberServiceApplication;
-    private final ObjectMapper objectMapper;
 
     @Operation(summary = "전체 회원 조회", description = "전체 회원 리스트를 가져온다.")
     @GetMapping("/v1/members")
