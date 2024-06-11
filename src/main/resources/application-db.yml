@@ -113,8 +113,6 @@ spring:
     url: ENC(tdT8e3e+B4Lnbjjca9DuylTI2WMxolkaTxUyT4yJKbFLHUV0YynNjMss5AsaQJxEyndmGmgUlYTuJhx6667fcyUxGiV43314vgEwX+/NaVaSjIa2wiAmMfZu3WPVlgp/)
     username: ENC(xhLiaQAS5lcTT2hgCMRDOw==)
     password: ENC(XzhtQOZIlb9QjMX3klXi1EMBAuVOqWrM)
-  thymeleaf:
-    cache: false
 
 --- # dev - MyBatis 활성화
 spring:
