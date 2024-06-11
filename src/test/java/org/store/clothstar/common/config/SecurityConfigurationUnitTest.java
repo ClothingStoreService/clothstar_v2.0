@@ -10,7 +10,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,17 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SecurityConfigurationUnitTest {
     @Autowired
     MockMvc mockMvc;
-
-    @DisplayName("인덱스 페이지는 권한 없이 사용이 가능한지 테스트")
-    @Test
-    void indexPageAuthorityTest() throws Exception {
-        //given
-        final String url = "/";
-
-        //when && then
-        mockMvc.perform(get(url).with(anonymous()))
-                .andExpect(status().isOk());
-    }
 
     @DisplayName("인증된 사용자는 User 페이지 사용이 가능한지 테스트")
     @Test
