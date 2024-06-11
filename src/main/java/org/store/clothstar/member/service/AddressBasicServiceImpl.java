@@ -7,7 +7,6 @@ import org.store.clothstar.member.dto.response.AddressResponse;
 import org.store.clothstar.member.repository.AddressRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -24,6 +23,6 @@ public class AddressBasicServiceImpl implements AddressBasicService {
     public List<AddressResponse> findMemberAllAddress(Long memberId) {
         return addressRepository.findMemberAllAddress(memberId).stream()
                 .map(AddressResponse::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

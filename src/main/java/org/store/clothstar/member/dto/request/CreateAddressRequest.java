@@ -1,10 +1,8 @@
 package org.store.clothstar.member.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import jakarta.validation.constraints.Pattern;
+import lombok.*;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.entity.AddressEntity;
 import org.store.clothstar.member.entity.MemberEntity;
@@ -12,6 +10,7 @@ import org.store.clothstar.member.entity.MemberEntity;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @ToString
 public class CreateAddressRequest {
     @NotBlank(message = "받는 사람 이름은 비어 있을 수 없습니다.")
@@ -24,7 +23,7 @@ public class CreateAddressRequest {
     private String addressBasic;
     private String addressDetail;
 
-    @NotBlank(message = "전화번호는 비어 있울 수 없습니다.")
+    @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "유효하지 않은 전화번호 형식입니다.")
     private String telNo;
     private String deliveryRequest;
     private boolean defaultAddress;

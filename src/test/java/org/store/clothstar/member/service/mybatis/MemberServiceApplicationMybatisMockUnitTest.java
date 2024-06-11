@@ -1,4 +1,4 @@
-package org.store.clothstar.member.service;
+package org.store.clothstar.member.service.mybatis;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -6,10 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.store.clothstar.member.application.MemberServiceApplication;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.response.MemberResponse;
 import org.store.clothstar.member.repository.MemberMybatisRepository;
+import org.store.clothstar.member.service.MemberBasicServiceImpl;
 
 import java.util.Optional;
 
@@ -19,15 +19,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class MemberServiceApplicationMockUnitTest {
+class MemberServiceApplicationMybatisMockUnitTest {
     @Mock
     MemberMybatisRepository memberMybatisRepository;
 
     @InjectMocks
-    MemberServiceApplication memberServiceApplication;
+    MemberBasicServiceImpl memberBasicService;
+    private String email = "test@test.com";
 
-
-    @DisplayName("회원아이디로 회원 조회 테스트(마이바티스 사용)")
+    @DisplayName("회원아이디로 회원울 조회한 테스트 한다.(Mybatis)")
     @Test
     void getMemberTest() {
         //given
@@ -36,7 +36,7 @@ class MemberServiceApplicationMockUnitTest {
         when(member.getMemberId()).thenReturn(1L);
 
         //when
-        MemberResponse memberResponse = memberServiceApplication.getMemberById(1L);
+        MemberResponse memberResponse = memberBasicService.getMemberById(1L);
 
         //then
         verify(memberMybatisRepository, times(1))
@@ -45,32 +45,30 @@ class MemberServiceApplicationMockUnitTest {
         assertThat(memberResponse.getMemberId()).isEqualTo(member.getMemberId());
     }
 
-    @DisplayName("이메일이 중복된 경우의 단위 테스트(마이바티스 사용)")
+    @DisplayName("email로 가입된 회원이 있는지 확인한다. 았으면 true를 반환한다. (Mybatis)")
     @Test
     void duplicateEmailCheckTest() {
         //given
-        String email = "test@test.com";
         Member member = mock(Member.class);
         given(memberMybatisRepository.findByEmail(anyString())).willReturn(Optional.of(member));
 
         //when
-        //MessageDTO message = memberServiceApplication.emailCheck(email);
+        boolean isMemberEmail = memberBasicService.getMemberByEmail(email);
 
         //then
-        //assertThat(message.getMessage()).isEqualTo("이미 사용중인 이메일 입니다.");
+        assertThat(isMemberEmail).isEqualTo(true);
     }
 
-    @DisplayName("이메일이 중복되지 않은 경우의 단위 테스트(마이바티스 사용)")
+    @DisplayName("email로 가입된 회원이 있는지 확인한다. 없으면 false를 반환한다. (Mybatis)")
     @Test
     void duplicateEmailCheckTest2() {
         //given
-        String email = "test@test.com";
         given(memberMybatisRepository.findByEmail(anyString())).willReturn(Optional.empty());
 
         //when
-        //MessageDTO message = memberServiceApplication.emailCheck(email);
+        boolean isMemberEmail = memberBasicService.getMemberByEmail(email);
 
         //then
-        //assertThat(message.getMessage()).isEqualTo("사용 가능한 이메일 입니다.");
+        assertThat(isMemberEmail).isEqualTo(false);
     }
 }

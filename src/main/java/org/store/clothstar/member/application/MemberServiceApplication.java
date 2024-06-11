@@ -3,7 +3,6 @@ package org.store.clothstar.member.application;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
@@ -37,29 +36,25 @@ public class MemberServiceApplication {
     }
 
     public MemberResponse getMemberById(Long memberId) {
-        return memberBasicService.findById(memberId);
+        return memberBasicService.getMemberById(memberId);
     }
 
     public boolean emailCheck(String email) {
-        return memberBasicService.findByEmail(email);
+        return memberBasicService.getMemberByEmail(email);
     }
 
-    @Transactional
     public void modifyMember(Long memberId, ModifyMemberRequest modifyMemberRequest) {
-        memberBasicService.update(memberId, modifyMemberRequest);
+        memberBasicService.modifyMember(memberId, modifyMemberRequest);
     }
 
-    @Transactional
     public void modifyPassword(Long memberId, String password) {
         memberPasswordUpdateService.updatePassword(memberId, password);
     }
 
-    @Transactional
     public void updateDeleteAt(Long memberId) {
         memberDeleteService.updateDeleteAt(memberId);
     }
 
-    @Transactional
     public Long signup(CreateMemberRequest createMemberDTO) {
         return memberSignupService.signUp(createMemberDTO);
     }

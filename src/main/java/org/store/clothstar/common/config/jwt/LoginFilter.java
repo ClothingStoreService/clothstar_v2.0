@@ -3,7 +3,6 @@ package org.store.clothstar.common.config.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -80,7 +79,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         log.info("생성 refreshToken: Bearer {}", refreshToken);
 
         response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addCookie(createCookie("refreshToken", refreshToken));
+        response.addCookie(jwtUtil.createCookie("refreshToken", refreshToken));
         response.setStatus(HttpStatus.OK.value());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
@@ -103,13 +102,5 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         ObjectMapper om = new ObjectMapper();
 
         response.getWriter().print(om.writeValueAsString(messageDTO));
-    }
-
-    public Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 30); //refresh token하고 같은 생명주기 30분으로 세팅
-        cookie.setHttpOnly(true); //자바스크립트로 쿠키 접근 못하게 막음
-
-        return cookie;
     }
 }

@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 class SecurityConfigurationUnitTest {
     @Autowired
     MockMvc mockMvc;
@@ -49,10 +49,10 @@ class SecurityConfigurationUnitTest {
 
     @DisplayName("인증된 사용자는 User 페이지 사용이 가능한지 테스트")
     @Test
-    @WithMockUser
+    @WithMockUser(username = "현수", roles = "USER")
     void userPageAuthorityTest_authenticatedUser() throws Exception {
         //given
-        final String url = "/userPage";
+        final String url = "/user";
 
         //when && then
         mockMvc
@@ -65,12 +65,12 @@ class SecurityConfigurationUnitTest {
     @WithAnonymousUser
     void userPageAuthorityTest_anonymousUser() throws Exception {
         //given
-        final String url = "/userPage";
+        final String url = "/user";
 
         //when && then
         mockMvc
                 .perform(get(url))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @DisplayName("판매자는 판매자 페이지 사용이 가능한지 테스트")
@@ -78,7 +78,7 @@ class SecurityConfigurationUnitTest {
     @WithMockUser(roles = "SELLER")
     void sellerPageAuthorityTest_sellerUser() throws Exception {
         //given
-        final String url = "/sellerPage";
+        final String url = "/seller";
 
         //when && then
         mockMvc
@@ -91,12 +91,12 @@ class SecurityConfigurationUnitTest {
     @WithAnonymousUser
     void sellerPageAuthorityTest_anonymousUser() throws Exception {
         //given
-        final String url = "/sellerPage";
+        final String url = "/seller";
 
         //when && then
         mockMvc
                 .perform(get(url))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @DisplayName("Admin 권한 사용자는 admin 페이지 사용이 가능한지 테스트")
@@ -104,7 +104,7 @@ class SecurityConfigurationUnitTest {
     @WithMockUser(roles = "ADMIN")
     void adminPageAuthorityTest_adminUser() throws Exception {
         //given
-        final String url = "/adminPage";
+        final String url = "/admin";
 
         //when && then
         mockMvc
@@ -117,11 +117,11 @@ class SecurityConfigurationUnitTest {
     @WithAnonymousUser
     void adminPageAuthorityTest_anonymousUser() throws Exception {
         //given
-        final String url = "/adminPage";
+        final String url = "/admin";
 
         //when && then
         mockMvc
                 .perform(get(url))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 }

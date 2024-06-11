@@ -1,8 +1,6 @@
 package org.store.clothstar.common.config;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,10 +24,8 @@ import org.store.clothstar.common.config.jwt.LoginFilter;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-    private static final Logger log = LoggerFactory.getLogger(SecurityConfiguration.class);
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final JwtUtil jwtUtil;
 
     @Bean
@@ -49,10 +46,10 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(cors -> cors.disable())
-                .csrf(csrf -> csrf.disable())
-                .httpBasic(httpBasic -> httpBasic.disable())
-                .formLogin(formLogin -> formLogin.disable());
+        http.cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/", "/login", "/userPage", "/sellerPage", "/adminPage"
@@ -61,14 +58,12 @@ public class SecurityConfiguration {
                         "/v1/orderdetails",
                         "/v1/seller/orders/**", "/v1/seller/orders", "/v1/orders/**", "/v1/orders").permitAll()
                 .requestMatchers(HttpMethod.POST, "/v1/members").permitAll()
-                .requestMatchers("/seller/**", "/v1/seller/**").hasRole("SELLER")
+                .requestMatchers(HttpMethod.POST, "/v1/sellers/**").authenticated()
+                .requestMatchers("/seller/**", "/v1/sellers/**").hasRole("SELLER")
                 .requestMatchers("/admin/**", "/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/v1/members").hasRole("ADMIN")
                 .anyRequest().authenticated()
         );
-//
-        http.exceptionHandling(exceptionHandling ->
-                exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint));
 
         //JWT 토큰 인증 방식 사용하기에 session 유지 비활성화
         http.sessionManagement(sessionManagement

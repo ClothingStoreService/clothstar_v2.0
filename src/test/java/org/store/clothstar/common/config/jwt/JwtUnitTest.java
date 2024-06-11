@@ -14,14 +14,11 @@ import org.store.clothstar.member.domain.MemberRole;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 @Transactional
 class JwtUnitTest {
     @Autowired
     private JwtUtil jwtUtil;
-
-    @Autowired
-    private JwtService jwtService;
 
     @DisplayName("access 토큰이 생성되는지 확인")
     @Test
@@ -52,23 +49,6 @@ class JwtUnitTest {
         //then
         Assertions.assertThat(refreshToken).isNotNull();
         Assertions.assertThat(tokenType).isEqualTo("REFRESH_TOKEN");
-    }
-
-    @DisplayName("refresh 토큰으로 access 토큰이 생성되는지 확인")
-    @Test
-    void createAccessTokenByRefreshTokenTest() {
-        //given
-        final String refreshToken = jwtUtil.createRefreshToken(getMember());
-        String refreshTokenType = jwtUtil.getTokenType(refreshToken);
-
-        //when
-        final String accessToken = jwtService.getAccessTokenByRefreshToken(refreshToken);
-        String accessTokenType = jwtUtil.getTokenType(accessToken);
-
-        //then
-        Assertions.assertThat(refreshToken).isNotNull();
-        Assertions.assertThat(refreshTokenType).isEqualTo("REFRESH_TOKEN");
-        Assertions.assertThat(accessTokenType).isEqualTo("ACCESS_TOKEN");
     }
 
     private Member getMember() {

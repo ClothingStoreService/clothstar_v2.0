@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.store.clothstar.common.dto.MessageDTO;
+import org.store.clothstar.common.dto.SaveResponseDTO;
 import org.store.clothstar.common.util.MessageDTOBuilder;
 import org.store.clothstar.member.application.MemberServiceApplication;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
@@ -41,8 +42,7 @@ public class MemberController {
 
     @Operation(summary = "이메일 중복 체크", description = "이메일 중복체크를 한다.")
     @GetMapping("/v1/members/email/{email}")
-    public ResponseEntity<MessageDTO> emailCheck(@PathVariable String email) {
-
+    public ResponseEntity<MessageDTO> emailDuplicationCheck(@PathVariable String email) {
         boolean emailExists = memberServiceApplication.emailCheck(email);
 
         MessageDTO messageDTO = MessageDTOBuilder.buildMessage(
@@ -102,17 +102,17 @@ public class MemberController {
 
     @Operation(summary = "회원가입", description = "회원가입시 회원 정보를 저장한다.")
     @PostMapping("/v1/members")
-    public ResponseEntity<MessageDTO> signup(@Validated @RequestBody CreateMemberRequest createMemberDTO) {
+    public ResponseEntity<SaveResponseDTO> signup(@Validated @RequestBody CreateMemberRequest createMemberDTO) {
         log.info("회원가입 요청 데이터 : {}", createMemberDTO.toString());
 
         Long memberId = memberServiceApplication.signup(createMemberDTO);
 
-        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(
-                memberId,
-                HttpStatus.OK.value(),
-                "memberId : " + memberId + " 가 정상적으로 회원가입 되었습니다."
-        );
+        SaveResponseDTO saveResponseDTO = SaveResponseDTO.builder()
+                .id(memberId)
+                .statusCode(HttpStatus.OK.value())
+                .message("memberId : " + memberId + " 가 정상적으로 회원가입 되었습니다.")
+                .build();
 
-        return new ResponseEntity<>(messageDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(saveResponseDTO, HttpStatus.CREATED);
     }
 }

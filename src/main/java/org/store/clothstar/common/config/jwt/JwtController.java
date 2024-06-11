@@ -6,11 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.store.clothstar.common.dto.AccessTokenResponse;
+import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.RefreshTokenInValidException;
+import org.store.clothstar.common.error.exception.RefreshTokenNotFoundException;
 
 @Tag(name = "Jwt", description = "Jwt와 관련된 API 입니다.")
 @RestController
@@ -25,34 +27,30 @@ public class JwtController {
     public ResponseEntity<AccessTokenResponse> reissue(HttpServletRequest request, HttpServletResponse response) {
         log.info("access 토큰 refresh 요청");
         String refreshToken = jwtService.getRefreshToken(request);
-
-        if (refreshToken == null) {
-            log.info("refresh 토큰이 없습니다.");
-            return new ResponseEntity<>(getAccessTokenResponse(null, "refresh 토큰이 없습니다.", false),
-                    HttpStatus.BAD_REQUEST);
-        }
-
-        if (!jwtUtil.validateToken(refreshToken)) {
-            log.info("refresh 토큰이 만료되었거나 유효하지 않습니다.");
-            return new ResponseEntity<>(
-                    getAccessTokenResponse(null, "refresh 토큰이 만료되었거나 유효하지 않습니다.", false),
-                    HttpStatus.BAD_REQUEST);
-        }
+        refreshTokenValidCheck(refreshToken);
 
         String accessToken = jwtService.getAccessTokenByRefreshToken(refreshToken);
         response.addHeader("Authorization", "Bearer " + accessToken);
         log.info("access 토큰이 갱신 되었습니다. {}", accessToken);
 
-        return ResponseEntity.ok(getAccessTokenResponse(accessToken, "access 토큰이 생성 되었습니다.", true));
+        AccessTokenResponse accessTokenResponse = AccessTokenResponse.builder()
+                .accessToken(accessToken)
+                .message("access 토큰이 생성 되었습니다.")
+                .success(true)
+                .build();
+
+        return ResponseEntity.ok(accessTokenResponse);
     }
 
-    private static AccessTokenResponse getAccessTokenResponse(String accessToken, String message, boolean success) {
-        AccessTokenResponse accessTokenResponse = null;
+    private void refreshTokenValidCheck(String refreshToken) {
+        if (refreshToken == null) {
+            log.info("refresh 토큰이 없습니다.");
+            throw new RefreshTokenNotFoundException(ErrorCode.NOT_FOUND_REFRESH_TOKEN);
+        }
 
-        return accessTokenResponse.builder()
-                .accessToken(accessToken)
-                .message(message)
-                .success(success)
-                .build();
+        if (!jwtUtil.validateToken(refreshToken)) {
+            log.info("refresh 토큰이 만료되었거나 유효하지 않습니다.");
+            throw new RefreshTokenInValidException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
     }
 }
