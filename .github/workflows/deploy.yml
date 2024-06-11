@@ -1,5 +1,8 @@
 env:
   S3_BUCKET_NAME: clothstar-bucket
+  CODE_DEPLOY_APP_NAME: clothstar-deploy-v2
+  DEPLOYMENT_GROUP_NAME: clothstar_deploy
+  ZIP_FILE_NAME: clothstar-deploy.zip
 
 name: aws-deploy
 on:
@@ -19,7 +22,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
       - name: Make zip file
-        run: zip -r ./practice-deploy.zip .
+        run: zip -r ./$ZIP_FILE_NAME .
         shell: bash
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -29,6 +32,12 @@ jobs:
           aws-region: ap-northeast-2
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 ./practice-deploy.zip s3://$S3_BUCKET_NAME/practice-deploy.zip
+      - name: Code Deploy
+        run: >
+          aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME
+          --deployment-config-name CodeDeployDefault.AllAtOnce
+          --deployment-group-name $DEPLOYMENT_GROUP_NAME
+          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$ZIP_FILE_NAME
 
 
 
