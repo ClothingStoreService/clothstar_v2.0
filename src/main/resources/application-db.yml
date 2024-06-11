@@ -100,15 +100,19 @@ spring:
 #      ddl-auto: create
 
 --- # dev 공통 설정
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+
 spring:
   config:
     activate:
       on-profile: "db-dev"
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ENC(tdT8e3e+B4Lnbjjca9DuylTI2WMxolkaTxUyT4yJKbFLHUV0YynNjMss5AsaQJxEyndmGmgUlYTuJhx6667fcyUxGiV43314vgEwX+/NaVaSjIa2wiAmMfZu3WPVlgp/)
+    username: ENC(xhLiaQAS5lcTT2hgCMRDOw==)
+    password: ENC(XzhtQOZIlb9QjMX3klXi1EMBAuVOqWrM)
   thymeleaf:
     cache: false
 
