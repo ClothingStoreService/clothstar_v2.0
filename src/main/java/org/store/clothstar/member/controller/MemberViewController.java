@@ -11,6 +11,11 @@ import org.store.clothstar.common.util.MessageDTOBuilder;
 @Tag(name = "index", description = "회원가입, 로그인, 로그아웃 기능과 user, seller, admin 페이지로 이동하기 위한 API 입니다.")
 @Controller
 public class MemberViewController {
+    @GetMapping("/main")
+    public String main() {
+        return "index";
+    }
+
     @GetMapping("/signup")
     public String signup() {
         return "signup";

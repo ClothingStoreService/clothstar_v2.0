@@ -52,7 +52,7 @@ public class SecurityConfiguration {
                 .formLogin(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/", "/login", "/userPage", "/sellerPage", "/adminPage"
+                .requestMatchers("/", "/login", "/userPage", "/sellerPage", "/adminPage", "/main"
                         , "/v1/login", "/signup", "/v1/members/email/**", "/v1/access",
                         "/v1/categories/**", "/v1/products/**", "/v1/productLines/**", "/v2/productLines/**",
                         "/v1/orderdetails", "/v1/orders",
