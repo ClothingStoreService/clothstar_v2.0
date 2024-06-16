@@ -14,7 +14,7 @@ import org.store.clothstar.common.error.ErrorCode;
 import org.store.clothstar.common.error.exception.RefreshTokenInValidException;
 import org.store.clothstar.common.error.exception.RefreshTokenNotFoundException;
 
-@Tag(name = "Jwt", description = "Jwt와 관련된 API 입니다.")
+@Tag(name = "Auth")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
