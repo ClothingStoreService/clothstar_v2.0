@@ -57,7 +57,7 @@ class AddressControllerIntegrationTest {
     @Autowired
     private JwtUtil jwtUtil;
 
-    private static final String ADDRESS_URL = "/v1/members/address/";
+    private static final String ADDRESS_URL = "/v1/members/addresses/";
     private Long memberId;
     private String accessToken;
     private Member member;
