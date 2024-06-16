@@ -28,7 +28,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/v1/login");
+        setFilterProcessesUrl("/v1/members/login");
     }
 
     /**
@@ -42,8 +42,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
+        log.info("로그인 진행");
 
-        log.info("attemptAuthentication() 실행");
         ObjectMapper om = new ObjectMapper();
         MemberLoginRequest memberLoginRequest;
         String email;
@@ -58,7 +58,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         UsernamePasswordAuthenticationToken authTokenDTO
                 = new UsernamePasswordAuthenticationToken(email, password, null);
 

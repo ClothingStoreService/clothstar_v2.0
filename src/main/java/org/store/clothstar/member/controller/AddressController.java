@@ -15,22 +15,22 @@ import org.store.clothstar.member.dto.response.AddressResponse;
 
 import java.util.List;
 
-@Tag(name = "Address", description = "회원 배송지 주소 관련 API 입니다.")
+@Tag(name = "Member")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class AddressController {
     private final AddressServiceApplication addressServiceApplication;
 
-    @Operation(summary = "상품 옵션 상세 조회", description = "회원 한 명에 대한 배송지를 전부 가져온다.")
-    @GetMapping("/v1/members/address/{id}")
+    @Operation(summary = "회원 배송지 전체 리스트 조회", description = "회원 한 명에 대한 배송지를 전부 가져온다.")
+    @GetMapping("/v1/members/addresses/{id}")
     public ResponseEntity<List<AddressResponse>> getMemberAllAddress(@PathVariable("id") Long memberId) {
         List<AddressResponse> memberList = addressServiceApplication.getMemberAllAddress(memberId);
         return ResponseEntity.ok(memberList);
     }
 
     @Operation(summary = "회원 배송지 저장", description = "회원 한 명에 대한 배송지를 저장한다.")
-    @PostMapping("/v1/members/address/{id}")
+    @PostMapping("/v1/members/addresses/{id}")
     public ResponseEntity<SaveResponseDTO> addrSave(@Validated @RequestBody CreateAddressRequest createAddressRequest,
                                                     @PathVariable("id") Long memberId) {
         log.info("회원 배송지 저장 요청 데이터 : {}", createAddressRequest.toString());

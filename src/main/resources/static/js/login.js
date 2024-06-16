@@ -2,7 +2,7 @@ const loginButton = document.getElementById("login-btn");
 
 if (loginButton) {
     loginButton.addEventListener("click", (event) => {
-        fetch("/v1/login", {
+        fetch("/v1/members/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
