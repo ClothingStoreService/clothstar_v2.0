@@ -33,7 +33,7 @@ class AddressControllerValidationTest {
     @Autowired
     MemberJpaRepositoryAdapter memberJpaRepository;
 
-    private static final String ADDRESS_ADD_URL = "/v1/members/address/1";
+    private static final String ADDRESS_ADD_URL = "/v1/members/addresses/1";
 
     @DisplayName("주소 추가시 받는사람은 필수 값이다.")
     @WithMockUser(username = "현수", roles = "USER")
@@ -134,5 +134,4 @@ class AddressControllerValidationTest {
         actions.andExpect(status().is4xxClientError());
         actions.andExpect(jsonPath("$.errorMap.telNo").value("유효하지 않은 전화번호 형식입니다."));
     }
-
 }
