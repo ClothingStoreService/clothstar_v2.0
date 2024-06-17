@@ -38,6 +38,12 @@ jobs:
           --deployment-config-name CodeDeployDefault.AllAtOnce
           --deployment-group-name $DEPLOYMENT_GROUP_NAME
           --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$ZIP_FILE_NAME
+      - name: Notify Discord
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          status: ${{ job.status }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
 
 
