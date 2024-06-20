@@ -29,38 +29,25 @@ public class OrderController {
     @Operation(summary = "단일 주문 조회", description = "단일 주문의 정보를 조회한다.")
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable Long orderId) {
-
         OrderResponse orderResponse = orderService.getOrder(orderId);
-
-        return ResponseEntity.ok().body(orderResponse);
+        return ResponseEntity.ok(orderResponse);
     }
 
     @Operation(summary = "주문 생성", description = "단일 주문을 생성한다.")
     @PostMapping
-    public ResponseEntity<URI> saveOrder(
-            @RequestBody @Validated OrderRequestWrapper orderRequestWrapper) {
-
+    public ResponseEntity<URI> saveOrder(@RequestBody @Validated OrderRequestWrapper orderRequestWrapper) {
         Long orderId = orderApplicationService.saveOrderWithTransaction(orderRequestWrapper);
-
         URI location = URIBuilder.buildURI(orderId);
-
         return ResponseEntity.created(location).build();
     }
 
     @Operation(summary = "구매 확정", description = "구매자가 구매 확정 시, 주문상태가 '구매확정'으로 변경된다.")
     @PatchMapping("/{orderId}")
     public ResponseEntity<MessageDTO> deliveredToConfirmOrder(@PathVariable Long orderId) {
-
         orderService.deliveredToConfirmOrder(orderId);
-
-        return ResponseEntity.ok()
-                .body(new MessageDTO(
-                        HttpStatus.OK.value(),
-                        "주문이 정상적으로 구매 확정 되었습니다."));
+        return ResponseEntity.ok(new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 구매 확정 되었습니다."));
     }
 }
-
-
 
 
 

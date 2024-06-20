@@ -24,20 +24,15 @@ public class OrderSellerController {
     @Operation(summary = "(판매자) WAITING 주문 리스트 조회", description = "(판매자) 주문상태가 '승인대기'인 주문 리스트를 조회한다.")
     @GetMapping
     public ResponseEntity<List<OrderResponse>> getWaitingOrder() {
-
         List<OrderResponse> orderResponseList = orderSellerService.getWaitingOrder();
-
         return ResponseEntity.ok(orderResponseList);
     }
 
     @Operation(summary = "(판매자) 주문 승인 또는 취소", description = "(판매자) 주문을 승인 또는 취소한다.")
     @PatchMapping("/{orderId}")
-    public ResponseEntity<MessageDTO> cancelOrApproveOrder(
-            @PathVariable Long orderId,
-            @RequestBody @Validated OrderSellerRequest orderSellerRequest) {
-
+    public ResponseEntity<MessageDTO> cancelOrApproveOrder(@PathVariable Long orderId,
+                                                           @RequestBody @Validated OrderSellerRequest orderSellerRequest) {
         MessageDTO messageDTO = orderSellerService.cancelOrApproveOrder(orderId, orderSellerRequest);
-
-        return ResponseEntity.ok().body(messageDTO);
+        return ResponseEntity.ok(messageDTO);
     }
 }
