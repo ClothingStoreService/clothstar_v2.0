@@ -33,7 +33,7 @@ public class OrderSellerController {
     @Operation(summary = "(판매자) 주문 승인 또는 취소", description = "(판매자) 주문을 승인 또는 취소한다.")
     @PatchMapping("/{orderId}")
     public ResponseEntity<MessageDTO> cancelOrApproveOrder(
-            @PathVariable("orderId") Long orderId,
+            @PathVariable Long orderId,
             @RequestBody @Validated OrderSellerRequest orderSellerRequest) {
 
         MessageDTO messageDTO = orderSellerService.cancelOrApproveOrder(orderId, orderSellerRequest);
