@@ -18,10 +18,8 @@ public class JpaOrderSellerRepositoryAdapter implements UpperOrderSellerReposito
 
     @Override
     public List<Order> SelectWaitingOrders() {
-        List<OrderEntity> orderEntityList = jpaOrderSellerRepository.findAll();
-
+        List<OrderEntity> orderEntityList = jpaOrderSellerRepository.findWaitingOrders();
         return orderEntityList.stream()
-                .filter(orderEntity -> orderEntity.getStatus() == Status.WAITING)
                 .map(Order::new)
                 .collect(Collectors.toList());
     }
