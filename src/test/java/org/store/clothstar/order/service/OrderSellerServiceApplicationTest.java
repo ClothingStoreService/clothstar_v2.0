@@ -17,6 +17,7 @@ import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
 import org.store.clothstar.order.repository.order.MybatisOrderRepository;
 import org.store.clothstar.order.repository.orderSeller.UpperOrderSellerRepository;
+import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,6 +46,9 @@ class OrderSellerServiceApplicationTest {
 
     @Mock
     private MybatisOrderRepository orderRepository;
+
+    @Mock
+    private OrderDetailService orderDetailService;
 
     @Test
     @DisplayName("getWaitingOrders: '승인대기' 주문 조회 - 메서드 호출 & 반환값 테스트")

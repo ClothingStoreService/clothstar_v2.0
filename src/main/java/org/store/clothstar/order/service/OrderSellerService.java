@@ -12,6 +12,8 @@ import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
 import org.store.clothstar.order.repository.order.MybatisOrderRepository;
 import org.store.clothstar.order.repository.orderSeller.UpperOrderSellerRepository;
+import org.store.clothstar.orderDetail.repository.UpperOrderDetailRepository;
+import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,15 +22,22 @@ import java.util.stream.Collectors;
 public class OrderSellerService {
 
     private final UpperOrderSellerRepository upperOrderSellerRepository;
+    private final UpperOrderDetailRepository upperOrderDetailRepository;
     private final MybatisOrderRepository orderRepository;
+    private final OrderDetailService orderDetailService;
 
     public OrderSellerService(
-            @Qualifier("jpaOrderSellerRepositoryAdapter") UpperOrderSellerRepository upperOrderSellerRepository
+            @Qualifier("jpaOrderSellerRepositoryAdapter") UpperOrderSellerRepository upperOrderSellerRepository,
+            @Qualifier("jpaOrderDetailRepositoryAdapter") UpperOrderDetailRepository upperOrderDetailRepository
 //            @Qualifier("mybatisOrderSellerRepository") UpperOrderSellerRepository upperOrderSellerRepository
-            , MybatisOrderRepository orderRepository
+//            @Qualifier("mybatisOrderDetailRepository") UpperOrderDetailRepository upperOrderDetailRepository,
+            ,MybatisOrderRepository orderRepository
+            ,OrderDetailService orderDetailService
     ) {
         this.upperOrderSellerRepository = upperOrderSellerRepository;
+        this.upperOrderDetailRepository = upperOrderDetailRepository;
         this.orderRepository = orderRepository;
+        this.orderDetailService=orderDetailService;
     }
 
     @Transactional(readOnly = true)
@@ -61,6 +70,7 @@ public class OrderSellerService {
             messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.");
         } else if (orderSellerRequest.getApprovalStatus() == ApprovalStatus.CANCEL) {
             upperOrderSellerRepository.cancelOrder(orderId);
+            orderDetailService.restoreStockByOrder(orderId);
             messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.");
         }
 
