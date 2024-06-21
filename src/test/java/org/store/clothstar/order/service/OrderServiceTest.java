@@ -19,7 +19,6 @@ import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
 import org.store.clothstar.order.repository.order.UpperOrderRepository;
-import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -43,9 +42,6 @@ class OrderServiceTest {
 
     @Mock
     private AddressRepository addressRepository;
-
-    @Mock
-    private OrderDetailService orderDetailService;
 
     @Test
     @DisplayName("getOrder: 주문 조회 - 메서드 호출 & 반환값 테스트")

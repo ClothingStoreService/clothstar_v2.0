@@ -12,7 +12,6 @@ import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
 import org.store.clothstar.order.repository.order.UpperOrderRepository;
 import org.store.clothstar.order.repository.orderSeller.UpperOrderSellerRepository;
-import org.store.clothstar.orderDetail.repository.UpperOrderDetailRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 import java.util.List;
@@ -27,10 +26,8 @@ public class OrderSellerService {
 
     public OrderSellerService(
             @Qualifier("jpaOrderSellerRepositoryAdapter") UpperOrderSellerRepository upperOrderSellerRepository,
-            @Qualifier("jpaOrderDetailRepositoryAdapter") UpperOrderDetailRepository upperOrderDetailRepository,
             @Qualifier("jpaOrderRepositoryAdapter") UpperOrderRepository upperOrderRepository
 //            @Qualifier("mybatisOrderSellerRepository") UpperOrderSellerRepository upperOrderSellerRepository
-//            @Qualifier("mybatisOrderDetailRepository") UpperOrderDetailRepository upperOrderDetailRepository,
 //            @Qualifier("mybatisOrderRepository") UpperOrderRepository upperOrderRepository
             ,OrderDetailService orderDetailService
     ) {

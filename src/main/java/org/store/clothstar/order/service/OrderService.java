@@ -15,7 +15,6 @@ import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.repository.order.UpperOrderRepository;
-import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 @Slf4j
 @Service
@@ -24,7 +23,6 @@ public class OrderService {
     private final UpperOrderRepository upperOrderRepository;
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
-    private final OrderDetailService orderDetailService;
 
     public OrderService(
             @Qualifier("jpaOrderRepositoryAdapter") UpperOrderRepository upperOrderRepository
@@ -38,7 +36,6 @@ public class OrderService {
         this.upperOrderRepository = upperOrderRepository;
         this.memberRepository = memberRepository;
         this.addressRepository = addressRepository;
-        this.orderDetailService = orderDetailService;
     }
 
     @Transactional(readOnly = true)
