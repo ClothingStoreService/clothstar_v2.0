@@ -8,9 +8,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.MemberGrade;
 import org.store.clothstar.member.domain.MemberRole;
+import org.store.clothstar.member.entity.MemberEntity;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -24,7 +24,7 @@ class JwtUnitTest {
     @Test
     void createAccessTokenTest() {
         //given
-        Member member = getMember();
+        MemberEntity memberEntity = getMember();
 
         //when
         String accessToken = jwtUtil.createAccessToken(getMember());
@@ -40,7 +40,7 @@ class JwtUnitTest {
     @Test
     void createRefreshTokenTest() {
         //given
-        Member member = getMember();
+        MemberEntity memberEntity = getMember();
 
         //when
         String refreshToken = jwtUtil.createRefreshToken(getMember());
@@ -51,8 +51,8 @@ class JwtUnitTest {
         Assertions.assertThat(tokenType).isEqualTo("REFRESH_TOKEN");
     }
 
-    private Member getMember() {
-        return Member.builder()
+    private MemberEntity getMember() {
+        return MemberEntity.builder()
                 .memberId(1L)
                 .email("test@test.com")
                 .password("test")

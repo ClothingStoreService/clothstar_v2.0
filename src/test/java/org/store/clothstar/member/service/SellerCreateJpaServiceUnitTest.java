@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ActiveProfiles("test")
 class SellerCreateJpaServiceUnitTest {
     @Autowired
-    SellerCreateJpaServiceImpl sellerCreateJpaService;
+    SellerService sellerService;
 
     @Autowired
-    private MemberSignupJpaServiceImpl memberSignupJpaService;
+    private MemberService memberService;
 
     private Long memberId;
     private Long memberId2;
@@ -31,10 +31,10 @@ class SellerCreateJpaServiceUnitTest {
     @DisplayName("회원가입과 판매자 신청을 진행 하고 memberId와 sellerId가 정상적으로 반환되는지 확인한다.")
     @BeforeEach
     public void signUp_getMemberId() {
-        memberId = memberSignupJpaService.signUp(getCreateMemberRequest());
-        memberId2 = memberSignupJpaService.signUp(getCreateMemberRequest2());
+        memberId = memberService.signUp(getCreateMemberRequest());
+        memberId2 = memberService.signUp(getCreateMemberRequest2());
 
-        Long sellerId = sellerCreateJpaService.sellerSave(memberId, getCreateSellerRequest());
+        Long sellerId = sellerService.sellerSave(memberId, getCreateSellerRequest());
 
         assertThat(memberId).isNotEqualTo(null);
         assertThat(sellerId).isNotEqualTo(null);
@@ -48,7 +48,7 @@ class SellerCreateJpaServiceUnitTest {
     void sellerSaveDuplicateTest() {
         //given & when
         Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
-            sellerCreateJpaService.sellerSave(memberId, getCreateSellerRequest());
+            sellerService.sellerSave(memberId, getCreateSellerRequest());
         });
 
         //then
@@ -64,7 +64,7 @@ class SellerCreateJpaServiceUnitTest {
         );
 
         Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
-            sellerCreateJpaService.sellerSave(memberId2, createSellerRequest);
+            sellerService.sellerSave(memberId2, createSellerRequest);
         });
 
         //then
@@ -80,7 +80,7 @@ class SellerCreateJpaServiceUnitTest {
         );
 
         Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
-            sellerCreateJpaService.sellerSave(memberId2, createSellerRequest);
+            sellerService.sellerSave(memberId2, createSellerRequest);
         });
 
         //then

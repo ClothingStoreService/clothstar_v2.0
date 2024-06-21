@@ -9,8 +9,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.repository.AddressMybatisRepository;
-import org.store.clothstar.member.repository.MemberMybatisRepository;
+import org.store.clothstar.member.entity.AddressEntity;
+import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.repository.AddressRepository;
+import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
@@ -37,10 +39,10 @@ class OrderServiceTest {
     private UpperOrderRepository upperOrderRepository;
 
     @Mock
-    private MemberMybatisRepository memberMybatisRepository;
+    private MemberRepository memberRepository;
 
     @Mock
-    private AddressMybatisRepository addressMybatisRepository;
+    private AddressRepository addressRepository;
 
     @Mock
     private OrderDetailService orderDetailService;
@@ -86,23 +88,23 @@ class OrderServiceTest {
         Order order = mock(Order.class);
         OrderRequestWrapper orderRequestWrapper = mock(OrderRequestWrapper.class);
         CreateOrderRequest createOrderRequest = mock(CreateOrderRequest.class);
-        Member mockmember = mock(Member.class);
-        Address mockAddress = mock(Address.class);
+        MemberEntity mockmember = mock(MemberEntity.class);
+        AddressEntity mockAddress = mock(AddressEntity.class);
 
         given(orderRequestWrapper.getCreateOrderRequest()).willReturn(createOrderRequest);
         given(createOrderRequest.getMemberId()).willReturn(1L);
         given(createOrderRequest.getAddressId()).willReturn(2L);
 
-        given(memberMybatisRepository.findById(createOrderRequest.getMemberId())).willReturn(Optional.of(mockmember));
-        given(addressMybatisRepository.findById(createOrderRequest.getAddressId())).willReturn(Optional.of(mockAddress));
+        given(memberRepository.findById(createOrderRequest.getMemberId())).willReturn(Optional.of(mockmember));
+        given(addressRepository.findById(createOrderRequest.getAddressId())).willReturn(Optional.of(mockAddress));
         given(createOrderRequest.toOrder(mockmember, mockAddress)).willReturn(order);
 
         //when
         orderService.saveOrder(orderRequestWrapper.getCreateOrderRequest());
 
         //then
-        then(memberMybatisRepository).should(times(1)).findById(createOrderRequest.getMemberId());
-        then(addressMybatisRepository).should(times(1)).findById(createOrderRequest.getAddressId());
+        then(memberRepository).should(times(1)).findById(createOrderRequest.getMemberId());
+        then(addressRepository).should(times(1)).findById(createOrderRequest.getAddressId());
         then(upperOrderRepository).should(times(1)).saveOrder(order);
         verify(order).getOrderId();
     }
@@ -114,8 +116,8 @@ class OrderServiceTest {
         Order order = mock(Order.class);
         OrderRequestWrapper orderRequestWrapper = mock(OrderRequestWrapper.class);
         CreateOrderRequest createOrderRequest = mock(CreateOrderRequest.class);
-        Member mockmember = mock(Member.class);
-        Address mockAddress = mock(Address.class);
+        MemberEntity mockmember = mock(MemberEntity.class);
+        AddressEntity mockAddress = mock(AddressEntity.class);
 
         given(order.getOrderId()).willReturn(1L);
 
@@ -124,8 +126,8 @@ class OrderServiceTest {
         given(createOrderRequest.getMemberId()).willReturn(1L);
         given(createOrderRequest.getAddressId()).willReturn(2L);
 
-        given(memberMybatisRepository.findById(1L)).willReturn(Optional.of(mockmember));
-        given(addressMybatisRepository.findById(2L)).willReturn(Optional.of(mockAddress));
+        given(memberRepository.findById(1L)).willReturn(Optional.of(mockmember));
+        given(addressRepository.findById(2L)).willReturn(Optional.of(mockAddress));
         given(createOrderRequest.toOrder(mockmember, mockAddress)).willReturn(order);
 
         //when
@@ -146,7 +148,7 @@ class OrderServiceTest {
 
         given(orderRequestWrapper.getCreateOrderRequest()).willReturn(createOrderRequest);
         given(createOrderRequest.getMemberId()).willReturn(1L);
-        given(memberMybatisRepository.findById(1L)).willReturn(Optional.empty());
+        given(memberRepository.findById(1L)).willReturn(Optional.empty());
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
@@ -164,14 +166,14 @@ class OrderServiceTest {
         mock(Order.class);
         OrderRequestWrapper orderRequestWrapper = mock(OrderRequestWrapper.class);
         CreateOrderRequest createOrderRequest = mock(CreateOrderRequest.class);
-        Member mockmember = mock(Member.class);
+        MemberEntity mockmember = mock(MemberEntity.class);
         mock(Address.class);
 
         given(orderRequestWrapper.getCreateOrderRequest()).willReturn(createOrderRequest);
         given(createOrderRequest.getMemberId()).willReturn(1L);
         given(createOrderRequest.getAddressId()).willReturn(2L);
-        given(memberMybatisRepository.findById(1L)).willReturn(Optional.of(mockmember));
-        given(addressMybatisRepository.findById(2L)).willReturn(Optional.empty());
+        given(memberRepository.findById(1L)).willReturn(Optional.of(mockmember));
+        given(addressRepository.findById(2L)).willReturn(Optional.empty());
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {

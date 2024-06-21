@@ -1,16 +1,16 @@
 package org.store.clothstar.member.repository;
 
-import org.store.clothstar.member.domain.Member;
+import org.store.clothstar.member.entity.MemberEntity;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository {
-    List<Member> findAll();
+    List<MemberEntity> findAll();
 
-    Optional<Member> findById(Long memberId);
+    Optional<MemberEntity> findById(Long memberId);
 
-    Optional<Member> findByEmail(String email);
+    Optional<MemberEntity> findByEmail(String email);
 
-    void update(Member member);
+    MemberEntity save(MemberEntity memberEntity);
 }

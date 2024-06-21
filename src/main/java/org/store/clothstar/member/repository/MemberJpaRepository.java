@@ -5,6 +5,6 @@ import org.store.clothstar.member.entity.MemberEntity;
 
 import java.util.Optional;
 
-public interface MemberJpaRepository extends JpaRepository<MemberEntity, Long> {
+public interface MemberJpaRepository extends JpaRepository<MemberEntity, Long>, MemberRepository {
     Optional<MemberEntity> findByEmail(String email);
 }

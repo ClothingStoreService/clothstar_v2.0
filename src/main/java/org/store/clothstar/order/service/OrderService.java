@@ -6,10 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import org.store.clothstar.member.domain.Address;
-import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.repository.AddressMybatisRepository;
-import org.store.clothstar.member.repository.MemberMybatisRepository;
+import org.store.clothstar.member.entity.AddressEntity;
+import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.repository.AddressRepository;
+import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
@@ -22,20 +22,20 @@ import org.store.clothstar.orderDetail.service.OrderDetailService;
 public class OrderService {
 
     private final UpperOrderRepository upperOrderRepository;
-    private final MemberMybatisRepository memberMybatisRepository;
-    private final AddressMybatisRepository addressMybatisRepository;
+    private final MemberRepository memberRepository;
+    private final AddressRepository addressRepository;
     private final OrderDetailService orderDetailService;
 
     public OrderService(
             @Qualifier("jpaOrderRepositoryAdapter") UpperOrderRepository upperOrderRepository
 //            @Qualifier("mybatisOrderRepository") UpperOrderRepository upperOrderRepository
-            , MemberMybatisRepository memberMybatisRepository
-            , AddressMybatisRepository addressMybatisRepository
+            , MemberRepository memberRepository
+            , AddressRepository addressRepository
             , OrderDetailService orderDetailService
     ) {
         this.upperOrderRepository = upperOrderRepository;
-        this.memberMybatisRepository = memberMybatisRepository;
-        this.addressMybatisRepository = addressMybatisRepository;
+        this.memberRepository = memberRepository;
+        this.addressRepository = addressRepository;
         this.orderDetailService = orderDetailService;
     }
 
@@ -50,13 +50,13 @@ public class OrderService {
     @Transactional
     public Long saveOrder(CreateOrderRequest createOrderRequest) {
 
-        Member member = memberMybatisRepository.findById(createOrderRequest.getMemberId())
+        MemberEntity memberEntity = memberRepository.findById(createOrderRequest.getMemberId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원 정보를 찾을 수 없습니다."));
 
-        Address address = addressMybatisRepository.findById(createOrderRequest.getAddressId())
+        AddressEntity addressEntity = addressRepository.findById(createOrderRequest.getAddressId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "배송지 정보를 찾을 수 없습니다."));
 
-        Order order = createOrderRequest.toOrder(member, address);
+        Order order = createOrderRequest.toOrder(memberEntity, addressEntity);
         upperOrderRepository.saveOrder(order);
 
         return order.getOrderId();

@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AddressJpaRepository extends JpaRepository<AddressEntity, Long> {
-
+public interface AddressJpaRepository extends JpaRepository<AddressEntity, Long>, AddressRepository {
     @Query("SELECT addr FROM address addr WHERE addr.member.memberId = :memberId")
     List<AddressEntity> findAddressListByMemberId(@Param("memberId") Long memberId);
 
