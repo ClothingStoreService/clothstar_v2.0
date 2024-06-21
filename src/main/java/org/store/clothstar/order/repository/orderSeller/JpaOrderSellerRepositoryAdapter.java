@@ -2,7 +2,6 @@ package org.store.clothstar.order.repository.orderSeller;
 
 import org.springframework.stereotype.Repository;
 import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.entity.OrderEntity;
 
 import java.util.List;

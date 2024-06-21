@@ -15,7 +15,6 @@ import org.store.clothstar.order.domain.type.ApprovalStatus;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
-import org.store.clothstar.order.repository.order.MybatisOrderRepository;
 import org.store.clothstar.order.repository.order.UpperOrderRepository;
 import org.store.clothstar.order.repository.orderSeller.UpperOrderSellerRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
