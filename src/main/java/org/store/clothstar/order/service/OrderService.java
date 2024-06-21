@@ -28,6 +28,8 @@ public class OrderService {
 
     public OrderService(
             @Qualifier("jpaOrderRepositoryAdapter") UpperOrderRepository upperOrderRepository
+            ,@Qualifier("memberJpaRepositoryAdapter") MemberRepository memberRepository
+            ,@Qualifier("addressJpaRepositoryAdapter") AddressRepository addressRepository
 //            @Qualifier("mybatisOrderRepository") UpperOrderRepository upperOrderRepository
             , MemberRepository memberRepository
             , AddressRepository addressRepository

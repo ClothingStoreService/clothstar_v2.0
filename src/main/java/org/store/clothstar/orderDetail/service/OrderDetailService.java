@@ -69,7 +69,6 @@ public class OrderDetailService {
                 order.getTotalProductsPrice() + order.getTotalShippingPrice() + orderDetail.getOneKindTotalPrice();
 
         order.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
-        log.info("총 주문 가격 =" + order.getTotalPaymentPrice());
         upperOrderRepository.updateOrderPrices(order);
 
         // 주문 수량만큼 상품 재고 차감

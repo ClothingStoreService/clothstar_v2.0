@@ -16,6 +16,7 @@ import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
 import org.store.clothstar.order.repository.order.MybatisOrderRepository;
+import org.store.clothstar.order.repository.order.UpperOrderRepository;
 import org.store.clothstar.order.repository.orderSeller.UpperOrderSellerRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 
@@ -45,7 +46,7 @@ class OrderSellerServiceApplicationTest {
     private UpperOrderSellerRepository upperOrderSellerRepository;
 
     @Mock
-    private MybatisOrderRepository orderRepository;
+    private UpperOrderRepository upperOrderRepository;
 
     @Mock
     private OrderDetailService orderDetailService;
@@ -84,14 +85,14 @@ class OrderSellerServiceApplicationTest {
         given(mockOrder.getStatus()).willReturn(Status.WAITING);
         given(mockOrder.getCreatedAt()).willReturn(LocalDateTime.now());
         given(mockOrderSellerRequest.getApprovalStatus()).willReturn(ApprovalStatus.APPROVE);
-        given(orderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
+        given(upperOrderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
 
         //when
         MessageDTO messageDTO = orderSellerService.cancelOrApproveOrder(orderId, mockOrderSellerRequest);
 
         //then
         then(upperOrderSellerRepository).should(times(1)).approveOrder(orderId);
-        then(orderRepository).should(times(2)).getOrder(orderId);
+        then(upperOrderRepository).should(times(2)).getOrder(orderId);
         assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 승인 되었습니다.");
     }
@@ -105,14 +106,14 @@ class OrderSellerServiceApplicationTest {
         given(mockOrder.getStatus()).willReturn(Status.WAITING);
         given(mockOrder.getCreatedAt()).willReturn(LocalDateTime.now());
         given(mockOrderSellerRequest.getApprovalStatus()).willReturn(ApprovalStatus.CANCEL);
-        given(orderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
+        given(upperOrderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
 
         //when
         MessageDTO messageDTO = orderSellerService.cancelOrApproveOrder(orderId, mockOrderSellerRequest);
 
         //then
         then(upperOrderSellerRepository).should(times(1)).cancelOrder(orderId);
-        then(orderRepository).should(times(2)).getOrder(orderId);
+        then(upperOrderRepository).should(times(2)).getOrder(orderId);
         assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 취소 되었습니다.");
     }
@@ -123,7 +124,7 @@ class OrderSellerServiceApplicationTest {
 
         //given
         Long orderId = 1L;
-        given(orderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
+        given(upperOrderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
         given(mockOrder.getStatus()).willReturn(Status.DELIVERED);
 
         //when
@@ -141,7 +142,7 @@ class OrderSellerServiceApplicationTest {
         //given
         Long orderId = 1L;
         given(mockOrderSellerRequest.getApprovalStatus()).willReturn(ApprovalStatus.APPROVE);
-        given(orderRepository.getOrder(orderId)).willReturn(Optional.empty());
+        given(upperOrderRepository.getOrder(orderId)).willReturn(Optional.empty());
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
