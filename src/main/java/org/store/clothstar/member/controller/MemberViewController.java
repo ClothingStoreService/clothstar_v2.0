@@ -16,6 +16,11 @@ public class MemberViewController {
         return "index";
     }
 
+    @GetMapping("/membersPagingOffset")
+    public String membersPagingOffset() {
+        return "memberList";
+    }
+
     @GetMapping("/signup")
     public String signup() {
         return "signup";
