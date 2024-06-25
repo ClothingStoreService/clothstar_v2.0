@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.store.clothstar.category.domain.Category;
 import org.store.clothstar.common.entity.BaseTimeEntity;
 import org.store.clothstar.member.entity.SellerEntity;
@@ -20,6 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@BatchSize(size = 100)
 @Entity(name = "product_line")
 //@Table(name = "product_line")
 public class ProductLineEntity extends BaseTimeEntity {
@@ -42,7 +44,7 @@ public class ProductLineEntity extends BaseTimeEntity {
 
     private int price;
 
-    private Long totalStock;
+//    private Long totalStock;
 
     @Enumerated(EnumType.STRING)
     private ProductLineStatus status;
@@ -63,6 +65,19 @@ public class ProductLineEntity extends BaseTimeEntity {
 
     public void changeProductStatus(ProductLineStatus productLineStatus) {
         this.status = productLineStatus;
+    }
+
+    // 상품 전체 재고 계산
+    public long calculateTotalStock() {
+        return products.stream().mapToLong(ProductEntity::getStock).sum();
+    }
+
+    // 상품 전체 재고 확인 및 상태 업데이트
+    public void checkAndUpdateStatus() {
+        long totalStock = calculateTotalStock();
+        if (totalStock == 0 && this.status != ProductLineStatus.SOLD_OUT) {
+            this.status = ProductLineStatus.SOLD_OUT;
+        }
     }
 
     public void delete() {
