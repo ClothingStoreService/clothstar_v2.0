@@ -96,6 +96,10 @@ spring:
   jpa:
     show-sql: true
     database-platform: H2
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
 #    hibernate:
 #      ddl-auto: create
 
@@ -131,5 +135,9 @@ spring:
   jpa:
     show-sql: true
     database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
 #    hibernate:
 #      ddl-auto: create
