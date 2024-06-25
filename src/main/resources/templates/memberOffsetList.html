@@ -45,8 +45,7 @@
     });
 
     function loadMembers(page = 0) {
-        const pageSize = 10; // 한 페이지에 보일 아이템 수
-        const url = `/v2/members?page=${page}`;
+        const url = `/v2/members`;
 
         fetch(url)
             .then(response => response.json())

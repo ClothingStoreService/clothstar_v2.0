@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +35,19 @@ public class MemberController {
         return ResponseEntity.ok(memberList);
     }
 
-    @Operation(summary = "전체 회원 조회", description = "전체 회원 리스트를 가져온다.")
+    @Operation(summary = "전체 회원 조회 offset 페이징", description = "전체 회원 리스트를 offset 페이징 형식으로 가져온다.")
     @GetMapping("/v2/members")
     public ResponseEntity<Page<MemberResponse>> getAllMemberOffsetPaging(
-            @PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
+            @PageableDefault(size = 10) Pageable pageable) {
         Page<MemberResponse> memberPages = memberServiceApplication.getAllMemberOffsetPaging(pageable);
+        return ResponseEntity.ok(memberPages);
+    }
+
+    @Operation(summary = "전체 회원 조회 slice 페이징", description = "전체 회원 리스트를 slice 페이징 형식으로 가져온다.")
+    @GetMapping("/v3/members")
+    public ResponseEntity<Slice<MemberResponse>> getAllMemberSlicePaging(
+            @PageableDefault(size = 15) Pageable pageable) {
+        Slice<MemberResponse> memberPages = memberServiceApplication.getAllMemberSlicePaging(pageable);
         return ResponseEntity.ok(memberPages);
     }
 
