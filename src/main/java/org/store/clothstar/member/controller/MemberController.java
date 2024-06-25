@@ -38,7 +38,7 @@ public class MemberController {
     @Operation(summary = "전체 회원 조회 offset 페이징", description = "전체 회원 리스트를 offset 페이징 형식으로 가져온다.")
     @GetMapping("/v2/members")
     public ResponseEntity<Page<MemberResponse>> getAllMemberOffsetPaging(
-            @PageableDefault(size = 10) Pageable pageable) {
+            @PageableDefault(size = 15) Pageable pageable) {
         Page<MemberResponse> memberPages = memberServiceApplication.getAllMemberOffsetPaging(pageable);
         return ResponseEntity.ok(memberPages);
     }
