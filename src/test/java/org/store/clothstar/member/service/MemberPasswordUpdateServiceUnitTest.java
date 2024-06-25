@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.store.clothstar.member.entity.MemberEntity;
-import org.store.clothstar.member.repository.MemberJpaRepository;
+import org.store.clothstar.member.repository.MemberRepository;
 
 import java.util.Optional;
 
@@ -22,10 +22,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MemberPasswordUpdateServiceUnitTest {
     @Mock
-    private MemberJpaRepository memberJpaRepository;
+    private MemberRepository memberRepository;
 
     @InjectMocks
-    private MemberPasswordUpdateServiceImpl memberPasswordUpdateService;
+    private MemberServiceImpl memberServiceImpl;
 
     @Spy
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -37,16 +37,16 @@ class MemberPasswordUpdateServiceUnitTest {
         Long memberId = 1L;
         String password = "test1234";
         MemberEntity memberEntity = mock(MemberEntity.class);
-        given(memberJpaRepository.findById(memberId)).willReturn(Optional.of(memberEntity));
+        given(memberRepository.findById(memberId)).willReturn(Optional.of(memberEntity));
         when(memberEntity.getPassword()).thenReturn(password);
 
         //when
         Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
-            memberPasswordUpdateService.updatePassword(memberId, password);
+            memberServiceImpl.updatePassword(memberId, password);
         });
 
         //then
-        verify(memberJpaRepository, times(1)).findById(memberId);
+        verify(memberRepository, times(1)).findById(memberId);
         assertThat(exception.getMessage()).isEqualTo("이전 비밀번호와 같은 비밀번호 입니다.");
     }
 }

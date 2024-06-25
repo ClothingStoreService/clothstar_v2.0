@@ -8,6 +8,7 @@ import org.store.clothstar.common.entity.BaseEntity;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.MemberGrade;
 import org.store.clothstar.member.domain.MemberRole;
+import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 
 import java.time.LocalDateTime;
 
@@ -49,9 +50,10 @@ public class MemberEntity extends BaseEntity {
         this.createdAt = member.getCreatedAt();
     }
 
-    public void updateMember(Member member, MemberEntity memberEntity) {
-        this.name = (member.getName() == null || member.getName() == "") ? memberEntity.getName() : member.getName();
-        this.role = (member.getRole() == null) ? memberEntity.getRole() : member.getRole();
+    public void updateMember(ModifyMemberRequest modifyMemberRequest, MemberEntity memberEntity) {
+        this.name = (modifyMemberRequest.getName() == null || modifyMemberRequest.getName() == "")
+                ? memberEntity.getName() : modifyMemberRequest.getName();
+        this.role = (modifyMemberRequest.getRole() == null) ? memberEntity.getRole() : modifyMemberRequest.getRole();
         log.info("name : {}, role : {}", name, role);
     }
 

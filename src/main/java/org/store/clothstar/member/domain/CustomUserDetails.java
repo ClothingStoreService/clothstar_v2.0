@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.store.clothstar.member.entity.MemberEntity;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,21 +15,21 @@ import java.util.List;
 @ToString
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
-    private final Member member;
+    private final MemberEntity memberEntity;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + String.valueOf(member.getRole())));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + String.valueOf(memberEntity.getRole())));
     }
 
     @Override
     public String getPassword() {
-        return member.getPassword();
+        return memberEntity.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return member.getEmail();
+        return memberEntity.getEmail();
     }
 
     @Override

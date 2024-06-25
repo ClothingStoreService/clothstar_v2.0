@@ -13,9 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
-import org.store.clothstar.member.repository.MemberJpaRepositoryAdapter;
-import org.store.clothstar.member.service.MemberSignupJpaServiceImpl;
-import org.store.clothstar.member.service.SellerCreateJpaServiceImpl;
+import org.store.clothstar.member.service.MemberServiceImpl;
+import org.store.clothstar.member.service.SellerServiceImpl;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -30,13 +29,10 @@ class SellerControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private MemberSignupJpaServiceImpl memberSignupJpaService;
+    private SellerServiceImpl sellerServiceImpl;
 
     @Autowired
-    private SellerCreateJpaServiceImpl sellerCreateJpaService;
-
-    @Autowired
-    MemberJpaRepositoryAdapter memberJpaRepository;
+    MemberServiceImpl memberServiceImpl;
 
     private static final String SELLER_URL = "/v1/sellers";
 
@@ -49,8 +45,8 @@ class SellerControllerIntegrationTest {
     @Test
     void getSellerTest() throws Exception {
         //given
-        memberId = memberSignupJpaService.signUp(getCreateMemberRequest("test1@naver.com"));
-        Long sellerId = sellerCreateJpaService.sellerSave(memberId, getCreateSellerRequest());
+        memberId = memberServiceImpl.signUp(getCreateMemberRequest("test1@naver.com"));
+        Long sellerId = sellerServiceImpl.sellerSave(memberId, getCreateSellerRequest());
         String sellerMemberIdURL = SELLER_URL + "/" + memberId;
 
         //when

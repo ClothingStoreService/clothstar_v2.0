@@ -5,7 +5,7 @@ import org.store.clothstar.member.entity.SellerEntity;
 
 import java.util.Optional;
 
-public interface SellerJpaRepository extends JpaRepository<SellerEntity, Long> {
+public interface SellerJpaRepository extends JpaRepository<SellerEntity, Long>, SellerRepository {
     Optional<SellerEntity> findByBizNo(String bizNo);
 
     Optional<SellerEntity> findByBrandName(String brandName);

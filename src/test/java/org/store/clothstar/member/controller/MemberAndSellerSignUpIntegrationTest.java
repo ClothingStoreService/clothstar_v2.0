@@ -14,14 +14,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.common.config.jwt.JwtUtil;
-import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.MemberRole;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyPasswordRequest;
-import org.store.clothstar.member.repository.MemberJpaRepositoryAdapter;
-import org.store.clothstar.member.service.MemberSignupJpaServiceImpl;
+import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.service.MemberService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -44,10 +44,10 @@ class MemberAndSellerSignUpIntegrationTest {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private MemberSignupJpaServiceImpl memberSignupJpaService;
+    private MemberRepository memberRepository;
 
     @Autowired
-    MemberJpaRepositoryAdapter memberJpaRepository;
+    private MemberService memberService;
 
     private static final String MEMBER_URL = "/v1/members";
     private static final String SELLER_URL = "/v1/sellers";
@@ -72,8 +72,8 @@ class MemberAndSellerSignUpIntegrationTest {
         String responseBody = actions.andReturn().getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long memberId = jsonNode.get("id").asLong();
-        Member member = memberJpaRepository.findById(memberId).get();
-        String accessToken = jwtUtil.createAccessToken(member);
+        MemberEntity memberEntity = memberRepository.findById(memberId).get();
+        String accessToken = jwtUtil.createAccessToken(memberEntity);
 
         //회원가입해서 받은 memberId로 판매자 신청 테스트
         //given
@@ -96,9 +96,9 @@ class MemberAndSellerSignUpIntegrationTest {
     @Test
     void getAllMemberTest() throws Exception {
         //given 3명의 회원을 만든다.
-        memberSignupJpaService.signUp(getCreateMemberRequest("test1@naver.com"));
-        memberSignupJpaService.signUp(getCreateMemberRequest("test2@naver.com"));
-        memberSignupJpaService.signUp(getCreateMemberRequest("test3@naver.com"));
+        memberService.signUp(getCreateMemberRequest("test1@naver.com"));
+        memberService.signUp(getCreateMemberRequest("test2@naver.com"));
+        memberService.signUp(getCreateMemberRequest("test3@naver.com"));
 
         //when
         ResultActions actions = mockMvc.perform(get(MEMBER_URL)
@@ -115,7 +115,7 @@ class MemberAndSellerSignUpIntegrationTest {
     @Test
     void getMemberTest() throws Exception {
         //given
-        Long memberId = memberSignupJpaService.signUp(getCreateMemberRequest("test1@naver.com"));
+        Long memberId = memberService.signUp(getCreateMemberRequest("test1@naver.com"));
         String getMemberURL = MEMBER_URL + "/" + memberId;
 
         //when
@@ -132,7 +132,7 @@ class MemberAndSellerSignUpIntegrationTest {
     void emailDuplicationCheckTest() throws Exception {
         //given
         String email = "dupltest@naver.com";
-        Long memberId = memberSignupJpaService.signUp(getCreateMemberRequest(email));
+        Long memberId = memberService.signUp(getCreateMemberRequest(email));
         String emailDuplicationCheckURL = MEMBER_URL + "/email/" + email;
 
         //when
@@ -149,7 +149,7 @@ class MemberAndSellerSignUpIntegrationTest {
     @Test
     void modifyName_modifyAuth_MemberTest() throws Exception {
         //given
-        Long memberId = memberSignupJpaService.signUp(getCreateMemberRequest("test1@naver.com"));
+        Long memberId = memberService.signUp(getCreateMemberRequest("test1@naver.com"));
         String modifyMemberURL = MEMBER_URL + "/" + memberId;
         ModifyMemberRequest modifyMemberRequest = ModifyMemberRequest.builder()
                 .name("관리자")
@@ -166,9 +166,9 @@ class MemberAndSellerSignUpIntegrationTest {
         //then
         //이름과 권한이 바꼈는지 확인
         actions.andExpect(status().isOk());
-        Member member = memberJpaRepository.findById(memberId).get();
-        assertThat(member.getName()).isEqualTo("관리자");
-        assertThat(member.getRole()).isEqualTo(MemberRole.ADMIN);
+        MemberEntity memberEntity = memberRepository.findById(memberId).get();
+        assertThat(memberEntity.getName()).isEqualTo("관리자");
+        assertThat(memberEntity.getRole()).isEqualTo(MemberRole.ADMIN);
     }
 
     @DisplayName("회원 비밀번호 수정 통합 테스트")
@@ -176,9 +176,9 @@ class MemberAndSellerSignUpIntegrationTest {
     @Test
     void modifyPasswordMemberTest() throws Exception {
         //given
-        Long memberId = memberSignupJpaService.signUp(getCreateMemberRequest("test1@naver.com"));
-        Member member = memberJpaRepository.findById(memberId).get();
-        final String originalPassword = member.getPassword();
+        Long memberId = memberService.signUp(getCreateMemberRequest("test1@naver.com"));
+        MemberEntity memberEntity = memberRepository.findById(memberId).get();
+        final String originalPassword = memberEntity.getPassword();
         final String modifyPasswordMemberURL = MEMBER_URL + "/" + memberId;
         ModifyPasswordRequest modifyPasswordRequest = ModifyPasswordRequest.builder()
                 .password("modified123")
@@ -193,7 +193,7 @@ class MemberAndSellerSignUpIntegrationTest {
 
         //then
         actions.andExpect(status().isOk());
-        Member updatedMember = memberJpaRepository.findById(memberId).get();
+        MemberEntity updatedMember = memberRepository.findById(memberId).get();
         assertThat(originalPassword).isNotEqualTo(updatedMember.getPassword());
     }
 
@@ -203,9 +203,9 @@ class MemberAndSellerSignUpIntegrationTest {
     void deleteMemberTest() throws Exception {
         //given
         //회원가입을 한 후 삭제 필드는 null이다.
-        Long memberId = memberSignupJpaService.signUp(getCreateMemberRequest("test1@naver.com"));
-        Member member = memberJpaRepository.findById(memberId).get();
-        assertThat(member.getDeletedAt()).isNull();
+        Long memberId = memberService.signUp(getCreateMemberRequest("test1@naver.com"));
+        MemberEntity memberEntity = memberRepository.findById(memberId).get();
+        assertThat(memberEntity.getDeletedAt()).isNull();
         String deleteURL = MEMBER_URL + "/" + memberId;
 
         //when
@@ -213,7 +213,7 @@ class MemberAndSellerSignUpIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON));
 
         //then
-        Member deletedMember = memberJpaRepository.findById(memberId).get();
+        MemberEntity deletedMember = memberRepository.findById(memberId).get();
         assertThat(deletedMember.getDeletedAt()).isNotNull();
     }
 

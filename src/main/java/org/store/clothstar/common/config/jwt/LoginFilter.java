@@ -15,8 +15,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.common.util.MessageDTOBuilder;
 import org.store.clothstar.member.domain.CustomUserDetails;
-import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.MemberLoginRequest;
+import org.store.clothstar.member.entity.MemberEntity;
 
 import java.io.IOException;
 
@@ -69,12 +69,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                                             Authentication authentication) throws IOException, ServletException {
         log.info("로그인 성공");
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        Member member = customUserDetails.getMember();
-        log.info("member: {}", member.toString());
+        MemberEntity memberEntity = customUserDetails.getMemberEntity();
+        log.info("member: {}", memberEntity.toString());
 
-        String accessToken = jwtUtil.createAccessToken(member);
+        String accessToken = jwtUtil.createAccessToken(memberEntity);
         log.info("생성 accessToken: Bearer {}", accessToken);
-        String refreshToken = jwtUtil.createRefreshToken(member);
+        String refreshToken = jwtUtil.createRefreshToken(memberEntity);
         log.info("생성 refreshToken: Bearer {}", refreshToken);
 
         response.addHeader("Authorization", "Bearer " + accessToken);

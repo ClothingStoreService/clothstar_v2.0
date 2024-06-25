@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyPasswordRequest;
-import org.store.clothstar.member.repository.MemberJpaRepositoryAdapter;
+import org.store.clothstar.member.repository.MemberRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -34,7 +34,7 @@ public class MemberControllerValidationTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    MemberJpaRepositoryAdapter memberJpaRepository;
+    MemberRepository memberRepository;
 
     private static final String MEMBER_SIGN_UP_URL = "/v1/members";
 
