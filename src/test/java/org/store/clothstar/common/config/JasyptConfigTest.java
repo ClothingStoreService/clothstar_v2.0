@@ -10,9 +10,9 @@ class JasyptConfigTest {
     @Test
     void jasypt() {
         String url = "";
-        String username = "";
-        String password = "";
-        
+        String username = "nexthope22@gmail.com";
+        String password = "pcde pppv pnxa dfmg";
+
         System.out.println(jasyptEncoding(url));
         System.out.println(jasyptEncoding(username));
         System.out.println(jasyptEncoding(password));
