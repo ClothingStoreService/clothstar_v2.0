@@ -3,9 +3,9 @@ package org.store.clothstar.order.dto.reponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.domain.type.PaymentMethod;
-import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.type.PaymentMethod;
+import org.store.clothstar.order.type.Status;
+import org.store.clothstar.order.entity.OrderEntity;
 
 import java.time.LocalDate;
 
@@ -42,17 +42,17 @@ public class OrderResponse {
     private int totalPaymentPrice;
 
 
-    public static OrderResponse fromOrder(Order order) {
+    public static OrderResponse fromOrderEntity(OrderEntity orderEntity) {
         return OrderResponse.builder()
-                .orderId(order.getOrderId())
-                .memberId(order.getMemberId())
-                .addressId(order.getAddressId())
-                .createdAt(order.getCreatedAt().toLocalDate())
-                .status(order.getStatus())
-                .totalShippingPrice(order.getTotalShippingPrice())
-                .totalProductsPrice(order.getTotalProductsPrice())
-                .paymentMethod(order.getPaymentMethod())
-                .totalPaymentPrice(order.getTotalPaymentPrice())
+                .orderId(orderEntity.getOrderId())
+                .memberId(orderEntity.getMember().getMemberId())
+                .addressId(orderEntity.getAddress().getAddressId())
+                .createdAt(orderEntity.getCreatedAt().toLocalDate())
+                .status(orderEntity.getStatus())
+                .totalShippingPrice(orderEntity.getTotalShippingPrice())
+                .totalProductsPrice(orderEntity.getTotalProductsPrice())
+                .paymentMethod(orderEntity.getPaymentMethod())
+                .totalPaymentPrice(orderEntity.getTotalPaymentPrice())
                 .build();
     }
 }

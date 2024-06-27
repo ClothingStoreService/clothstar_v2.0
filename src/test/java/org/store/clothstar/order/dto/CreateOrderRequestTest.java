@@ -7,8 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.store.clothstar.member.entity.AddressEntity;
 import org.store.clothstar.member.entity.MemberEntity;
-import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
+import org.store.clothstar.order.entity.OrderEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -30,9 +30,9 @@ class CreateOrderRequestTest {
         given(member.getMemberId()).willReturn(1L);
 
         //when
-        Order order = request.toOrder(member, address);
+        OrderEntity orderEntity = request.toOrderEntity(member, address);
 
         //then
-        assertEquals(member.getMemberId(), order.getMemberId());
+        assertEquals(member.getMemberId(), orderEntity.getMember().getMemberId());
     }
 }

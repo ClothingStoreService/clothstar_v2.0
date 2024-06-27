@@ -7,10 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
-import org.store.clothstar.product.domain.Product;
-import org.store.clothstar.productLine.domain.ProductLine;
+import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
+import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 @Getter
 @AllArgsConstructor
@@ -37,19 +37,19 @@ public class AddOrderDetailRequest {
     private int quantity;
 
 
-    public OrderDetail toOrderDetail(Order order, ProductLine productLine, Product product) {
-        return OrderDetail.builder()
-                .orderId(order.getOrderId())
-                .productLineId(productLine.getProductLineId())
-                .productId(product.getProductId())
+    public OrderDetailEntity toOrderDetailEntity(OrderEntity orderEntity, ProductLineEntity productLineEntity, ProductEntity productEntity) {
+        return OrderDetailEntity.builder()
+                .order(orderEntity)
+                .productLine(productLineEntity)
+                .product(productEntity)
                 .quantity(quantity)
-                .fixedPrice(productLine.getPrice())
-                .oneKindTotalPrice(quantity * productLine.getPrice())
-                .name(productLine.getName())
-                .stock(product.getStock())
-                .optionName(product.getName())
+                .fixedPrice(productLineEntity.getPrice())
+                .oneKindTotalPrice(quantity * productLineEntity.getPrice())
+                .name(productLineEntity.getName())
+                .stock(productEntity.getStock())
+                .optionName(productEntity.getName())
 //                .extraCharge(product.getExtraCharge())
-                .brandName(productLine.getBrandName())
+                .brandName(productLineEntity.getSeller().getBrandName())
                 .build();
     }
 }

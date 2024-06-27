@@ -1,4 +1,4 @@
-package org.store.clothstar.order.domain.type;
+package org.store.clothstar.order.type;
 
 public enum PaymentMethod {
     CARD,

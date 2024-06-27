@@ -30,9 +30,9 @@ public class QOrderEntity extends EntityPathBase<OrderEntity> {
 
     public final NumberPath<Long> orderId = createNumber("orderId", Long.class);
 
-    public final EnumPath<org.store.clothstar.order.domain.type.PaymentMethod> paymentMethod = createEnum("paymentMethod", org.store.clothstar.order.domain.type.PaymentMethod.class);
+    public final EnumPath<org.store.clothstar.order.type.PaymentMethod> paymentMethod = createEnum("paymentMethod", org.store.clothstar.order.type.PaymentMethod.class);
 
-    public final EnumPath<org.store.clothstar.order.domain.type.Status> status = createEnum("status", org.store.clothstar.order.domain.type.Status.class);
+    public final EnumPath<org.store.clothstar.order.type.Status> status = createEnum("status", org.store.clothstar.order.type.Status.class);
 
     public final NumberPath<Integer> totalPaymentPrice = createNumber("totalPaymentPrice", Integer.class);
 
