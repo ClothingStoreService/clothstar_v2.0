@@ -29,14 +29,14 @@ public class OrderSellerController {
     }
 
     @Operation(summary = "(판매자) 주문 승인", description = "(판매자) 주문을 승인한다.")
-    @PatchMapping("/{orderId}-approve")
+    @PatchMapping("/{orderId}/approve")
     public ResponseEntity<MessageDTO> approveOrder(@PathVariable Long orderId) {
         MessageDTO messageDTO = orderSellerService.approveOrder(orderId);
         return ResponseEntity.ok(messageDTO);
     }
 
     @Operation(summary = "(판매자) 주문 취소", description = "(판매자) 주문을 취소한다.")
-    @PatchMapping("/{orderId}-cancel")
+    @PatchMapping("/{orderId}/cancel")
     public ResponseEntity<MessageDTO> cancelOrder(@PathVariable Long orderId) {
         MessageDTO messageDTO = orderSellerService.cancelOrder(orderId);
         return ResponseEntity.ok(messageDTO);
