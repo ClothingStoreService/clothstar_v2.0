@@ -45,4 +45,8 @@ public class MemberServiceApplication {
     public Long signup(CreateMemberRequest createMemberDTO) {
         return memberService.signUp(createMemberDTO);
     }
+
+    public void signupEmailAuthentication(Long memberId) {
+        memberService.signupEmailAuthentication(memberId);
+    }
 }
