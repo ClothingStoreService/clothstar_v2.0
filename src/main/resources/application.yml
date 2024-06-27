@@ -19,9 +19,11 @@ spring:
     username: ENC(kGXTSlfxUWNbRoGuBwNRTJBETjMz04AChYMrwDeY3Cs=)
     password: ENC(/hOuHdVpOgyzKrlqyayORlsTFpIrwe7RYnfAqXEFzIk=)
     properties:
-      mail.smtp:
-        auth: true
-        enable: true
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 email.send: ENC(kGXTSlfxUWNbRoGuBwNRTJBETjMz04AChYMrwDeY3Cs=)
 

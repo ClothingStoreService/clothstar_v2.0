@@ -53,6 +53,6 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         //ture -> 계정 사용 가능
-        return true;
+        return memberEntity.isEnabled();
     }
 }
