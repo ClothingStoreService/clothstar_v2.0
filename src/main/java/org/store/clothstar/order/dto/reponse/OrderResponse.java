@@ -3,9 +3,9 @@ package org.store.clothstar.order.dto.reponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
-import org.store.clothstar.order.entity.OrderEntity;
 
 import java.time.LocalDate;
 
