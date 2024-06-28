@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.repository.orderSeller.JpaOrderSellerRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderSellerService {
+
 
     private final OrderSellerRepository orderSellerRepository;
     private final OrderRepository orderRepository;

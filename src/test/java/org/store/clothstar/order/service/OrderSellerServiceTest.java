@@ -15,7 +15,7 @@ import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
-import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
+import org.store.clothstar.order.repository.orderSeller.JpaOrderSellerRepository;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 
@@ -38,11 +38,14 @@ class OrderSellerServiceTest {
     @Mock
     private OrderEntity mockOrderEntity;
 
-    @Mock
-    private OrderSellerRepository orderSellerRepository;
+//    @Mock
+//    private OrderSellerRepository orderSellerRepository;
 
     @Mock
     private OrderRepository orderRepository;
+
+    @Mock
+    private JpaOrderSellerRepository jpaOrderSellerRepository;
 
     @Mock
     private OrderDetailService orderDetailService;
@@ -74,13 +77,13 @@ class OrderSellerServiceTest {
         given(order3.getAddress()).willReturn(mockAddressEntity);
 
         List<OrderEntity> orders = List.of(order1, order2, order3);
-        given(orderSellerRepository.findWaitingOrders()).willReturn(orders);
+        given(jpaOrderSellerRepository.findWaitingOrders()).willReturn(orders);
 
         //when
         List<OrderResponse> response = orderSellerService.getWaitingOrder();
 
         //then
-        then(orderSellerRepository).should(times(1)).findWaitingOrders();
+        then(jpaOrderSellerRepository).should(times(1)).findWaitingOrders();
         assertThat(response).isNotNull().hasSize(3);
         assertThat(response.get(0).getTotalShippingPrice()).isEqualTo(1000);
     }
@@ -100,7 +103,7 @@ class OrderSellerServiceTest {
         MessageDTO messageDTO = orderSellerService.approveOrder(orderId);
 
         //then
-        then(orderSellerRepository).should(times(1)).approveOrder(orderId);
+        then(jpaOrderSellerRepository).should(times(1)).approveOrder(orderId);
         then(orderRepository).should(times(2)).findById(orderId);
         assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 승인 되었습니다.");
@@ -121,7 +124,7 @@ class OrderSellerServiceTest {
         MessageDTO messageDTO = orderSellerService.cancelOrder(orderId);
 
         //then
-        then(orderSellerRepository).should(times(1)).cancelOrder(orderId);
+        then(jpaOrderSellerRepository).should(times(1)).cancelOrder(orderId);
         then(orderRepository).should(times(2)).findById(orderId);
         assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 취소 되었습니다.");
