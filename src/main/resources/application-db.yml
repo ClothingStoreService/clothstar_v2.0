@@ -11,6 +11,9 @@
 #  init:
 #    mode: always
 
+app:
+  repository:
+    type: jpa
 mybatis:
   mapper-locations: classpath:/mappers/**.xml
   config-location: classpath:/config/mybatis-config.xml
