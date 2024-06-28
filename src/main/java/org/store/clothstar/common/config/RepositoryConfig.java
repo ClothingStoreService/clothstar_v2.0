@@ -6,6 +6,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.store.clothstar.category.repository.CategoryJpaRepository;
 import org.store.clothstar.member.repository.SellerRepository;
 import org.store.clothstar.product.repository.ProductJPARepository;
@@ -23,8 +24,9 @@ import org.store.clothstar.productLine.repository.adapter.ProductLineJPAReposito
 public class RepositoryConfig {
 
     @Bean
+    @Primary
     @ConditionalOnProperty(name = "app.repository.type", havingValue = "jpa", matchIfMissing = true)
-    public UpperProductLineRepository productLineRepository(CategoryJpaRepository categoryJpaRepository,
+    public UpperProductLineRepository jpaProductLineRepository(CategoryJpaRepository categoryJpaRepository,
                                                             SellerRepository sellerRepository,
                                                             ProductLineJPARepository productLineJPARepository,
                                                             ProductJPARepository productJPARepository) {
@@ -34,20 +36,21 @@ public class RepositoryConfig {
 
     @Bean
     @ConditionalOnProperty(name = "app.repository.type", havingValue = "mybatis")
-    public UpperProductLineRepository productLineRepository(SqlSessionTemplate sqlSessionTemplate) {
+    public UpperProductLineRepository mybatisProductLineRepository(SqlSessionTemplate sqlSessionTemplate) {
         log.info("Configuring ProductLine MyBatis repository");
         return sqlSessionTemplate.getMapper(ProductLineRepository.class);
     }
     @Bean
+    @Primary
     @ConditionalOnProperty(name = "app.repository.type", havingValue = "jpa", matchIfMissing = true)
-    public UpperProductRepository productRepository(ProductJPARepository productJPARepository, ProductLineJPARepository productLineJPARepository) {
+    public UpperProductRepository jpaProductRepository(ProductJPARepository productJPARepository, ProductLineJPARepository productLineJPARepository) {
         log.info("Configuring Product JPA repository");
         return new ProductJPARepositoryAdapter(productJPARepository, productLineJPARepository);
     }
 
     @Bean
     @ConditionalOnProperty(name = "app.repository.type", havingValue = "mybatis")
-    public UpperProductRepository productRepository(SqlSessionTemplate sqlSessionTemplate) {
+    public UpperProductRepository mybatisProductRepository(SqlSessionTemplate sqlSessionTemplate) {
         log.info("Configuring Product MyBatis repository");
         return sqlSessionTemplate.getMapper(ProductRepository.class);
     }

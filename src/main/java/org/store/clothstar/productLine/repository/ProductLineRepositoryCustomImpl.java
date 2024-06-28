@@ -21,13 +21,11 @@ import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.entity.QProductEntity;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
 import org.store.clothstar.productLine.dto.response.QProductLineWithProductsJPAResponse;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.entity.QProductLineEntity;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -88,7 +86,8 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        Map<Long, ProductLineWithProductsJPAResponse> productLineMap = new HashMap<>();for (Tuple tuple : results) {
+        Map<Long, ProductLineWithProductsJPAResponse> productLineMap = new HashMap<>();
+        for (Tuple tuple : results) {
             ProductLineEntity productLine = tuple.get(qProductLine);
             Category category = tuple.get(qCategory);
             SellerEntity seller = tuple.get(qSeller);
@@ -102,7 +101,6 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
                 response.getProductList().add(ProductResponse.from(product));
             }
         }
-
 
 
         List<ProductLineWithProductsJPAResponse> content = new ArrayList<>(productLineMap.values());
@@ -121,11 +119,12 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
         NumberExpression<Long> totalStockExpression = qProduct.stock.sum();
 
         return Optional.ofNullable(jpaQueryFactory
-                .select(new QProductLineWithProductsJPAResponse(qProductLine, qCategory, qSeller, qMember, totalStockExpression))
+                .select(new QProductLineWithProductsJPAResponse(qProductLine, qCategory, qSeller, qSeller.member, totalStockExpression))
                 .from(qProductLine)
                 .innerJoin(qProductLine.seller)
                 .innerJoin(qSeller.member)
                 .innerJoin(qProductLine.products, qProduct)
+                .innerJoin(qProductLine.category, qCategory)
                 .where(qProductLine.productLineId.eq(productLineId)
                         .and(qProductLine.deletedAt.isNull()))
                 .fetchOne());
