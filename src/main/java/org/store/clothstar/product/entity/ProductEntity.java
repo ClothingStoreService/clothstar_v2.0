@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
+import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 
@@ -38,12 +39,18 @@ public class ProductEntity {
         this.stock = updateProductRequest.getStock();
     }
 
+    public void updateOption(Product pro) {
+        this.name = pro.getName();
+        this.extraCharge = pro.getExtraCharge();
+        this.stock = pro.getStock();
+    }
+
     public void updateStock(long stock) {
         this.stock = stock;
         checkAndUpdateProductLineStatus();
     }
 
-    // 재고를 차감하고 상태를 변경하는 메서드
+    //  재고를 차감하고 상태를 변경하는 메서드
     public void reduceStock(int quantity) {
         if (this.stock >= quantity) {
             this.stock -= quantity;

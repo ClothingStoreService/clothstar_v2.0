@@ -6,13 +6,20 @@ import org.store.clothstar.productLine.dto.response.ProductLineWithProductsRespo
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Repository
-public interface ProductLineRepository {
+public interface ProductLineRepository extends UpperProductLineRepository{
 
     List<ProductLine> selectAllProductLinesNotDeleted();
 
     Optional<ProductLine> selectByProductLineId(Long productId);
 
-    Optional<ProductLineWithProductsResponse> findProductLineWithOptionsById(Long productId);
+    Optional<ProductLineWithProductsResponse> selectProductLineWithOptions(Long productId);
+
+    int save(ProductLine productLine);
+
+    int updateProductLine(ProductLine productLine);
+
+    int setDeletedAt(ProductLine productLine);
 }

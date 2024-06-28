@@ -29,6 +29,10 @@ public class BaseTimeEntity {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime deletedAt; // 삭제일시
 
+    protected void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
+    }
+
     protected void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
     }

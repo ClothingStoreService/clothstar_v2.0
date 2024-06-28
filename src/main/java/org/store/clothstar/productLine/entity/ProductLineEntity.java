@@ -11,6 +11,7 @@ import org.store.clothstar.category.domain.Category;
 import org.store.clothstar.common.entity.BaseTimeEntity;
 import org.store.clothstar.member.entity.SellerEntity;
 import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 
@@ -61,6 +62,14 @@ public class ProductLineEntity extends BaseTimeEntity {
         this.content = updateProductLineRequest.getContent();
         this.price = updateProductLineRequest.getPrice();
         this.status = updateProductLineRequest.getStatus();
+    }
+
+    public void updateProductLine(ProductLine productLine) {
+        this.name = productLine.getName();
+        this.content = productLine.getContent();
+        this.price = productLine.getPrice();
+        this.status = productLine.getStatus();
+        this.setModifiedAt(LocalDateTime.now());
     }
 
     public void changeProductStatus(ProductLineStatus productLineStatus) {

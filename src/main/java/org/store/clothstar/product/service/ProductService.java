@@ -12,11 +12,12 @@ import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.repository.ProductRepository;
+import org.store.clothstar.product.repository.UpperProductRepository;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
-    private final ProductRepository productRepository;
+    private final UpperProductRepository productRepository;
 
     /*
     @Transactional(readOnly = true)

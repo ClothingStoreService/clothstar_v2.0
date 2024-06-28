@@ -21,6 +21,7 @@ import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.entity.QProductEntity;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
+import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
 import org.store.clothstar.productLine.dto.response.QProductLineWithProductsJPAResponse;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.entity.QProductLineEntity;
