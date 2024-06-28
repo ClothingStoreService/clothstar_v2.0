@@ -25,13 +25,9 @@ public class OrderDetailController {
 
     @Operation(summary = "주문상세 추가 저장", description = "개별 상품에 대한 주문상세(상품명, 가격, 개수...)를 특정 주문에 추가 저장한다.")
     @PostMapping
-    public ResponseEntity<URI> addOrderDetail(
-            @RequestBody @Validated AddOrderDetailRequest addOrderDetailRequest) {
-
+    public ResponseEntity<URI> addOrderDetail(@RequestBody @Validated AddOrderDetailRequest addOrderDetailRequest) {
         Long orderDetailId = orderdetailService.addOrderDetail(addOrderDetailRequest);
-
         URI location = URIBuilder.buildURI(orderDetailId);
-
         return ResponseEntity.created(location).build();
     }
 }

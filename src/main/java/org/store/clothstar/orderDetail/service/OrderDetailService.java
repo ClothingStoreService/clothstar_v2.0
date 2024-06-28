@@ -1,6 +1,5 @@
 package org.store.clothstar.orderDetail.service;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -70,14 +69,12 @@ public class OrderDetailService {
                 order.getTotalProductsPrice() + order.getTotalShippingPrice() + orderDetail.getOneKindTotalPrice();
 
         order.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
-        log.info("총 주문 가격 =" + order.getTotalPaymentPrice());
         upperOrderRepository.updateOrderPrices(order);
 
         // 주문 수량만큼 상품 재고 차감
         updateProductStock(product, orderDetail.getQuantity());
     }
 
-    @PermitAll
     // 주문 상세 추가 생성
     @Transactional
     public Long addOrderDetail(AddOrderDetailRequest addOrderDetailRequest) {

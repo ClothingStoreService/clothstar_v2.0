@@ -24,19 +24,17 @@ public class OrderService {
     private final UpperOrderRepository upperOrderRepository;
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
-    private final OrderDetailService orderDetailService;
 
     public OrderService(
             @Qualifier("jpaOrderRepositoryAdapter") UpperOrderRepository upperOrderRepository
+            ,@Qualifier("memberJpaRepository") MemberRepository memberRepository
+            ,@Qualifier("addressJpaRepository") AddressRepository addressRepository
 //            @Qualifier("mybatisOrderRepository") UpperOrderRepository upperOrderRepository
-            , MemberRepository memberRepository
-            , AddressRepository addressRepository
             , OrderDetailService orderDetailService
     ) {
         this.upperOrderRepository = upperOrderRepository;
         this.memberRepository = memberRepository;
         this.addressRepository = addressRepository;
-        this.orderDetailService = orderDetailService;
     }
 
     @Transactional(readOnly = true)

@@ -7,7 +7,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.order.entity.OrderEntity;
 
+import java.util.List;
+
 public interface JpaOrderSellerRepository extends JpaRepository<OrderEntity, Long> {
+    @Query("SELECT o FROM orders o WHERE o.status = 'WAITING'")
+    List<OrderEntity> findWaitingOrders();
+
     @Transactional
     @Modifying
     @Query("UPDATE orders o SET o.status = 'APPROVE' WHERE o.orderId = :orderId")
