@@ -64,7 +64,7 @@ public class CreateProductLineRequest {
                 .name(name)
                 .content(content)
                 .price(price)
-                .totalStock(0L)
+//                .totalStock(0L)
                 .status(status)
                 .saleCount(0L)
                 .build();
