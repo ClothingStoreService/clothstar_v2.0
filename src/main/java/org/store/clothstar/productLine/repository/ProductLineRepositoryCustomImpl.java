@@ -26,6 +26,7 @@ import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.entity.QProductLineEntity;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -115,19 +116,38 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
 
     @Override
     public Optional<ProductLineWithProductsJPAResponse> findProductLineWithOptionsById(Long productLineId) {
-
         NumberExpression<Long> totalStockExpression = qProduct.stock.sum();
 
-        return Optional.ofNullable(jpaQueryFactory
-                .select(new QProductLineWithProductsJPAResponse(qProductLine, qCategory, qSeller, qSeller.member, totalStockExpression))
+        ProductLineWithProductsJPAResponse result = jpaQueryFactory
+                .select(new QProductLineWithProductsJPAResponse(
+                        qProductLine,
+                        qCategory,
+                        qSeller,
+                        qMember,
+                        totalStockExpression
+                ))
                 .from(qProductLine)
-                .innerJoin(qProductLine.seller)
-                .innerJoin(qSeller.member)
-                .innerJoin(qProductLine.products, qProduct)
+                .innerJoin(qProductLine.seller, qSeller)
+                .innerJoin(qSeller.member, qMember)
                 .innerJoin(qProductLine.category, qCategory)
+                .leftJoin(qProductLine.products, qProduct)
                 .where(qProductLine.productLineId.eq(productLineId)
                         .and(qProductLine.deletedAt.isNull()))
-                .fetchOne());
+                .groupBy(qProductLine.productLineId, qCategory, qSeller, qMember)
+                .fetchOne();
+
+        if (result != null) {
+            List<ProductEntity> products = jpaQueryFactory
+                    .selectFrom(qProduct)
+                    .where(qProduct.productLine.productLineId.eq(productLineId))
+                    .fetch();
+
+            result.setProductList(products.stream()
+                    .map(ProductResponse::from)
+                    .collect(Collectors.toList()));
+        }
+
+        return Optional.ofNullable(result);
     }
 
     private List<OrderSpecifier<?>> getOrderSpecifiers(Sort sort) {
