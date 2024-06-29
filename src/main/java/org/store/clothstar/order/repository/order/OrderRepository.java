@@ -12,6 +12,4 @@ public interface OrderRepository {
 
     void deliveredToConfirmOrder(Long orderId);
 
-    //없앤 이유는 JPA가 변경 자동 감지해서 업데이트 시켜주니까
-//    void updateOrderPrices(Order order);
 }
