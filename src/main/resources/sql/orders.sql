@@ -58,7 +58,7 @@ show index from orders;
 drop index FK_member_TO_orders_1 on orders;
 
 DELETE
-FROM orders;
+FROM orders where total_products_price=10000;
 
 INSERT INTO orders (order_id, member_id, address_id, created_at, status, total_shipping_price, total_products_price,
                     payment_method, total_payment_price)
