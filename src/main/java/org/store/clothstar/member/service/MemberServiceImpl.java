@@ -1,11 +1,13 @@
 package org.store.clothstar.member.service;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.store.clothstar.common.mail.MailContentBuilder;
+import org.store.clothstar.common.mail.MailSendDTO;
+import org.store.clothstar.common.mail.MailService;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
@@ -22,16 +24,13 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 @Transactional
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public MemberServiceImpl(
-            @Qualifier("memberJpaRepository") MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
-    }
+    private final MailContentBuilder mailContentBuilder;
+    private final MailService mailService;
 
     @Override
     public List<MemberResponse> findAll() {
@@ -94,8 +93,28 @@ public class MemberServiceImpl implements MemberService {
 
         String encodedPassword = passwordEncoder.encode(createMemberDTO.getPassword());
         MemberEntity memberEntity = createMemberDTO.toMemberEntity(encodedPassword);
+        memberEntity.updateEnabled(false);
         memberEntity = memberRepository.save(memberEntity);
 
+        sendEmailAuthentication(memberEntity.getMemberId(), memberEntity.getEmail());
+
         return memberEntity.getMemberId();
+    }
+
+    @Override
+    public void signupEmailAuthentication(Long memberId) {
+        MemberEntity memberEntity = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
+
+        memberEntity.updateEnabled(true);
+        log.info("이메일 인증 완료, email = {}", memberEntity.getEmail());
+    }
+
+    private void sendEmailAuthentication(Long memberId, String email) {
+        String link = "http://localhost:8080/v1/members/auth/" + memberId;
+        String message = mailContentBuilder.build(link);
+        MailSendDTO mailSendDTO = new MailSendDTO(email, "clothstar 회원가입 인증 메일 입니다.", message);
+
+        mailService.sendMail(mailSendDTO);
     }
 }

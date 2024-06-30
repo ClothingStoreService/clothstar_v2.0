@@ -20,4 +20,6 @@ public interface MemberService {
     void modifyMember(Long memberId, ModifyMemberRequest modifyMemberRequest);
 
     Long signUp(CreateMemberRequest createMemberDTO);
+
+    void signupEmailAuthentication(Long memberId);
 }

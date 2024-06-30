@@ -12,6 +12,7 @@ CREATE TABLE `member`
     `created_at`          timestamp    NOT NULL,
     `modified_at`         timestamp    NULL,
     `deleted_at`          timestamp    NULL,
+    `enabled`             boolean      NOT NULL DEFAULT FALSE,
 
     CONSTRAINT PK_member PRIMARY KEY (member_id),
     CONSTRAINT UK_member_email UNIQUE (email)
@@ -71,7 +72,7 @@ from seller;
 select *
 from productLine;
 select *
-from member;
+from member where email = 'rkdgustn@test.com';
 
 select *
 from information_schema.table_constraints
@@ -110,3 +111,5 @@ from seller;
 
 alter table member
     change modified_at updated_at timestamp;
+
+ALTER TABLE member ADD COLUMN enabled boolean not null default false;
