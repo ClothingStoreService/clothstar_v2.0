@@ -1,6 +1,9 @@
 package org.store.clothstar.member.application;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
@@ -19,7 +22,15 @@ public class MemberServiceApplication {
     }
 
     public List<MemberResponse> getAllMember() {
-        return memberService.findAll();
+        return memberService.getAllMember();
+    }
+
+    public Page<MemberResponse> getAllMemberOffsetPaging(Pageable pageable) {
+        return memberService.getAllMemberOffsetPaging(pageable);
+    }
+
+    public Slice<MemberResponse> getAllMemberSlicePaging(Pageable pageable) {
+        return memberService.getAllMemberSlicePaging(pageable);
     }
 
     public MemberResponse getMemberById(Long memberId) {

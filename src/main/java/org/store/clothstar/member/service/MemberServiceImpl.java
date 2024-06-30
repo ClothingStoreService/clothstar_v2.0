@@ -3,6 +3,9 @@ package org.store.clothstar.member.service;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,10 +37,22 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberResponse> findAll() {
+    public List<MemberResponse> getAllMember() {
         return memberRepository.findAll().stream()
                 .map(MemberResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<MemberResponse> getAllMemberOffsetPaging(Pageable pageable) {
+        return memberRepository.findAllOffsetPaging(pageable)
+                .map(MemberResponse::new);
+    }
+
+    @Override
+    public Slice<MemberResponse> getAllMemberSlicePaging(Pageable pageable) {
+        return memberRepository.findAllSlicePaging(pageable)
+                .map(MemberResponse::new);
     }
 
     @Override
