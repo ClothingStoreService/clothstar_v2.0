@@ -19,7 +19,6 @@ class MailServiceTest {
     @Test
     void mailSendTest() {
         //given
-//        String link = Constants.ACTIVATION_EMAIL + "/" + token;
         String link = "https://www.naver.com/";
         String message = mailContentBuilder.build(link);
         MailSendDTO mailSendDTO = new MailSendDTO("test@test.com", "test", message);

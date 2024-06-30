@@ -25,8 +25,8 @@ public class MailService {
             messageHelper.setSubject(mailSendDTO.getSubject());
             messageHelper.setText(mailSendDTO.getText(), true);
         };
-        log.error("전송 메일주소 : {} -> {}", fromAddress, mailSendDTO.getAddress());
 
+        log.info("전송 메일주소 : {} -> {}", fromAddress, mailSendDTO.getAddress());
         mailSender.send(messagePreparator);
 
         return true;

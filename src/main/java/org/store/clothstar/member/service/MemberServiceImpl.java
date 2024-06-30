@@ -1,6 +1,5 @@
 package org.store.clothstar.member.service;
 
-import jakarta.servlet.ServletContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +31,6 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MailContentBuilder mailContentBuilder;
     private final MailService mailService;
-    private final ServletContext context;
-
 
     @Override
     public List<MemberResponse> findAll() {
