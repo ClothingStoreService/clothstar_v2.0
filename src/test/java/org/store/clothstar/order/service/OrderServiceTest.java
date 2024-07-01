@@ -20,7 +20,6 @@ import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.type.Status;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

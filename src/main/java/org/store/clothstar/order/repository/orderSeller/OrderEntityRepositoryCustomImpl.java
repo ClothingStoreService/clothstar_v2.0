@@ -12,17 +12,11 @@ import org.store.clothstar.order.entity.QOrderEntity;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
 import org.store.clothstar.orderDetail.dto.QOrderDetailDTO;
-import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.orderDetail.entity.QOrderDetailEntity;
-import org.store.clothstar.product.dto.response.ProductResponse;
-import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.entity.QProductEntity;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
 import org.store.clothstar.productLine.entity.QProductLineEntity;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
