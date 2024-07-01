@@ -37,7 +37,7 @@ public class ProductController {
 
     @Operation(summary = "상품 옵션 상세 조회", description = "productId로 상품 옵션 한개를 상세 조회한다.")
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductResponse> getProduct(@PathVariable Long productId) {
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable("productId") Long productId) {
         ProductResponse productResponse = productService.getProduct(productId);
         return ResponseEntity.ok().body(productResponse);
     }
@@ -55,12 +55,12 @@ public class ProductController {
     @Operation(summary = "상품 옵션 수정", description = "상품 옵션 이름, 추가금액, 재고 수를 입력하여 상품 옵션 정보를 수정한다.")
     @PutMapping("/{productId}")
     public ResponseEntity<MessageDTO> updateProduct(
-            @PathVariable Long productId,
+            @PathVariable("productId") Long productId,
             @Validated @RequestBody UpdateProductRequest updateProductRequest) {
 
         productService.updateProduct(productId, updateProductRequest);
 
-        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "Product updated successfully", null));
+        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "Product updated successfully"));
     }
 
     @Operation(summary = "상품 옵션 삭제", description = "상품 옵션 id로 상품 옵션을 삭제한다.")

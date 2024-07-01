@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.store.clothstar.orderDetail.repository.OrderDetailRepository">
+<mapper namespace="org.store.clothstar.orderDetail.repository.MybatisOrderDetailRepository">
 
     <insert id="saveOrderDetail" parameterType="org.store.clothstar.orderDetail.domain.OrderDetail"
             useGeneratedKeys="true" keyProperty="orderDetailId" keyColumn="order_detail_id">
@@ -13,5 +13,9 @@
         VALUES( #{orderDetailId}, #{productLineId}, #{orderId}, #{productId}, #{quantity}, #{fixedPrice},
         #{oneKindTotalPrice}, #{name}, #{stock}, #{optionName}, #{brandName} )
     </insert>
+
+    <select id="findByOrderId" resultType="org.store.clothstar.orderDetail.domain.OrderDetail">
+        select * from order_detail where order_id = #{orderId}
+    </select>
 
 </mapper>

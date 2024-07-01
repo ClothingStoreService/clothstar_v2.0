@@ -26,7 +26,6 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
      */
-
     @Transactional(readOnly = true)
     public ProductResponse getProduct(Long productId) {
         return productRepository.selectByProductId(productId)

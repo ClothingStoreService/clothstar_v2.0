@@ -1,16 +1,19 @@
 package org.store.clothstar.productLine.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.store.clothstar.category.domain.Category;
+import org.store.clothstar.member.entity.SellerEntity;
 import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter
@@ -50,6 +53,19 @@ public class CreateProductLineRequest {
                 .totalStock(0L)
                 .status(status)
                 .createdAt(LocalDateTime.now())
+                .saleCount(0L)
+                .build();
+    }
+
+    public ProductLineEntity toProductLineEntity(Long memberId, SellerEntity seller, Category category) {
+        return ProductLineEntity.builder()
+                .seller(seller)
+                .category(category)
+                .name(name)
+                .content(content)
+                .price(price)
+                .totalStock(0L)
+                .status(status)
                 .saleCount(0L)
                 .build();
     }

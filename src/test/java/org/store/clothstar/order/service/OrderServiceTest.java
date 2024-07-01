@@ -9,14 +9,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.repository.AddressRepository;
-import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.repository.AddressMybatisRepository;
+import org.store.clothstar.member.repository.MemberMybatisRepository;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
-import org.store.clothstar.order.repository.OrderRepository;
+import org.store.clothstar.order.repository.order.UpperOrderRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 import java.time.LocalDateTime;
@@ -34,55 +34,81 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Mock
-    private OrderRepository orderRepository;
+    private UpperOrderRepository upperOrderRepository;
 
     @Mock
-    private MemberRepository memberRepository;
+    private MemberMybatisRepository memberMybatisRepository;
 
     @Mock
-    private AddressRepository addressRepository;
+    private AddressMybatisRepository addressMybatisRepository;
 
     @Mock
     private OrderDetailService orderDetailService;
 
     @Test
-    @DisplayName("getOrder 주문 조회 테스트")
+    @DisplayName("getOrder: 주문 조회 - 메서드 호출 & 반환값 테스트")
     void getOrder_test() {
         //given
         Order order = mock(Order.class);
         given(order.getOrderId()).willReturn(1L);
         given(order.getCreatedAt()).willReturn(LocalDateTime.now());
-
-        given(orderRepository.getOrder(order.getOrderId())).willReturn(Optional.of(order));
+        given(upperOrderRepository.getOrder(order.getOrderId())).willReturn(Optional.of(order));
 
         //when
         OrderResponse orderResponse = orderService.getOrder(order.getOrderId());
 
         //then
+        then(upperOrderRepository).should(times(1)).getOrder(1L);
         assertThat(orderResponse.getOrderId()).isEqualTo(order.getOrderId());
     }
 
     @Test
-    @DisplayName("getOrder 메서드 호출 테스트")
-    void getOrder_verify_test() {
+    @DisplayName("getOrder: 주문 조회 - 주문 예외처리 테스트")
+    void getOrder_order_exception_test() {
         //given
-        Long orderId = 1L;
-        Order mockOrder = mock(Order.class);
-        mock(OrderResponse.class);
-
-        given(orderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
-        given(mockOrder.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(mockOrder.getStatus()).willReturn(Status.DELIVERED);
+        Order order = mock(Order.class);
+        given(order.getOrderId()).willReturn(1L);
+        given(upperOrderRepository.getOrder(order.getOrderId())).willReturn(Optional.empty());
 
         //when
-        orderService.getOrder(orderId);
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
+            orderService.getOrder(order.getOrderId());
+        });
 
         //then
-        then(orderRepository).should().getOrder(orderId);
+        assertEquals("400 BAD_REQUEST \"존재하지 않는 주문번호입니다.\"", thrown.getMessage());
     }
 
     @Test
-    @DisplayName("saveOrder 메서드 반환값 테스트")
+    @DisplayName("saveOrder: 주문 생성 - 메서드 호출 테스트")
+    void saveOrder_verify_test() {
+        //given
+        Order order = mock(Order.class);
+        OrderRequestWrapper orderRequestWrapper = mock(OrderRequestWrapper.class);
+        CreateOrderRequest createOrderRequest = mock(CreateOrderRequest.class);
+        Member mockmember = mock(Member.class);
+        Address mockAddress = mock(Address.class);
+
+        given(orderRequestWrapper.getCreateOrderRequest()).willReturn(createOrderRequest);
+        given(createOrderRequest.getMemberId()).willReturn(1L);
+        given(createOrderRequest.getAddressId()).willReturn(2L);
+
+        given(memberMybatisRepository.findById(createOrderRequest.getMemberId())).willReturn(Optional.of(mockmember));
+        given(addressMybatisRepository.findById(createOrderRequest.getAddressId())).willReturn(Optional.of(mockAddress));
+        given(createOrderRequest.toOrder(mockmember, mockAddress)).willReturn(order);
+
+        //when
+        orderService.saveOrder(orderRequestWrapper.getCreateOrderRequest());
+
+        //then
+        then(memberMybatisRepository).should(times(1)).findById(createOrderRequest.getMemberId());
+        then(addressMybatisRepository).should(times(1)).findById(createOrderRequest.getAddressId());
+        then(upperOrderRepository).should(times(1)).saveOrder(order);
+        verify(order).getOrderId();
+    }
+
+    @Test
+    @DisplayName("saveOrder: 주문 생성 - 반환값 테스트")
     void saveOrder_test() {
         //given
         Order order = mock(Order.class);
@@ -98,8 +124,8 @@ class OrderServiceTest {
         given(createOrderRequest.getMemberId()).willReturn(1L);
         given(createOrderRequest.getAddressId()).willReturn(2L);
 
-        given(memberRepository.findById(1L)).willReturn(Optional.of(mockmember));
-        given(addressRepository.findById(2L)).willReturn(Optional.of(mockAddress));
+        given(memberMybatisRepository.findById(1L)).willReturn(Optional.of(mockmember));
+        given(addressMybatisRepository.findById(2L)).willReturn(Optional.of(mockAddress));
         given(createOrderRequest.toOrder(mockmember, mockAddress)).willReturn(order);
 
         //when
@@ -110,78 +136,80 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("saveOrder 메서드 호출 테스트")
-    void saveOrder_verify_test() {
+    @DisplayName("saveOrder: 주문 생성 - 회원 예외처리 테스트")
+    void saveOrder_member_exception_test() {
         //given
-        Order order = mock(Order.class);
+        mock(Order.class);
+        OrderRequestWrapper orderRequestWrapper = mock(OrderRequestWrapper.class);
+        CreateOrderRequest createOrderRequest = mock(CreateOrderRequest.class);
+        mock(Member.class);
+
+        given(orderRequestWrapper.getCreateOrderRequest()).willReturn(createOrderRequest);
+        given(createOrderRequest.getMemberId()).willReturn(1L);
+        given(memberMybatisRepository.findById(1L)).willReturn(Optional.empty());
+
+        //when
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
+            orderService.saveOrder(orderRequestWrapper.getCreateOrderRequest());
+        });
+
+        //then
+        assertEquals("400 BAD_REQUEST \"회원 정보를 찾을 수 없습니다.\"", thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("saveOrder: 주문 생성 - 배송지 예외처리 테스트")
+    void saveOrder_address_exception_test() {
+        //given
+        mock(Order.class);
         OrderRequestWrapper orderRequestWrapper = mock(OrderRequestWrapper.class);
         CreateOrderRequest createOrderRequest = mock(CreateOrderRequest.class);
         Member mockmember = mock(Member.class);
-        Address mockAddress = mock(Address.class);
+        mock(Address.class);
 
         given(orderRequestWrapper.getCreateOrderRequest()).willReturn(createOrderRequest);
         given(createOrderRequest.getMemberId()).willReturn(1L);
         given(createOrderRequest.getAddressId()).willReturn(2L);
-
-        given(memberRepository.findById(createOrderRequest.getMemberId())).willReturn(Optional.of(mockmember));
-        given(addressRepository.findById(createOrderRequest.getAddressId())).willReturn(Optional.of(mockAddress));
-        given(createOrderRequest.toOrder(mockmember, mockAddress)).willReturn(order);
+        given(memberMybatisRepository.findById(1L)).willReturn(Optional.of(mockmember));
+        given(addressMybatisRepository.findById(2L)).willReturn(Optional.empty());
 
         //when
-        orderService.saveOrder(orderRequestWrapper.getCreateOrderRequest());
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
+            orderService.saveOrder(orderRequestWrapper.getCreateOrderRequest());
+        });
 
         //then
-        then(memberRepository).should(times(1)).findById(createOrderRequest.getMemberId());
-        then(addressRepository).should(times(1)).findById(createOrderRequest.getAddressId());
-        then(orderRepository).should(times(1)).saveOrder(order);
-        verify(order).getOrderId();
+        assertEquals("400 BAD_REQUEST \"배송지 정보를 찾을 수 없습니다.\"", thrown.getMessage());
     }
 
     @Test
-    @DisplayName("deliveredToConfirmOrder 메서드 호출 테스트")
-    void deliveredToConfirmOrder_verify() {
+    @DisplayName("deliveredToConfirmOrder: 구매 확정 - 성공 메서드 호출 테스트")
+    void deliveredToConfirmOrder_verify_test() {
         //given
         Long orderId = 1L;
         Order order = mock(Order.class);
         mock(OrderResponse.class);
 
-        given(orderRepository.getOrder(1L)).willReturn(Optional.of(order));
+        given(upperOrderRepository.getOrder(1L)).willReturn(Optional.of(order));
         given(order.getStatus()).willReturn(Status.DELIVERED);
 
         //when
         orderService.deliveredToConfirmOrder(orderId);
 
         //then
-        then(orderRepository).should(times(1)).getOrder(orderId);
-        then(orderRepository).should().deliveredToConfirmOrder(orderId);
+        then(upperOrderRepository).should(times(1)).getOrder(orderId);
+        then(upperOrderRepository).should().deliveredToConfirmOrder(orderId);
     }
 
     @Test
-    @DisplayName("deliveredToConfirmOrder 성공 테스트")
-    void deliveredToConfirmOrder_success_test() {
-        //given
-        Long orderId = 1L;
-        Order mockOrder = mock(Order.class);
-
-        given(mockOrder.getStatus()).willReturn(Status.DELIVERED);
-        given(orderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
-
-        //when
-        orderService.deliveredToConfirmOrder(orderId);
-
-        //then
-        then(orderRepository).should().deliveredToConfirmOrder(orderId);
-    }
-
-    @Test
-    @DisplayName("deliveredToConfirmOrder 실패 테스트")
-    void deliveredToConfirmOrder_fail_test() {
+    @DisplayName("deliveredToConfirmOrder: 구매 확정 - 실패 예외처리 테스트")
+    void deliveredToConfirmOrder_fail_exception_test() {
         //given
         Long orderId = 1L;
         Order mockOrder = mock(Order.class);
 
         given(mockOrder.getStatus()).willReturn(Status.APPROVE);
-        given(orderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
+        given(upperOrderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {

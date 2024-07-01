@@ -59,7 +59,7 @@ public class OrderDetailResponse {
                 .name(orderDetail.getName())
                 .stock(orderDetail.getStock())
                 .optionName(orderDetail.getOptionName())
-                .extraCharge(orderDetail.getExtraCharge())
+//                .extraCharge(orderDetail.getExtraCharge())
                 .brandName(orderDetail.getBrandName())
                 .build();
     }

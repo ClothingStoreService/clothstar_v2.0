@@ -1,22 +1,21 @@
 package org.store.clothstar.member.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.MemberGrade;
 import org.store.clothstar.member.domain.MemberRole;
+import org.store.clothstar.member.entity.MemberEntity;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @ToString
 public class CreateMemberRequest {
     @Email(message = "유효하지 않은 이메일 형식입니다.")
@@ -42,6 +41,19 @@ public class CreateMemberRequest {
                 .role(MemberRole.USER)
                 .grade(MemberGrade.BRONZE)
                 .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public MemberEntity toMemberEntity(String encryptedPassword) {
+        return MemberEntity.builder()
+                .email(email)
+                .password(encryptedPassword)
+                .name(name)
+                .telNo(telNo)
+                .totalPaymentPrice(0)
+                .point(0)
+                .role(MemberRole.USER)
+                .grade(MemberGrade.BRONZE)
                 .build();
     }
 }

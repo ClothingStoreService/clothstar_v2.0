@@ -31,6 +31,10 @@ from product_line;
 select *
 from product;
 
+select *
+from order_detail
+where order_id = 202405251562452;
+
 ALTER TABLE `orders`
     ADD CONSTRAINT `FK_member_TO_orders_1` FOREIGN KEY (`member_id`)
         REFERENCES `member` (`member_id`);

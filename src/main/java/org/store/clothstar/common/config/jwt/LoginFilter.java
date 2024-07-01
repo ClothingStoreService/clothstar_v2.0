@@ -1,6 +1,10 @@
 package org.store.clothstar.common.config.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,15 +12,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.store.clothstar.common.dto.MessageDTO;
+import org.store.clothstar.common.util.MessageDTOBuilder;
 import org.store.clothstar.member.domain.CustomUserDetails;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.MemberLoginRequest;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
@@ -27,7 +28,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/v1/login");
+        setFilterProcessesUrl("/v1/members/login");
     }
 
     /**
@@ -41,8 +42,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
+        log.info("로그인 진행");
 
-        log.info("attemptAuthentication() 실행");
         ObjectMapper om = new ObjectMapper();
         MemberLoginRequest memberLoginRequest;
         String email;
@@ -57,7 +58,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         UsernamePasswordAuthenticationToken authTokenDTO
                 = new UsernamePasswordAuthenticationToken(email, password, null);
 
@@ -78,23 +78,28 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         log.info("생성 refreshToken: Bearer {}", refreshToken);
 
         response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addCookie(createCookie("refreshToken", refreshToken));
+        response.addCookie(jwtUtil.createCookie("refreshToken", refreshToken));
         response.setStatus(HttpStatus.OK.value());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+
+        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(HttpServletResponse.SC_OK, "로그인 성공 하였습니다.");
+        ObjectMapper om = new ObjectMapper();
+
+        response.getWriter().print(om.writeValueAsString(messageDTO));
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
-
         log.info("로그인 실패");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    }
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
 
-    public Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 30); //refresh token하고 같은 생명주기 30분으로 세팅
-        cookie.setHttpOnly(true); //자바스크립트로 쿠키 접근 못하게 막음
+        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(HttpServletResponse.SC_UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다. 다시 확인해주세요.");
+        ObjectMapper om = new ObjectMapper();
 
-        return cookie;
+        response.getWriter().print(om.writeValueAsString(messageDTO));
     }
 }

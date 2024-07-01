@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.store.clothstar.member.repository.AddressRepository">
+<mapper namespace="org.store.clothstar.member.repository.AddressMybatisRepository">
     <select id="findMemberAllAddress" resultType="org.store.clothstar.member.domain.Address">
         select * from address where member_id = #{memberId};
     </select>

@@ -1,6 +1,8 @@
 package org.store.clothstar.orderDetail.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,9 +11,6 @@ import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.productLine.domain.ProductLine;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 @Getter
 @AllArgsConstructor
@@ -49,7 +48,7 @@ public class AddOrderDetailRequest {
                 .name(productLine.getName())
                 .stock(product.getStock())
                 .optionName(product.getName())
-                .extraCharge(product.getExtraCharge())
+//                .extraCharge(product.getExtraCharge())
                 .brandName(productLine.getBrandName())
                 .build();
     }

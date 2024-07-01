@@ -24,4 +24,8 @@ public class Product {
     public void updateStock(long stock) {
         this.stock = stock;
     }
+
+    public void restoreStock(int quantity) {
+        this.stock += quantity;
+    }
 }

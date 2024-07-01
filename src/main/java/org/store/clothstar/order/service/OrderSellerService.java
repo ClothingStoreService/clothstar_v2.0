@@ -1,6 +1,6 @@
 package org.store.clothstar.order.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,23 +10,31 @@ import org.store.clothstar.order.domain.type.ApprovalStatus;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderSellerRequest;
-import org.store.clothstar.order.repository.OrderRepository;
-import org.store.clothstar.order.repository.OrderSellerRepository;
+import org.store.clothstar.order.repository.order.MybatisOrderRepository;
+import org.store.clothstar.order.repository.orderSeller.UpperOrderSellerRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class OrderSellerService {
 
-    private final OrderRepository orderRepository;
-    private final OrderSellerRepository orderSellerRepository;
+    private final UpperOrderSellerRepository upperOrderSellerRepository;
+    private final MybatisOrderRepository orderRepository;
+
+    public OrderSellerService(
+            @Qualifier("jpaOrderSellerRepositoryAdapter") UpperOrderSellerRepository upperOrderSellerRepository
+//            @Qualifier("mybatisOrderSellerRepository") UpperOrderSellerRepository upperOrderSellerRepository
+            , MybatisOrderRepository orderRepository
+    ) {
+        this.upperOrderSellerRepository = upperOrderSellerRepository;
+        this.orderRepository = orderRepository;
+    }
 
     @Transactional(readOnly = true)
     public List<OrderResponse> getWaitingOrder() {
 
-        return orderSellerRepository.SelectWaitingOrders().stream()
+        return upperOrderSellerRepository.SelectWaitingOrders().stream()
                 .map(OrderResponse::fromOrder)
                 .collect(Collectors.toList());
     }
@@ -36,7 +44,7 @@ public class OrderSellerService {
 
         // 주문 유효성 검사
         orderRepository.getOrder(orderId)
-                .filter(o -> o.getStatus() == Status.WAITING)
+                .filter(Order -> Order.getStatus() == Status.WAITING)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문이 존재하지 않거나 상태가 'WAITING'이 아니어서 처리할 수 없습니다."));
 
         return processOrder(orderId, orderSellerRequest);
@@ -49,11 +57,11 @@ public class OrderSellerService {
         MessageDTO messageDTO = null;
 
         if (orderSellerRequest.getApprovalStatus() == ApprovalStatus.APPROVE) {
-            orderSellerRepository.approveOrder(orderId);
-            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.", null);
+            upperOrderSellerRepository.approveOrder(orderId);
+            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.");
         } else if (orderSellerRequest.getApprovalStatus() == ApprovalStatus.CANCEL) {
-            orderSellerRepository.cancelOrder(orderId);
-            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.", null);
+            upperOrderSellerRepository.cancelOrder(orderId);
+            messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.");
         }
 
         orderRepository.getOrder(orderId)

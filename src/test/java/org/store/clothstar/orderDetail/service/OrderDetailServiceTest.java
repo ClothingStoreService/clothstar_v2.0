@@ -8,19 +8,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.repository.OrderRepository;
+import org.store.clothstar.order.repository.order.MybatisOrderRepository;
 import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
-import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
+import org.store.clothstar.orderDetail.repository.MybatisOrderDetailRepository;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.repository.ProductRepository;
 import org.store.clothstar.productLine.domain.ProductLine;
-import org.store.clothstar.productLine.repository.ProductLineRepository;
+import org.store.clothstar.productLine.repository.ProductLineMybatisRepository;
 
+import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.*;
@@ -32,15 +32,18 @@ class OrderDetailServiceTest {
     private OrderDetailService orderDetailService;
 
     @Mock
-    private OrderRepository orderRepository;
+    private MybatisOrderRepository orderRepository;
+
     @Mock
-    private ProductLineRepository productLineRepository;
+    private ProductLineMybatisRepository productLineMybatisRepository;
+
     @Mock
     private ProductRepository productRepository;
-    @Mock
-    private OrderDetailRepository orderDetailRepository;
 
-    @DisplayName("saveOrderDetailWithOrder 메서드 호출 테스트")
+    @Mock
+    private MybatisOrderDetailRepository orderDetailRepository;
+
+    @DisplayName("saveOrderDetailWithOrder: 주문상세 생성 - 메서드 호출 테스트")
     @Test
     void saveOrderDetailWithOrder_verify_test() {
         //given
@@ -52,7 +55,7 @@ class OrderDetailServiceTest {
         Order mockOrder = mock(Order.class);
 
         given(orderRepository.getOrder(orderId)).willReturn(Optional.of(mockOrder));
-        given(productLineRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
+        given(productLineMybatisRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productRepository.selectByProductId(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.toOrderDetail(orderId, mockProductLine, mockProduct)).willReturn(mockOrderDetail);
 
@@ -61,48 +64,34 @@ class OrderDetailServiceTest {
 
         //then
         then(orderRepository).should().getOrder(orderId);
-        then(productLineRepository).should().selectByProductLineId(mockRequest.getProductLineId());
+        then(productLineMybatisRepository).should().selectByProductLineId(mockRequest.getProductLineId());
         then(productRepository).should().selectByProductId(mockRequest.getProductId());
     }
 
-    @DisplayName("addOrderDetail 주문 상세 추가 생성 테스트")
+    @DisplayName("addOrderDetail: 주문상세 추가 - 반환값 테스트")
     @Test
     void addOrderDetail_test() {
         //given
-        OrderDetail orderDetail = OrderDetail.builder()
-                .orderDetailId(1L)
-                .orderId(1L)
-                .productLineId(1L)
-                .productId(1L)
-                .quantity(1)
-                .fixedPrice(3000)
-                .oneKindTotalPrice(3000)
-                .name("워셔블 케이블 반팔 니트 세트")
-                .stock(30L)
-                .optionName("아이보리")
-                .extraCharge(0)
-                .brandName("수아레")
-                .build();
-
         AddOrderDetailRequest mockRequest = mock(AddOrderDetailRequest.class);
+        OrderDetail mockOrderDetail = mock(OrderDetail.class);
         ProductLine mockProductLine = mock(ProductLine.class);
         Product mockProduct = mock(Product.class);
         Order mockOrder = mock(Order.class);
 
+        given(mockOrderDetail.getOrderDetailId()).willReturn(1L);
         given(orderRepository.getOrder(mockRequest.getOrderId())).willReturn(Optional.of(mockOrder));
-        given(productLineRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
+        given(productLineMybatisRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productRepository.selectByProductId(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
-        given(mockRequest.toOrderDetail(mockOrder, mockProductLine, mockProduct)).willReturn(orderDetail);
+        given(mockRequest.toOrderDetail(mockOrder, mockProductLine, mockProduct)).willReturn(mockOrderDetail);
 
         //when
-        Long orderDetailResponse = orderDetailService.addOrderDetail(mockRequest);
+        Long orderDetailId = orderDetailService.addOrderDetail(mockRequest);
 
         //then
-        assertThat(orderDetailResponse).isEqualTo(1L);
-
+        assertEquals(orderDetailId, 1L);
     }
 
-    @DisplayName("addOrderDetail 메서드 호출 테스트")
+    @DisplayName("addOrderDetail: 주문상세 추가 - 메서드 호출 테스트")
     @Test
     void addOrderDetail_verify_test() {
         //given
@@ -113,7 +102,7 @@ class OrderDetailServiceTest {
         Order mockOrder = mock(Order.class);
 
         given(orderRepository.getOrder(mockRequest.getOrderId())).willReturn(Optional.of(mockOrder));
-        given(productLineRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
+        given(productLineMybatisRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productRepository.selectByProductId(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.toOrderDetail(mockOrder, mockProductLine, mockProduct)).willReturn(mockOrderDetail);
 
@@ -122,11 +111,11 @@ class OrderDetailServiceTest {
 
         //then
         then(orderRepository).should().getOrder(mockRequest.getOrderId());
-        then(productLineRepository).should().selectByProductLineId(mockRequest.getProductLineId());
+        then(productLineMybatisRepository).should().selectByProductLineId(mockRequest.getProductLineId());
         then(productRepository).should().selectByProductId(mockRequest.getProductId());
     }
 
-    @DisplayName("addOrderDetail - 주문 유효성 검사 예외처리 테스트")
+    @DisplayName("addOrderDetail: 주문상세 추가 - 주문 유효성 검사 예외처리 테스트")
     @Test
     void getOrderDetail_quantityZero_exception_test() {
         //given
@@ -136,7 +125,7 @@ class OrderDetailServiceTest {
         Product mockProduct = mock(Product.class);
 
         given(orderRepository.getOrder(mockRequest.getOrderId())).willReturn(Optional.of(mockOrder));
-        given(productLineRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
+        given(productLineMybatisRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productRepository.selectByProductId(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.getQuantity()).willReturn(10);
         given(mockProduct.getStock()).willReturn(1L);
@@ -151,7 +140,7 @@ class OrderDetailServiceTest {
     }
 
     @Test
-    @DisplayName("주문생성시, 상품재고를 차감하는 메서드(updateProduct())가 호출되는지 테스트")
+    @DisplayName("addOrderDetail: 주문생성시, 상품재고를 차감하는 메서드(updateProduct())가 호출되는지 테스트")
     void product_stock_subtract() {
         //given
         AddOrderDetailRequest mockRequest = mock(AddOrderDetailRequest.class);
@@ -161,7 +150,7 @@ class OrderDetailServiceTest {
         OrderDetail mockOrderDetail = mock(OrderDetail.class);
 
         given(orderRepository.getOrder(mockRequest.getOrderId())).willReturn(Optional.of(mockOrder));
-        given(productLineRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
+        given(productLineMybatisRepository.selectByProductLineId(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productRepository.selectByProductId(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.getQuantity()).willReturn(1);
         given(mockProduct.getStock()).willReturn(10L);
@@ -172,5 +161,49 @@ class OrderDetailServiceTest {
 
         //then
         verify(productRepository).updateProduct(mockProduct);
+    }
+
+    @Test
+    @DisplayName("restoreStockByOrder: 주문 취소시, 상품 재고 반환 - 메서드 호출 테스트")
+    void restoreStockByOrder_verify_test() {
+        //given
+        long orderId = 1L;
+        OrderDetail mockOrderDetail1 = mock(OrderDetail.class);
+        OrderDetail mockOrderDetail2 = mock(OrderDetail.class);
+        OrderDetail mockOrderDetail3 = mock(OrderDetail.class);
+        Product mockProduct = mock(Product.class);
+        List<OrderDetail> orderDetails = List.of(mockOrderDetail1, mockOrderDetail2, mockOrderDetail3);
+        given(orderDetailRepository.findByOrderId(orderId)).willReturn(orderDetails);
+        given(productRepository.selectByProductId(mockOrderDetail1.getProductId())).willReturn(Optional.of(mockProduct));
+
+        //when
+        orderDetailService.restoreStockByOrder(orderId);
+
+        //then
+        then(orderDetailRepository).should(times(1)).findByOrderId(orderId);
+        then(productRepository).should(times(3)).selectByProductId(mockProduct.getProductId());
+        then(productRepository).should(times(3)).updateProduct(mockProduct);
+
+    }
+
+    @Test
+    @DisplayName("restoreStockByOrder - Product NULL 예외처리 테스트")
+    void restoreStockByOrder_product_null_exception_test() {
+        //given
+        long orderId = 1L;
+        OrderDetail mockOrderDetail1 = mock(OrderDetail.class);
+        OrderDetail mockOrderDetail2 = mock(OrderDetail.class);
+        OrderDetail mockOrderDetail3 = mock(OrderDetail.class);
+        List<OrderDetail> orderDetails = List.of(mockOrderDetail1, mockOrderDetail2, mockOrderDetail3);
+        given(orderDetailRepository.findByOrderId(orderId)).willReturn(orderDetails);
+        given(productRepository.selectByProductId(mockOrderDetail1.getProductId())).willReturn(Optional.empty());
+
+        //when
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
+            orderDetailService.restoreStockByOrder(orderId);
+        });
+
+        //then
+        assertEquals("404 NOT_FOUND \"상품 정보를 찾을 수 없습니다.\"", thrown.getMessage());
     }
 }

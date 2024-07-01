@@ -35,7 +35,7 @@ public class ProductLineController {
 
     @Operation(summary = "상품 상세 조회", description = "productLineId로 상품과 하위 옵션들을 상세 조회한다.")
     @GetMapping("/{productLineId}")
-    public ResponseEntity<ProductLineWithProductsResponse> getProductLine(@PathVariable Long productLineId) {
+    public ResponseEntity<ProductLineWithProductsResponse> getProductLine(@PathVariable("productLineId") Long productLineId) {
         ProductLineWithProductsResponse productLineWithProducts = productLineService.getProductLineWithProducts(productLineId);
         return ResponseEntity.ok().body(productLineWithProducts);
     }
@@ -57,11 +57,11 @@ public class ProductLineController {
 
         productLineService.updateProductLine(productLineId, updateProductLineRequest);
 
-        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "ProductLine updated successfully", null));
+        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "ProductLine updated successfully"));
     }
 
     @DeleteMapping("/{productLineId}")
-    public ResponseEntity<Void> deleteProductLine(@PathVariable Long productLineId) {
+    public ResponseEntity<Void> deleteProductLine(@PathVariable("productLineId") Long productLineId) {
         productLineService.setDeletedAt(productLineId);
         return ResponseEntity.noContent().build();
     }

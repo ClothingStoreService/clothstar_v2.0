@@ -13,10 +13,11 @@ import org.store.clothstar.category.domain.Category;
 import org.store.clothstar.category.dto.request.CreateCategoryRequest;
 import org.store.clothstar.category.dto.response.CategoryDetailResponse;
 import org.store.clothstar.category.dto.response.CategoryResponse;
-import org.store.clothstar.category.repository.CategoryRepository;
+import org.store.clothstar.category.repository.CategoryMybatisRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -30,7 +31,7 @@ class CategoryServiceTest {
     private CategoryService categoryService;
 
     @Mock
-    private CategoryRepository categoryRepository;
+    private CategoryMybatisRepository categoryMybatisRepository;
 
     @DisplayName("카테고리 리스트 조회에 성공한다.")
     @Test
@@ -69,13 +70,13 @@ class CategoryServiceTest {
         categories.add(category5);
         categories.add(category6);
 
-        BDDMockito.given(categoryRepository.selectAllCategory()).willReturn(categories);
+        BDDMockito.given(categoryMybatisRepository.selectAllCategory()).willReturn(categories);
 
         // when
         List<CategoryResponse> response = categoryService.getAllCategories();
 
         // then
-        Mockito.verify(categoryRepository, Mockito.times(1))
+        Mockito.verify(categoryMybatisRepository, Mockito.times(1))
                 .selectAllCategory();
         assertThat(response).isNotNull();
         assertThat(response.size()).isEqualTo(6);
@@ -98,13 +99,13 @@ class CategoryServiceTest {
                 .categoryType("OUTER")
                 .build();
 
-        BDDMockito.given(categoryRepository.selectCategoryById(anyLong())).willReturn(category);
+        BDDMockito.given(categoryMybatisRepository.selectCategoryById(anyLong())).willReturn(Optional.ofNullable(category));
 
         // when
         CategoryDetailResponse response = categoryService.getCategory(categoryId);
 
         // then
-        Mockito.verify(categoryRepository, Mockito.times(1))
+        Mockito.verify(categoryMybatisRepository, Mockito.times(1))
                 .selectCategoryById(anyLong());
         assertThat(response).isNotNull();
         assertThat(response.getCategoryId()).isEqualTo(1L);
@@ -119,13 +120,13 @@ class CategoryServiceTest {
                 .categoryType("OUTER")
                 .build();
 
-        BDDMockito.given(categoryRepository.save(Mockito.any(Category.class))).willReturn(1);
+        BDDMockito.given(categoryMybatisRepository.save(Mockito.any(Category.class))).willReturn(1);
 
         // when
         Long categoryId = categoryService.createCategory(createCategoryRequest);
 
         // then
-        Mockito.verify(categoryRepository, Mockito.times(1))
+        Mockito.verify(categoryMybatisRepository, Mockito.times(1))
                 .save(Mockito.any(Category.class));
     }
 

@@ -56,6 +56,6 @@ public class CategoryController {
 
         categoryService.updateCategory(categoryId, updateCategoryRequest);
 
-        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "Category updated successfully", null));
+        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "Category updated successfully"));
     }
 }

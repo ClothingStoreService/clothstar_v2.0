@@ -3,8 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.store.clothstar.productLine.repository.ProductLineRepository">
-    <resultMap id="productWithOptions" type="org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse">
+<mapper namespace="org.store.clothstar.productLine.repository.ProductLineMybatisRepository">
+    <resultMap id="productWithOptions"
+               type="org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse">
         <id property="productLineId" column="product_line_id"/>
         <result property="memberId" column="member_id"/>
         <result property="categoryId" column="category_id"/>
@@ -19,9 +20,10 @@
         <result property="deletedAt" column="deleted_at"/>
         <result property="brandName" column="brand_name"/>
         <result property="biz_no" column="biz_no"/>
-        <collection property="productList" column="productLineId = product_line_id" javaType="List" ofType="org.store.clothstar.product.domain.Product" select="getProductsByProductLineId"/>
+        <collection property="productList" column="productLineId = product_line_id" javaType="List"
+                    ofType="org.store.clothstar.product.domain.Product" select="getProductsByProductLineId"/>
     </resultMap>
-    
+
     <select id="selectAllProductLinesNotDeleted" resultType="org.store.clothstar.productLine.domain.ProductLine">
         SELECT pl.*, s.brand_name, s.biz_no
         FROM product_line pl
@@ -29,7 +31,8 @@
         WHERE pl.deleted_at IS NULL
         AND pl.status NOT IN ('hidden', 'discontinued');
     </select>
-    <select id="selectByProductLineId" parameterType="Long" resultType="org.store.clothstar.productLine.domain.ProductLine">
+    <select id="selectByProductLineId" parameterType="Long"
+            resultType="org.store.clothstar.productLine.domain.ProductLine">
         SELECT pl.*, s.brand_name, s.biz_no
         FROM product_line pl
         INNER JOIN seller s ON pl.member_id = s.member_id
@@ -37,14 +40,16 @@
     </select>
     <select id="selectProductLineWithOptions" resultMap="productWithOptions">
         SELECT
-            pl.*,
-            s.brand_name,
-            s.biz_no
+        pl.*,
+        s.brand_name,
+        s.biz_no
         FROM product_line pl
         INNER JOIN seller s ON pl.member_id = s.member_id
         WHERE pl.product_line_id = #{productLineId}
     </select>
-    <select id="getProductsByProductLineId" parameterType="org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse" resultType="org.store.clothstar.product.domain.Product">
+    <select id="getProductsByProductLineId"
+            parameterType="org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse"
+            resultType="org.store.clothstar.product.domain.Product">
         SELECT *
         FROM product
         WHERE product_line_id = #{productLineId}
@@ -52,8 +57,10 @@
     <insert id="save"
             parameterType="org.store.clothstar.productLine.domain.ProductLine"
             useGeneratedKeys="true" keyProperty="productLineId" keyColumn="product_line_id">
-        INSERT INTO product_line(member_id, category_id, name, content, price, total_stock, sale_count, status, created_at)
-        VALUES (#{memberId}, #{categoryId}, #{name}, #{content}, #{price}, #{totalStock}, #{saleCount}, #{status}, #{createdAt})
+        INSERT INTO product_line(member_id, category_id, name, content, price, total_stock, sale_count, status,
+        created_at)
+        VALUES (#{memberId}, #{categoryId}, #{name}, #{content}, #{price}, #{totalStock}, #{saleCount}, #{status},
+        #{createdAt})
     </insert>
     <update id="updateProductLine"
             parameterType="org.store.clothstar.productLine.domain.ProductLine"
