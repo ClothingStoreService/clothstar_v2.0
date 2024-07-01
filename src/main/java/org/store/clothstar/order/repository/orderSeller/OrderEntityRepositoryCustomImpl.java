@@ -32,17 +32,47 @@ public class OrderEntityRepositoryCustomImpl implements OrderEntityRepositoryCus
     QProductLineEntity qProductLineEntity = QProductLineEntity.productLineEntity;
 
     @Override
-    public List<OrderEntity> findWaitingOrders() {
-        return jpaQueryFactory.select(qOrderEntity)
+    public List<OrderResponse> findWaitingOrders() {
+//        return jpaQueryFactory.select(qOrderEntity)
+//                .from(qOrderEntity)
+//                .where(qOrderEntity.status.eq(Status.WAITING))
+//                .fetch();
+        List<OrderResponse> results = jpaQueryFactory
+                .select(new QOrderResponse(
+                        qOrderEntity,
+                        qOrderDetailEntity,
+                        qMemberEntity,
+                        qAddressEntity,
+                        qProductLineEntity))
                 .from(qOrderEntity)
+                .innerJoin(qOrderEntity.member, qMemberEntity)
+                .innerJoin(qOrderEntity.address, qAddressEntity)
+                .innerJoin(qOrderEntity.orderDetails, qOrderDetailEntity)
+                .innerJoin(qOrderDetailEntity.product, qProductEntity)
+                .innerJoin(qProductEntity.productLine, qProductLineEntity)
                 .where(qOrderEntity.status.eq(Status.WAITING))
+                .groupBy(qOrderEntity.orderId)
                 .fetch();
+
+        if (results != null) {
+            results.forEach(result -> {
+                List<OrderDetailDTO> orderDetailList = jpaQueryFactory
+                        .select(new QOrderDetailDTO(
+                                qOrderDetailEntity
+                        ))
+                        .from(qOrderDetailEntity)
+                        .where(qOrderDetailEntity.order.orderId.eq(result.getOrderId()))
+                        .fetch();
+
+                result.setterOrderDetailList(orderDetailList);
+            });
+        }
+        return results;
     }
 
     @Override
     public OrderResponse findOrderWithDetails(Long orderId){
 
-//        return
                 OrderResponse result = jpaQueryFactory
                 .select(new QOrderResponse(
                         qOrderEntity,
@@ -60,7 +90,6 @@ public class OrderEntityRepositoryCustomImpl implements OrderEntityRepositoryCus
                 .groupBy(qOrderEntity.orderId)
                 .fetchOne();
 
-//        return null;
         if (result != null) {
             List<OrderDetailDTO> orderDetailList = jpaQueryFactory
                     .select(new QOrderDetailDTO(
@@ -71,12 +100,7 @@ public class OrderEntityRepositoryCustomImpl implements OrderEntityRepositoryCus
                     .fetch();
 
             result.setterOrderDetailList(orderDetailList);
-
-//            result.setOrderDetailList(orderDetailList.stream()
-//                    .map()
-//            );
         }
-
         return result;
     }
 }
