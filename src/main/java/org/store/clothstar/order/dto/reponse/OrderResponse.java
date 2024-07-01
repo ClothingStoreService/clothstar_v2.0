@@ -2,8 +2,10 @@ package org.store.clothstar.order.dto.reponse;
 
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import org.store.clothstar.member.domain.Member;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.store.clothstar.member.entity.AddressEntity;
 import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.order.entity.OrderEntity;
@@ -11,7 +13,6 @@ import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
-import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 import java.time.LocalDate;
