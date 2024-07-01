@@ -30,7 +30,7 @@ public class OrderController {
 
     @Operation(summary = "단일 주문 조회", description = "단일 주문의 정보를 조회한다.")
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderResponse> getOrder(@Valid @Validated @PathVariable Long orderId) {
+    public ResponseEntity<OrderResponse> getOrder(@Validated @PathVariable Long orderId) {
         OrderResponse orderResponse = orderService.getOrder(orderId);
         return ResponseEntity.ok(orderResponse);
     }
