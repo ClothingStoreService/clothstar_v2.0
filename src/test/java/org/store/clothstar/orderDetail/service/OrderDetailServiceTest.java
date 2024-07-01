@@ -15,6 +15,7 @@ import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.repository.ProductJPARepository;
+import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
@@ -30,6 +31,9 @@ class OrderDetailServiceTest {
 
     @InjectMocks
     private OrderDetailService orderDetailService;
+
+    @Mock
+    private ProductService productService;
 
     @Mock
     private OrderRepository orderRepository;
@@ -202,43 +206,13 @@ class OrderDetailServiceTest {
         OrderDetailEntity mockOrderDetail1 = mock(OrderDetailEntity.class);
         OrderDetailEntity mockOrderDetail2 = mock(OrderDetailEntity.class);
         OrderDetailEntity mockOrderDetail3 = mock(OrderDetailEntity.class);
-        ProductEntity mockProductEntity = mock(ProductEntity.class);
-        given(mockOrderDetail1.getProduct()).willReturn(mockProductEntity);
-        given(mockOrderDetail2.getProduct()).willReturn(mockProductEntity);
-        given(mockOrderDetail3.getProduct()).willReturn(mockProductEntity);
         List<OrderDetailEntity> orderDetailList = List.of(mockOrderDetail1, mockOrderDetail2, mockOrderDetail3);
         given(orderDetailRepository.findOrderDetailListByOrderId(orderId)).willReturn(orderDetailList);
-        given(productJPARepository.findById(mockOrderDetail1.getProduct().getProductId())).willReturn(Optional.of(mockProductEntity));
 
         //when
         orderDetailService.restoreStockByOrder(orderId);
 
         //then
-        then(orderDetailRepository).should(times(1)).findOrderDetailListByOrderId(orderId);
-        then(productJPARepository).should(times(3)).findById(mockProductEntity.getProductId());
-        then(productJPARepository).should(times(3)).save(mockProductEntity);
-    }
-
-    @Test
-    @DisplayName("restoreStockByOrder - Product NULL 예외처리 테스트")
-    void restoreStockByOrder_product_null_exception_test() {
-        //given
-        long orderId = 1L;
-        OrderDetailEntity mockOrderDetail1 = mock(OrderDetailEntity.class);
-        OrderDetailEntity mockOrderDetail2 = mock(OrderDetailEntity.class);
-        OrderDetailEntity mockOrderDetail3 = mock(OrderDetailEntity.class);
-        ProductEntity mockProductEntity = mock(ProductEntity.class);
-        given(mockOrderDetail1.getProduct()).willReturn(mockProductEntity);
-        List<OrderDetailEntity> orderDetailList = List.of(mockOrderDetail1, mockOrderDetail2, mockOrderDetail3);
-        given(orderDetailRepository.findOrderDetailListByOrderId(orderId)).willReturn(orderDetailList);
-        given(productJPARepository.findById(mockOrderDetail1.getProduct().getProductId())).willReturn(Optional.empty());
-
-        //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            orderDetailService.restoreStockByOrder(orderId);
-        });
-
-        //then
-        assertEquals("404 NOT_FOUND \"상품 정보를 찾을 수 없습니다.\"", thrown.getMessage());
+        then(productService).should(times(1)).restoreProductStock(orderDetailList);
     }
 }
