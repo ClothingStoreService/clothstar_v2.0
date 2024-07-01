@@ -15,7 +15,6 @@ import org.store.clothstar.product.repository.ProductRepository;
 import org.store.clothstar.product.repository.UpperProductRepository;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 import org.store.clothstar.productLine.repository.ProductLineRepository;
-import org.store.clothstar.productLine.repository.UpperProductLineRepository;
 import org.store.clothstar.productLine.repository.adapter.ProductLineJPARepositoryAdapter;
 
 @Slf4j
@@ -26,17 +25,17 @@ public class RepositoryConfig {
     @Bean
     @Primary
     @ConditionalOnProperty(name = "app.repository.type", havingValue = "jpa", matchIfMissing = true)
-    public UpperProductLineRepository jpaProductLineRepository(CategoryJpaRepository categoryJpaRepository,
-                                                            SellerRepository sellerRepository,
-                                                            ProductLineJPARepository productLineJPARepository,
-                                                            ProductJPARepository productJPARepository) {
+    public ProductLineRepository jpaProductLineRepository(CategoryJpaRepository categoryJpaRepository,
+                                                          SellerRepository sellerRepository,
+                                                          ProductLineJPARepository productLineJPARepository,
+                                                          ProductJPARepository productJPARepository) {
         log.info("Configuring ProductLine JPA repository");
         return new ProductLineJPARepositoryAdapter(categoryJpaRepository, sellerRepository, productLineJPARepository, productJPARepository);
     }
 
     @Bean
     @ConditionalOnProperty(name = "app.repository.type", havingValue = "mybatis")
-    public UpperProductLineRepository mybatisProductLineRepository(SqlSessionTemplate sqlSessionTemplate) {
+    public ProductLineRepository mybatisProductLineRepository(SqlSessionTemplate sqlSessionTemplate) {
         log.info("Configuring ProductLine MyBatis repository");
         return sqlSessionTemplate.getMapper(ProductLineRepository.class);
     }

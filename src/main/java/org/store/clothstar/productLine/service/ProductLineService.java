@@ -12,7 +12,7 @@ import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineResponse;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
-import org.store.clothstar.productLine.repository.UpperProductLineRepository;
+import org.store.clothstar.productLine.repository.ProductLineRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductLineService {
 
-    private final UpperProductLineRepository productLineRepository;
+    private final ProductLineRepository productLineRepository;
 
     @Transactional(readOnly = true)
     public List<ProductLineResponse> getAllProductLines() {

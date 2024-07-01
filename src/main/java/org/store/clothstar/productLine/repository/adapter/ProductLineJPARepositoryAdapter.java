@@ -17,18 +17,16 @@ import org.store.clothstar.productLine.dto.response.ProductLineWithProductsRespo
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 import org.store.clothstar.productLine.repository.ProductLineRepository;
-import org.store.clothstar.productLine.repository.UpperProductLineRepository;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class ProductLineJPARepositoryAdapter implements UpperProductLineRepository {
+public class ProductLineJPARepositoryAdapter implements ProductLineRepository {
     private final CategoryJpaRepository categoryJpaRepository;
     private final SellerRepository sellerJpaRepository;
 
