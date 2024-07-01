@@ -59,26 +59,26 @@ class OrderSellerServiceTest {
     void getWaitingOrder_test() {
         //given
         OrderEntity order1 = mock(OrderEntity.class);
-        given(order1.getCreatedAt()).willReturn(LocalDateTime.now());
+//        given(order1.getCreatedAt()).willReturn(LocalDateTime.now());
         given(order1.getTotalShippingPrice()).willReturn(1000);
-        given(order1.getMember()).willReturn(mockMemberEntity);
-        given(order1.getAddress()).willReturn(mockAddressEntity);
+//        given(order1.getMember()).willReturn(mockMemberEntity);
+//        given(order1.getAddress()).willReturn(mockAddressEntity);
 
         OrderEntity order2 = mock(OrderEntity.class);
-        given(order2.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(order2.getMember()).willReturn(mockMemberEntity);
-        given(order2.getAddress()).willReturn(mockAddressEntity);
+//        given(order2.getCreatedAt()).willReturn(LocalDateTime.now());
+//        given(order2.getMember()).willReturn(mockMemberEntity);
+//        given(order2.getAddress()).willReturn(mockAddressEntity);
 
         OrderEntity order3 = mock(OrderEntity.class);
-        given(order3.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(order3.getMember()).willReturn(mockMemberEntity);
-        given(order3.getAddress()).willReturn(mockAddressEntity);
+//        given(order3.getCreatedAt()).willReturn(LocalDateTime.now());
+//        given(order3.getMember()).willReturn(mockMemberEntity);
+//        given(order3.getAddress()).willReturn(mockAddressEntity);
 
         List<OrderEntity> orders = List.of(order1, order2, order3);
         given(orderSellerRepository.findWaitingOrders()).willReturn(orders);
 
         //when
-        List<OrderResponse> response = orderSellerService.getWaitingOrder();
+        List<OrderEntity> response = orderSellerService.getWaitingOrder();
 
         //then
         then(orderSellerRepository).should(times(1)).findWaitingOrders();

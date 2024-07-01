@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
+import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.repository.orderSeller.JpaOrderSellerRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
@@ -35,10 +36,9 @@ public class OrderSellerService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderResponse> getWaitingOrder() {
+    public List<OrderEntity> getWaitingOrder() {
 
         return orderSellerRepository.findWaitingOrders().stream()
-                .map(OrderResponse::fromOrderEntity)
                 .collect(Collectors.toList());
     }
 
