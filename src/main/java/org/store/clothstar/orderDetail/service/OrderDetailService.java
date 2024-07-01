@@ -101,7 +101,6 @@ public class OrderDetailService {
                 orderEntity.getTotalProductsPrice() + orderEntity.getTotalShippingPrice() + orderDetailEntity.getOneKindTotalPrice();
 
         orderEntity.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
-//        orderRepository.updateOrderPrices(orderEntity);
 
         updateProductStock(productEntity,orderDetailEntity.getQuantity());
 
@@ -112,20 +111,11 @@ public class OrderDetailService {
     void updateProductStock(ProductEntity productEntity, int quantity) {
         long updatedStock = productEntity.getStock() - quantity;
         productEntity.updateStock(updatedStock);
-//        productJPARepository.updateProduct(productEntity);
     }
 
     @Transactional
     public void restoreStockByOrder(Long orderId) {
         List<OrderDetailEntity> orderDetailList = orderDetailRepository.findOrderDetailListByOrderId(orderId);
-
-        orderDetailList.stream()
-                .map(orderDetailEntity -> {
-                    ProductEntity productEntity = productJPARepository.findById(orderDetailEntity.getProduct().getProductId())
-                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
-                    productEntity.restoreStock(orderDetailEntity.getQuantity());
-                    return productEntity;
-                })
-                .forEach(productJPARepository::save);
+        productService.restoreProductStock(orderDetailList);
     }
 }
