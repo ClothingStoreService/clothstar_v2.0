@@ -11,7 +11,7 @@ import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
-import org.store.clothstar.product.repository.ProductRepository;
+import org.store.clothstar.product.repository.ProductMybatisRepository;
 
 import java.util.Optional;
 
@@ -29,7 +29,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Mock
-    private ProductRepository productRepository;
+    private ProductMybatisRepository productMybatisRepository;
 
     @DisplayName("product_id로 상품 옵션 단건 조회에 성공한다.")
     @Test
@@ -45,7 +45,7 @@ class ProductServiceTest {
                 .stock(30L)
                 .build();
 
-        given(productRepository.selectByProductId(anyLong())).willReturn(Optional.ofNullable(product));
+        given(productMybatisRepository.selectByProductId(anyLong())).willReturn(Optional.ofNullable(product));
 
         // when
         ProductResponse response = productService.getProduct(productId);
@@ -71,13 +71,13 @@ class ProductServiceTest {
                 .stock(200L)
                 .build();
 
-        given(productRepository.save(any(Product.class))).willReturn(1);
+        given(productMybatisRepository.save(any(Product.class))).willReturn(1);
 
         // when
         Long createdProductId = productService.createProduct(createProductRequest);
 
         // then
-        verify(productRepository, times(1))
+        verify(productMybatisRepository, times(1))
                 .save(any(Product.class));
         assertThat(createdProductId).isNotNull();
     }
@@ -101,16 +101,16 @@ class ProductServiceTest {
                 .stock(180L)
                 .build();
 
-        given(productRepository.selectByProductId(anyLong())).willReturn(Optional.ofNullable(product));
-        given(productRepository.updateProduct(any(Product.class))).willReturn(1);
+        given(productMybatisRepository.selectByProductId(anyLong())).willReturn(Optional.ofNullable(product));
+        given(productMybatisRepository.updateProduct(any(Product.class))).willReturn(1);
 
         // when
         productService.updateProduct(productId, updateProductRequest);
 
         // then
-        verify(productRepository, times(1))
+        verify(productMybatisRepository, times(1))
                 .selectByProductId(anyLong());
-        verify(productRepository, times(1))
+        verify(productMybatisRepository, times(1))
                 .updateProduct(any(Product.class));
     }
 
@@ -127,16 +127,16 @@ class ProductServiceTest {
                 .stock(30L)
                 .build();
 
-        given(productRepository.selectByProductId(anyLong())).willReturn(Optional.ofNullable(product));
-        given(productRepository.deleteProduct(anyLong())).willReturn(1);
+        given(productMybatisRepository.selectByProductId(anyLong())).willReturn(Optional.ofNullable(product));
+        given(productMybatisRepository.deleteProduct(anyLong())).willReturn(1);
 
         // when
         productService.deleteProduct(productId);
 
         // then
-        verify(productRepository, times(1))
+        verify(productMybatisRepository, times(1))
                 .selectByProductId(anyLong());
-        verify(productRepository, times(1))
+        verify(productMybatisRepository, times(1))
                 .deleteProduct(anyLong());
     }
 }

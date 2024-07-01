@@ -15,6 +15,7 @@ import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -41,6 +42,34 @@ public class ProductLineWithProductsJPAResponse {
     private LocalDateTime modifiedAt;
 //    private LocalDateTime deletedAt;
 
+//    @QueryProjection
+//    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Category category, SellerEntity seller, MemberEntity member, Long totalStock) {
+//        this.productLineId = productLine.getProductLineId();
+//        this.category = CategoryResponse.from(category);
+//        this.name = productLine.getName();
+//        this.price = productLine.getPrice();
+//        this.totalStock = totalStock;
+//        this.status = productLine.getStatus();
+//        this.productList = productLine.getProducts()
+//                .stream()
+//                .map(ProductResponse::from)
+//                .toList();
+////        this.productList = productLine.getProducts();
+//        this.saleCount = productLine.getSaleCount();
+//        this.member = MemberSimpleResponse.from(member);
+//        this.seller = SellerSimpleResponse.from(seller);
+//        this.createdAt = productLine.getCreatedAt();
+//        this.modifiedAt = productLine.getModifiedAt();
+////        this.deletedAt = productLine.getDeletedAt();
+//    }
+
+    // 추가된 생성자
+    // 추가된 생성자
+    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Category category, SellerEntity seller, MemberEntity member, Long totalStock, List<ProductResponse> productList) {
+        this(productLine, category, seller, member, totalStock);
+        this.productList = productList != null ? productList : new ArrayList<>();
+    }
+
     @QueryProjection
     public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Category category, SellerEntity seller, MemberEntity member, Long totalStock) {
         this.productLineId = productLine.getProductLineId();
@@ -49,16 +78,12 @@ public class ProductLineWithProductsJPAResponse {
         this.price = productLine.getPrice();
         this.totalStock = totalStock;
         this.status = productLine.getStatus();
-        this.productList = productLine.getProducts()
-                .stream()
-                .map(ProductResponse::from)
-                .toList();
-//        this.productList = productLine.getProducts();
         this.saleCount = productLine.getSaleCount();
         this.member = MemberSimpleResponse.from(member);
         this.seller = SellerSimpleResponse.from(seller);
         this.createdAt = productLine.getCreatedAt();
         this.modifiedAt = productLine.getModifiedAt();
-//        this.deletedAt = productLine.getDeletedAt();
+        this.productList = new ArrayList<>();
     }
+
 }

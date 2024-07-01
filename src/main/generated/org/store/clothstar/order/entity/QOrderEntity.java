@@ -28,6 +28,8 @@ public class QOrderEntity extends EntityPathBase<OrderEntity> {
 
     public final org.store.clothstar.member.entity.QMemberEntity member;
 
+    public final ListPath<org.store.clothstar.orderDetail.entity.OrderDetailEntity, org.store.clothstar.orderDetail.entity.QOrderDetailEntity> orderDetails = this.<org.store.clothstar.orderDetail.entity.OrderDetailEntity, org.store.clothstar.orderDetail.entity.QOrderDetailEntity>createList("orderDetails", org.store.clothstar.orderDetail.entity.OrderDetailEntity.class, org.store.clothstar.orderDetail.entity.QOrderDetailEntity.class, PathInits.DIRECT2);
+
     public final NumberPath<Long> orderId = createNumber("orderId", Long.class);
 
     public final EnumPath<org.store.clothstar.order.type.PaymentMethod> paymentMethod = createEnum("paymentMethod", org.store.clothstar.order.type.PaymentMethod.class);
