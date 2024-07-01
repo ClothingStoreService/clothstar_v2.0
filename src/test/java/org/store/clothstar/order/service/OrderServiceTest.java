@@ -47,38 +47,17 @@ class OrderServiceTest {
     @DisplayName("getOrder: 주문 조회 - 메서드 호출 & 반환값 테스트")
     void getOrder_test() {
         //given
-        OrderEntity mockOrderEntity = mock(OrderEntity.class);
-        MemberEntity mockMemberEntity = mock(MemberEntity.class);
-        AddressEntity mockAddressEntity = mock(AddressEntity.class);
-        given(mockOrderEntity.getOrderId()).willReturn(1L);
-        given(mockOrderEntity.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(mockOrderEntity.getMember()).willReturn(mockMemberEntity);
-        given(mockOrderEntity.getAddress()).willReturn(mockAddressEntity);
-        given(orderRepository.findById(mockOrderEntity.getOrderId())).willReturn(Optional.of(mockOrderEntity));
+        Long orderId = 1L;
+        OrderResponse mockOrderResponse = mock(OrderResponse.class);
+        given(mockOrderResponse.getOrderId()).willReturn(orderId);
+        given(orderRepository.findOrderWithDetails(orderId)).willReturn(mockOrderResponse);
 
         //when
-        OrderResponse orderResponse = orderService.getOrder(mockOrderEntity.getOrderId());
+        OrderResponse orderResponse = orderService.getOrder(orderId);
 
         //then
-        then(orderRepository).should(times(1)).findById(1L);
-        assertThat(orderResponse.getOrderId()).isEqualTo(mockOrderEntity.getOrderId());
-    }
-
-    @Test
-    @DisplayName("getOrder: 주문 조회 - 주문 예외처리 테스트")
-    void getOrder_order_exception_test() {
-        //given
-        OrderEntity orderEntity = mock(OrderEntity.class);
-        given(orderEntity.getOrderId()).willReturn(1L);
-        given(orderRepository.findById(orderEntity.getOrderId())).willReturn(Optional.empty());
-
-        //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            orderService.getOrder(orderEntity.getOrderId());
-        });
-
-        //then
-        assertEquals("400 BAD_REQUEST \"존재하지 않는 주문번호입니다.\"", thrown.getMessage());
+        then(orderRepository).should(times(1)).findOrderWithDetails(orderId);
+        assertThat(orderResponse.getOrderId()).isEqualTo(orderId);
     }
 
     @Test
