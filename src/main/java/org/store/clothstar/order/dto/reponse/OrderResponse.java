@@ -29,41 +29,14 @@ public class OrderResponse {
     @Schema(description = "주문 id", example = "1")
     private Long orderId;
 
-    @Schema(description = "회원 id", example = "1")
-    private Long memberId;
-
-    @Schema(description = "배송지 id", example = "1")
-    private Long addressId;
+    @Schema(description = "주문자 이름", example = "수빈")
+    private String ordererName;
 
     @Schema(description = "주문 생성 날짜", example = "2024-05-15")
     private LocalDate createdAt;
 
     @Schema(description = "주문 상태", example = "WAITING")
     private Status status;
-
-    @Schema(description = "총 배송비", example = "3000")
-    private int totalShippingPrice;
-
-    @Schema(description = "총 상품 금액", example = "15000")
-    private int totalProductsPrice;
-
-    @Schema(description = "결제 수단", example = "CARD")
-    private PaymentMethod paymentMethod;
-
-    @Schema(description = "총 결제 금액", example = "18000")
-    private int totalPaymentPrice;
-
-    //orderDetail
-    private List<OrderDetailDTO> orderDetailList = new ArrayList<>();
-
-    //productLine - Seller
-    private String brandName;
-
-    //productLine
-    private String name;
-
-    //orderDetail
-    private int quantity;
 
     //address
     private String receiverName;
@@ -72,6 +45,20 @@ public class OrderResponse {
     private String telNo;
     private String deliveryRequest;
 
+    @Schema(description = "결제 수단", example = "CARD")
+    private PaymentMethod paymentMethod;
+
+    @Schema(description = "총 배송비", example = "3000")
+    private int totalShippingPrice;
+
+    @Schema(description = "총 상품 금액", example = "15000")
+    private int totalProductsPrice;
+
+    @Schema(description = "총 결제 금액", example = "18000")
+    private int totalPaymentPrice;
+
+    //orderDetail
+    private List<OrderDetailDTO> orderDetailList = new ArrayList<>();
 
     public OrderResponse(OrderEntity orderEntity, OrderDetailEntity orderDetailEntity, MemberEntity memberEntity, AddressEntity addressEntity,
                          ProductLineEntity productLineEntity, List<OrderDetailDTO> orderDetailList) {
@@ -88,17 +75,13 @@ public class OrderResponse {
                          MemberEntity memberEntity, AddressEntity addressEntity,
                          ProductLineEntity productLineEntity){
         this.orderId = orderEntity.getOrderId();
-        this.memberId = memberEntity.getMemberId();
-        this.addressId = addressEntity.getAddressId();
+        this.ordererName = memberEntity.getName();
         this.createdAt = orderEntity.getCreatedAt().toLocalDate();
         this.status = orderEntity.getStatus();
         this.totalShippingPrice = orderEntity.getTotalShippingPrice();
         this.totalProductsPrice = orderEntity.getTotalProductsPrice();
         this.paymentMethod = orderEntity.getPaymentMethod();
         this.totalPaymentPrice = orderEntity.getTotalPaymentPrice();
-        this.brandName = productLineEntity.getSeller().getBrandName();
-        this.name = productLineEntity.getName();
-//        this.quantity = orderDetailEntity.getQuantity();
         this.receiverName = addressEntity.getReceiverName();
         this.addressBasic = addressEntity.getAddressBasic();
         this.addressDetail = addressEntity.getAddressDetail();
@@ -110,8 +93,7 @@ public class OrderResponse {
     public static OrderResponse fromOrderEntity(OrderEntity orderEntity) {
         return OrderResponse.builder()
                 .orderId(orderEntity.getOrderId())
-                .memberId(orderEntity.getMember().getMemberId())
-                .addressId(orderEntity.getAddress().getAddressId())
+                .ordererName(orderEntity.getMember().getName())
                 .createdAt(orderEntity.getCreatedAt().toLocalDate())
                 .status(orderEntity.getStatus())
                 .totalShippingPrice(orderEntity.getTotalShippingPrice())
@@ -124,8 +106,4 @@ public class OrderResponse {
     public void setterOrderDetailList(List<OrderDetailDTO> orderDetailDTOList){
         this.orderDetailList=orderDetailDTOList;
     }
-
-//    public OrderResponse update(){
-//
-//    }
 }
