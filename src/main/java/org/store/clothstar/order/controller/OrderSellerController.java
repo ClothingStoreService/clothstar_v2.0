@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.store.clothstar.common.dto.MessageDTO;
+import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.service.OrderSellerService;
 
@@ -21,8 +22,8 @@ public class OrderSellerController {
 
     @Operation(summary = "(판매자) WAITING 주문 리스트 조회", description = "(판매자) 주문상태가 '승인대기'인 주문 리스트를 조회한다.")
     @GetMapping
-    public ResponseEntity<List<OrderEntity>> getWaitingOrder() {
-        List<OrderEntity> orderResponseList = orderSellerService.getWaitingOrder();
+    public ResponseEntity<List<OrderResponse>> getWaitingOrder() {
+        List<OrderResponse> orderResponseList = orderSellerService.getWaitingOrder();
         return ResponseEntity.ok(orderResponseList);
     }
 

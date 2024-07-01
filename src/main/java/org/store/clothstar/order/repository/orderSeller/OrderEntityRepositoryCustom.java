@@ -8,5 +8,5 @@ import java.util.List;
 public interface OrderEntityRepositoryCustom {
     OrderResponse findOrderWithDetails(Long orderId);
 
-    List<OrderEntity> findWaitingOrders();
+    List<OrderResponse> findWaitingOrders();
 }

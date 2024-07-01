@@ -35,7 +35,7 @@ public class OrderSellerService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderEntity> getWaitingOrder() {
+    public List<OrderResponse> getWaitingOrder() {
 
         return orderSellerRepository.findWaitingOrders().stream()
                 .collect(Collectors.toList());
