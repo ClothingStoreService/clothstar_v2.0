@@ -14,6 +14,7 @@ import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.repository.ProductJPARepository;
+import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
@@ -23,18 +24,20 @@ import java.util.List;
 @Service
 public class OrderDetailService {
     private final OrderRepository orderRepository;
+    private final ProductService productService;
     private final OrderDetailRepository orderDetailRepository;
     private final ProductJPARepository productJPARepository;
     private final ProductLineJPARepository productLineJPARepository;
 
     public OrderDetailService(
             @Qualifier("jpaOrderDetailRepository") OrderDetailRepository orderDetailRepository,
-            @Qualifier("jpaOrderRepository") OrderRepository orderRepository
+            @Qualifier("jpaOrderRepository") OrderRepository orderRepository, ProductService productService
             , ProductJPARepository productJPARepository
             , ProductLineJPARepository productLineJPARepository
     ) {
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
+        this.productService = productService;
         this.productJPARepository = productJPARepository;
         this.productLineJPARepository = productLineJPARepository;
     }
