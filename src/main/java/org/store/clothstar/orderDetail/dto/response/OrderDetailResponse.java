@@ -3,7 +3,7 @@ package org.store.clothstar.orderDetail.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
+import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 
 @Getter
 @Builder
@@ -47,20 +47,20 @@ public class OrderDetailResponse {
     private String brandName;
 
 
-    public static OrderDetailResponse fromOrderDetail(OrderDetail orderDetail) {
+    public static OrderDetailResponse fromOrderDetailEntity(OrderDetailEntity orderDetailEntity) {
         return OrderDetailResponse.builder()
-                .orderDetailId(orderDetail.getOrderDetailId())
-                .orderId(orderDetail.getOrderId())
-                .productLineId(orderDetail.getProductLineId())
-                .productId(orderDetail.getProductId())
-                .quantity(orderDetail.getQuantity())
-                .fixedPrice(orderDetail.getFixedPrice())
-                .oneKindTotalPrice(orderDetail.getOneKindTotalPrice())
-                .name(orderDetail.getName())
-                .stock(orderDetail.getStock())
-                .optionName(orderDetail.getOptionName())
+                .orderDetailId(orderDetailEntity.getOrderDetailId())
+                .orderId(orderDetailEntity.getOrder().getOrderId())
+                .productLineId(orderDetailEntity.getProductLine().getProductLineId())
+                .productId(orderDetailEntity.getProduct().getProductId())
+                .quantity(orderDetailEntity.getQuantity())
+                .fixedPrice(orderDetailEntity.getFixedPrice())
+                .oneKindTotalPrice(orderDetailEntity.getOneKindTotalPrice())
+                .name(orderDetailEntity.getName())
+                .stock(orderDetailEntity.getStock())
+                .optionName(orderDetailEntity.getOptionName())
 //                .extraCharge(orderDetail.getExtraCharge())
-                .brandName(orderDetail.getBrandName())
+                .brandName(orderDetailEntity.getBrandName())
                 .build();
     }
 }

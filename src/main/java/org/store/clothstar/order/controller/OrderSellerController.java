@@ -4,11 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
-import org.store.clothstar.order.dto.request.OrderSellerRequest;
 import org.store.clothstar.order.service.OrderSellerService;
 
 import java.util.List;

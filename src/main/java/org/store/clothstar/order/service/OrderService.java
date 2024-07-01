@@ -10,29 +10,28 @@ import org.store.clothstar.member.entity.AddressEntity;
 import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.AddressRepository;
 import org.store.clothstar.member.repository.MemberRepository;
-import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
-import org.store.clothstar.order.repository.order.UpperOrderRepository;
+import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 @Slf4j
 @Service
 public class OrderService {
 
-    private final UpperOrderRepository upperOrderRepository;
+    private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
 
     public OrderService(
-            @Qualifier("jpaOrderRepositoryAdapter") UpperOrderRepository upperOrderRepository
+            @Qualifier("jpaOrderRepository") OrderRepository orderRepository
             ,@Qualifier("memberJpaRepository") MemberRepository memberRepository
             ,@Qualifier("addressJpaRepository") AddressRepository addressRepository
-//            @Qualifier("mybatisOrderRepository") UpperOrderRepository upperOrderRepository
             , OrderDetailService orderDetailService
     ) {
-        this.upperOrderRepository = upperOrderRepository;
+        this.orderRepository = orderRepository;
         this.memberRepository = memberRepository;
         this.addressRepository = addressRepository;
     }
@@ -40,8 +39,8 @@ public class OrderService {
     @Transactional(readOnly = true)
     public OrderResponse getOrder(Long orderId) {
 
-        return upperOrderRepository.getOrder(orderId)
-                .map(OrderResponse::fromOrder)
+        return orderRepository.findById(orderId)
+                .map(OrderResponse::fromOrderEntity)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 주문번호입니다."));
     }
 
@@ -54,22 +53,22 @@ public class OrderService {
         AddressEntity addressEntity = addressRepository.findById(createOrderRequest.getAddressId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "배송지 정보를 찾을 수 없습니다."));
 
-        Order order = createOrderRequest.toOrder(memberEntity, addressEntity);
-        upperOrderRepository.saveOrder(order);
+        OrderEntity orderEntity = createOrderRequest.toOrderEntity(memberEntity, addressEntity);
+        orderRepository.save(orderEntity);
 
-        return order.getOrderId();
+        return orderEntity.getOrderId();
     }
 
     @Transactional
     public void deliveredToConfirmOrder(Long orderId) {
 
-        Order order = upperOrderRepository.getOrder(orderId)
+        OrderEntity orderEntity = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 정보를 찾을 수 없습니다."));
 
-        if (order.getStatus() != Status.DELIVERED) {
+        if (orderEntity.getStatus() != Status.DELIVERED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 상태가 '배송완료'가 아니기 때문에 주문확정이 불가능합니다.");
         }
 
-        upperOrderRepository.deliveredToConfirmOrder(orderId);
+        orderRepository.deliveredToConfirmOrder(orderId);
     }
 }

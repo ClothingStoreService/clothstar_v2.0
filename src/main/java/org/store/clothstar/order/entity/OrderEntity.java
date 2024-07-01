@@ -7,8 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.member.entity.AddressEntity;
 import org.store.clothstar.member.entity.MemberEntity;
-import org.store.clothstar.order.domain.type.PaymentMethod;
-import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.type.PaymentMethod;
+import org.store.clothstar.order.type.Status;
 
 import java.time.LocalDateTime;
 
@@ -57,5 +57,9 @@ public class OrderEntity {
         this.totalPaymentPrice = totalPaymentPrice;
     }
 
+        public void updatePrices(int totalProductsPrice, int totalPaymentPrice) {
+        this.totalProductsPrice = totalProductsPrice;
+        this.totalPaymentPrice = totalPaymentPrice;
+    }
 
 }
