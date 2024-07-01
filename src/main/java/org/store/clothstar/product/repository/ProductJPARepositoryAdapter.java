@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class ProductJPARepositoryAdapter implements UpperProductRepository {
+public class ProductJPARepositoryAdapter implements ProductRepository {
 
     private final ProductJPARepository productJPARepository;
     private final ProductLineJPARepository productLineJPARepository;
