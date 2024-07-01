@@ -71,6 +71,9 @@ dependencies {
 
     //mail 전송 의존성
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    //Redis 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {

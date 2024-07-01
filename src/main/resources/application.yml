@@ -24,6 +24,11 @@ spring:
           auth: true
           starttls:
             enable: true
+  # Redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 email.send: ENC(kGXTSlfxUWNbRoGuBwNRTJBETjMz04AChYMrwDeY3Cs=)
 

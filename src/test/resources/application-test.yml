@@ -39,3 +39,4 @@ jwt:
   refreshTokenValidTimeMillis: 1200000
 
 email.send: ENC(kGXTSlfxUWNbRoGuBwNRTJBETjMz04AChYMrwDeY3Cs=)
+
