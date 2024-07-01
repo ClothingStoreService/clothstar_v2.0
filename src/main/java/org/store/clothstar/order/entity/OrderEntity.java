@@ -9,8 +9,10 @@ import org.store.clothstar.member.entity.AddressEntity;
 import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
+import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,6 +22,9 @@ import java.time.LocalDateTime;
 public class OrderEntity {
     @Id
     private Long orderId;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDetailEntity> orderDetails;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
@@ -48,6 +53,9 @@ public class OrderEntity {
     @OneToOne
     @JoinColumn(name = "address_id")
     private AddressEntity address;
+//
+//    @ManyToOne
+//    private OrderDetailEntity orderDetail;
 
     public void setTotalProductsPrice(int totalProductsPrice) {
         this.totalProductsPrice = totalProductsPrice;

@@ -9,7 +9,6 @@ import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
-import org.store.clothstar.order.repository.orderSeller.JpaOrderSellerRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
@@ -36,7 +35,7 @@ public class OrderSellerService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderEntity> getWaitingOrder() {
+    public List<OrderResponse> getWaitingOrder() {
 
         return orderSellerRepository.findWaitingOrders().stream()
                 .collect(Collectors.toList());

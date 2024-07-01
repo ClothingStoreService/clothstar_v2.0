@@ -7,16 +7,25 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
+import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
+import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
+import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.product.repository.ProductJPARepository;
 import org.store.clothstar.product.repository.ProductRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ProductJPARepository productJPARepository;
+    private final OrderDetailRepository orderDetailRepository;
+
 
     /*
     @Transactional(readOnly = true)
@@ -63,5 +72,18 @@ public class ProductService {
                         "productId :" + productId + "인 상품 옵션 정보를 찾을 수 없습니다."));
 
         productRepository.deleteProduct(productId);
+    }
+
+    @Transactional
+    public ProductEntity restoreProductStock(
+            List<OrderDetailEntity> orderDetailList
+    ) {
+        ProductEntity productEntity = null;
+        for (OrderDetailEntity orderDetailEntity : orderDetailList) {
+            productEntity = productJPARepository.findById(orderDetailEntity.getProduct().getProductId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
+            productEntity.restoreStock(orderDetailEntity.getQuantity());
+        }
+        return productEntity;
     }
 }

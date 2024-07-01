@@ -1,7 +1,6 @@
 package org.store.clothstar.productLine.domain;
 
 import lombok.*;
-import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
