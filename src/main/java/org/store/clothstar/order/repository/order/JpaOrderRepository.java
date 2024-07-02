@@ -14,10 +14,6 @@ import org.store.clothstar.order.repository.orderSeller.OrderEntityRepositoryCus
 
 public interface JpaOrderRepository extends JpaRepository<OrderEntity, Long>, OrderRepository, OrderEntityRepositoryCustom {
 
-    @Query(value = "SELECT o FROM orders o",
-            countQuery = "select count(o) from orders o")
-    Slice<OrderEntity> findAllSlicePaging(Pageable pageable);
-
     @Transactional
     @Modifying
     @Query("UPDATE orders o SET o.status ='CONFIRM' WHERE o.orderId = :orderId")

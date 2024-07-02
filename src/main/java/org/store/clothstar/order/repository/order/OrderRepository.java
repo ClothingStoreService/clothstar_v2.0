@@ -16,9 +16,9 @@ public interface OrderRepository {
 
     OrderResponse findOrderWithDetails(Long orderId);
 
-    Page<OrderEntity> findAll(Pageable pageable);
+    Page<OrderResponse> findAllOffsetPaging(Pageable pageable);
 
-    Slice<OrderEntity> findAllSlicePaging(Pageable pageable);
+    Slice<OrderResponse> findAllSlicePaging(Pageable pageable);
 
     OrderEntity save(OrderEntity orderEntity);
 

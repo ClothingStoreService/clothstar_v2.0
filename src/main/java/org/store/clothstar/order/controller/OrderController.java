@@ -42,17 +42,17 @@ public class OrderController {
 
     @Operation(summary = "전체 주문 조회 offset 페이징", description = "전체 주문 리스트를 offset 페이징 형식으로 가져온다.")
     @GetMapping("/v1/orders/list")
-    public ResponseEntity<Page<OrderPageResponse>> getAllOrderOffsetPaging(
+    public ResponseEntity<Page<OrderResponse>> getAllOrderOffsetPaging(
             @PageableDefault(size = 15) Pageable pageable) {
-        Page<OrderPageResponse> orderPages = orderService.getAllOrderOffsetPaging(pageable);
+        Page<OrderResponse> orderPages = orderService.getAllOrderOffsetPaging(pageable);
         return ResponseEntity.ok(orderPages);
     }
 
     @Operation(summary = "전체 주문 조회 slice 페이징", description = "전체 주문 리스트를 slice 페이징 형식으로 가져온다.")
     @GetMapping("/v2/orders/list")
-    public ResponseEntity<Slice<OrderPageResponse>> getAllOrderSlicePaging(
+    public ResponseEntity<Slice<OrderResponse>> getAllOrderSlicePaging(
             @PageableDefault(size = 15) Pageable pageable) {
-        Slice<OrderPageResponse> orderPages = orderService.getAllOrderSlicePaging(pageable);
+        Slice<OrderResponse> orderPages = orderService.getAllOrderSlicePaging(pageable);
         return ResponseEntity.ok(orderPages);
     }
 

@@ -49,14 +49,12 @@ public class OrderService {
         return orderRepository.findOrderWithDetails(orderId);
     }
 
-    public Page<OrderPageResponse> getAllOrderOffsetPaging(Pageable pageable) {
-        return orderRepository.findAll(pageable)
-                .map(OrderPageResponse::from);
+    public Page<OrderResponse> getAllOrderOffsetPaging(Pageable pageable) {
+        return orderRepository.findAllOffsetPaging(pageable);
     }
 
-    public Slice<OrderPageResponse> getAllOrderSlicePaging(Pageable pageable) {
-        return orderRepository.findAllSlicePaging(pageable)
-                .map(OrderPageResponse::from);
+    public Slice<OrderResponse> getAllOrderSlicePaging(Pageable pageable) {
+        return orderRepository.findAllSlicePaging(pageable);
     }
 
     @Transactional
