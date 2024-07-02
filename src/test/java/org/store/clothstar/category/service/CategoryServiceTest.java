@@ -13,7 +13,7 @@ import org.store.clothstar.category.domain.Category;
 import org.store.clothstar.category.dto.request.CreateCategoryRequest;
 import org.store.clothstar.category.dto.response.CategoryDetailResponse;
 import org.store.clothstar.category.dto.response.CategoryResponse;
-import org.store.clothstar.category.repository.CategoryMybatisRepository;
+import org.store.clothstar.category.repository.CategoryJpaRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ class CategoryServiceTest {
     private CategoryService categoryService;
 
     @Mock
-    private CategoryMybatisRepository categoryMybatisRepository;
+    private CategoryJpaRepository categoryMybatisRepository;
 
     @DisplayName("카테고리 리스트 조회에 성공한다.")
     @Test

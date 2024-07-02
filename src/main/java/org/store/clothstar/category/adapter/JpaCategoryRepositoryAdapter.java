@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Profile("jpa")
 @RequiredArgsConstructor
 public class JpaCategoryRepositoryAdapter implements CategoryRepository {
     private final CategoryJpaRepository categoryJpaRepository;
