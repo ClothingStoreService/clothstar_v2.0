@@ -32,7 +32,7 @@ public class AuthenticationController {
         SaveResponseDTO saveResponseDTO = SaveResponseDTO.builder()
                 .id(memberId)
                 .statusCode(HttpStatus.OK.value())
-                .message(createMemberDTO.getEmail() + " 계정으로 인증메일이 전송 되었습니다.")
+                .message(createMemberDTO.getEmail() + " 아이디로 회원가입이 완료 되었습니다.")
                 .build();
 
         return new ResponseEntity<>(saveResponseDTO, HttpStatus.CREATED);
@@ -44,10 +44,10 @@ public class AuthenticationController {
         // 실제 로그인 로직은 Spring Security에서 처리
     }
 
-    @Operation(summary = "회원가입시 이메일 인증", description = "회원가입후 전송된 이메일에 링크를 클릭하면 회원이 활성화 된다.")
-    @GetMapping("/v1/members/auth/{id}")
-    public String signupEmailAuthentication(@PathVariable("id") Long memberId) {
-        memberServiceApplication.signupEmailAuthentication(memberId);
-        return "redirect:/login";
+    @Operation(summary = "이메일로 인증번호 전송", description = "기입한 이메일로 인증번호를 전송합니다.")
+    @ResponseBody
+    @GetMapping("/v1/members/auth/{email}")
+    public void signupEmailAuthentication(@PathVariable("email") String email) {
+        memberServiceApplication.signupCertifyNumEmailSend(email);
     }
 }

@@ -11,9 +11,9 @@ import org.thymeleaf.context.Context;
 public class MailContentBuilder {
     private final TemplateEngine templateEngine;
 
-    public String build(String message) {
+    public String build(String certifyNum) {
         Context context = new Context();
-        context.setVariable("link", message);
+        context.setVariable("certifyNum", certifyNum);
         return templateEngine.process("mailTemplate", context);
     }
 }

@@ -29,6 +29,7 @@ spring:
     redis:
       host: localhost
       port: 6379
+      duration: 600
 
 email.send: ENC(kGXTSlfxUWNbRoGuBwNRTJBETjMz04AChYMrwDeY3Cs=)
 

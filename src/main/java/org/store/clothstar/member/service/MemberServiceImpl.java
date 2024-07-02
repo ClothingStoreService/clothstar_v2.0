@@ -5,9 +5,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.SignupCertifyNumAuthFailedException;
 import org.store.clothstar.common.mail.MailContentBuilder;
 import org.store.clothstar.common.mail.MailSendDTO;
 import org.store.clothstar.common.mail.MailService;
+import org.store.clothstar.common.redis.RedisUtil;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
@@ -15,6 +18,7 @@ import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.MemberRepository;
 
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +35,7 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MailContentBuilder mailContentBuilder;
     private final MailService mailService;
+    private final RedisUtil redisUtil;
 
     @Override
     public List<MemberResponse> findAll() {
@@ -93,28 +98,65 @@ public class MemberServiceImpl implements MemberService {
 
         String encodedPassword = passwordEncoder.encode(createMemberDTO.getPassword());
         MemberEntity memberEntity = createMemberDTO.toMemberEntity(encodedPassword);
-        memberEntity.updateEnabled(false);
-        memberEntity = memberRepository.save(memberEntity);
 
-        sendEmailAuthentication(memberEntity.getMemberId(), memberEntity.getEmail());
+        //인증코드 확인
+        boolean certifyStatus = verifyEmailCode(memberEntity.getEmail(), createMemberDTO.getCertifyNum());
+        if (certifyStatus) {
+            memberEntity = memberRepository.save(memberEntity);
+        } else {
+            throw new SignupCertifyNumAuthFailedException(ErrorCode.INVALID_AUTH_CERTIFY_NUM);
+        }
 
         return memberEntity.getMemberId();
     }
 
     @Override
-    public void signupEmailAuthentication(Long memberId) {
-        MemberEntity memberEntity = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
-
-        memberEntity.updateEnabled(true);
-        log.info("이메일 인증 완료, email = {}", memberEntity.getEmail());
+    public void signupCertifyNumEmailSend(String email) {
+        sendEmailAuthentication(email);
+        log.info("인증번호 전송 완료, email = {}", email);
     }
 
-    private void sendEmailAuthentication(Long memberId, String email) {
-        String link = "http://localhost:8080/v1/members/auth/" + memberId;
-        String message = mailContentBuilder.build(link);
-        MailSendDTO mailSendDTO = new MailSendDTO(email, "clothstar 회원가입 인증 메일 입니다.", message);
+    private String sendEmailAuthentication(String toEmail) {
+        String certifyNum = createdCode();
+        String message = mailContentBuilder.build(certifyNum);
+        MailSendDTO mailSendDTO = new MailSendDTO(toEmail, "clothstar 회원가입 인증 메일 입니다.", message);
 
         mailService.sendMail(mailSendDTO);
+
+        //메일 전송에 성공하면 redis에 key = email, value = 인증번호를 생성한다.
+        //지속시간은 10분
+        createRedis(toEmail, certifyNum);
+
+        return certifyNum;
+    }
+
+    public Boolean verifyEmailCode(String email, String certifyNum) {
+        String codeFoundByEmail = redisUtil.getData(email);
+        if (codeFoundByEmail == null) {
+            return false;
+        }
+
+        return codeFoundByEmail.equals(certifyNum);
+    }
+
+    private void createRedis(String toEmail, String code) {
+        if (redisUtil.existData(toEmail)) {
+            redisUtil.deleteData(toEmail);
+        }
+
+        redisUtil.setDataExpire(toEmail, code);
+    }
+
+    private String createdCode() {
+        int leftLimit = 48; // number '0'
+        int rightLimit = 122; // alphabet 'z'
+        int targetStringLength = 6;
+        Random random = new Random();
+
+        return random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 }

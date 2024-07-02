@@ -1,6 +1,7 @@
 package org.store.clothstar.common.redis;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,9 @@ import java.time.Duration;
 public class RedisUtil {
     private final StringRedisTemplate template;
 
+    @Value("${spring.data.redis.duration}")
+    private int duration;
+
     public String getData(String key) {
         ValueOperations<String, String> valueOperations = template.opsForValue();
         return valueOperations.get(key);
@@ -21,7 +25,7 @@ public class RedisUtil {
         return Boolean.TRUE.equals(template.hasKey(key));
     }
 
-    public void setDataExpire(String key, String value, long duration) {
+    public void setDataExpire(String key, String value) {
         ValueOperations<String, String> valueOperations = template.opsForValue();
         Duration expireDuration = Duration.ofSeconds(duration);
         valueOperations.set(key, value, expireDuration);
@@ -30,5 +34,4 @@ public class RedisUtil {
     public void deleteData(String key) {
         template.delete(key);
     }
-
 }

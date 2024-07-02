@@ -21,5 +21,5 @@ public interface MemberService {
 
     Long signUp(CreateMemberRequest createMemberDTO);
 
-    void signupEmailAuthentication(Long memberId);
+    void signupCertifyNumEmailSend(String email);
 }
