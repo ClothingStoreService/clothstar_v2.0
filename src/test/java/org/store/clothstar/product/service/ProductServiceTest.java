@@ -12,6 +12,7 @@ import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.repository.ProductMybatisRepository;
+import org.store.clothstar.product.repository.ProductRepository;
 
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Mock
-    private ProductMybatisRepository productMybatisRepository;
+    private ProductRepository productMybatisRepository;
 
     @DisplayName("product_id로 상품 옵션 단건 조회에 성공한다.")
     @Test

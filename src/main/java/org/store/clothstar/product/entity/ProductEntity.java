@@ -50,7 +50,6 @@ public class ProductEntity {
         checkAndUpdateProductLineStatus();
     }
 
-    //  재고를 차감하고 상태를 변경하는 메서드
     public void reduceStock(int quantity) {
         if (this.stock >= quantity) {
             this.stock -= quantity;
@@ -60,7 +59,6 @@ public class ProductEntity {
         }
     }
 
-    // 재고 변경 시 ProductLine 상태 업데이트 메서드
     private void checkAndUpdateProductLineStatus() {
         if (productLine != null) {
             productLine.checkAndUpdateStatus();
