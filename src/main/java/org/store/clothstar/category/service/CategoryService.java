@@ -40,9 +40,9 @@ public class CategoryService {
     @Transactional
     public Long createCategory(CreateCategoryRequest createCategoryRequest) {
         CategoryEntity category = createCategoryRequest.toCategoryEntity();
-        categoryRepository.save(category);
+        CategoryEntity savedCategory = categoryRepository.save(category);
 
-        return category.getCategoryId();
+        return savedCategory.getCategoryId();
     }
 
     @Transactional

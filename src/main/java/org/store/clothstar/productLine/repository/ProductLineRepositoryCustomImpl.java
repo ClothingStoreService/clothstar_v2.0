@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import org.store.clothstar.category.domain.Category;
 import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.category.entity.QCategoryEntity;
 import org.store.clothstar.member.entity.MemberEntity;

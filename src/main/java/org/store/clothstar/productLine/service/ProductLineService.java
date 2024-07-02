@@ -73,8 +73,8 @@ public class ProductLineService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "카테고리를 찾을 수 없습니다."));
 
         ProductLineEntity productLine = createProductLineRequest.toProductLineEntity(seller, category);
-        productLineRepository.save(productLine);
-        return productLine.getProductLineId();
+        ProductLineEntity savedProductLine = productLineRepository.save(productLine);
+        return savedProductLine.getProductLineId();
     }
 
     @Transactional

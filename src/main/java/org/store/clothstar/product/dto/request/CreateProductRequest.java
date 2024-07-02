@@ -32,15 +32,6 @@ public class CreateProductRequest {
     @PositiveOrZero(message = "0이상 양수를 입력해주세요")
     private Long stock;
 
-    public Product toProduct() {
-        return Product.builder()
-                .productLineId(productLineId)
-                .name(name)
-                .extraCharge(extraCharge)
-                .stock(stock)
-                .build();
-    }
-
     public ProductEntity toProductEntity(ProductLineEntity productLine) {
         return ProductEntity.builder()
                 .productLine(productLine)

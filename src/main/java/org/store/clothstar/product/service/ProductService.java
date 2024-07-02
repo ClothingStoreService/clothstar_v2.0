@@ -51,9 +51,9 @@ public class ProductService {
                         "productLineId :" + createProductRequest.getProductLineId() + "인 상품 라인 정보를 찾을 수 없습니다."));
 
         ProductEntity product = createProductRequest.toProductEntity(ProductLine);
-        productRepository.save(product);
+        ProductEntity savedProduct = productRepository.save(product);
 
-        return product.getProductId();
+        return savedProduct.getProductId();
     }
 
     @Transactional

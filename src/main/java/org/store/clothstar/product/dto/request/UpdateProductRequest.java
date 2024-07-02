@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.store.clothstar.product.domain.Product;
+import org.store.clothstar.product.entity.ProductEntity;
 
 @Getter
 @AllArgsConstructor
@@ -27,8 +27,8 @@ public class UpdateProductRequest {
     @PositiveOrZero(message = "0포함 양수를 입력해주세요")
     private Long stock;
 
-    public Product toProduct() {
-        return Product.builder()
+    public ProductEntity toProduct() {
+        return ProductEntity.builder()
                 .name(name)
                 .extraCharge(extraCharge)
                 .stock(stock)

@@ -3,16 +3,13 @@ package org.store.clothstar.category.service;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
-import org.store.clothstar.category.domain.Category;
 import org.store.clothstar.category.dto.request.CreateCategoryRequest;
 import org.store.clothstar.category.dto.response.CategoryDetailResponse;
 import org.store.clothstar.category.dto.response.CategoryResponse;
+import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.category.repository.CategoryJpaRepository;
 
 import java.util.ArrayList;
@@ -31,55 +28,29 @@ class CategoryServiceTest {
     private CategoryService categoryService;
 
     @Mock
-    private CategoryJpaRepository categoryMybatisRepository;
+    private CategoryJpaRepository categoryRepository;
 
     @DisplayName("카테고리 리스트 조회에 성공한다.")
     @Test
     void givenCategories_whenGetAllCategories_thenGetAllCategories() {
         //given
-        List<Category> categories = new ArrayList<>();
-        Category category1 = Category.builder()
-                .categoryId(1L)
-                .categoryType("OUTER")
-                .build();
-        Category category2 = Category.builder()
-                .categoryId(2L)
-                .categoryType("TOP")
-                .build();
-        Category category3 = Category.builder()
-                .categoryId(3L)
-                .categoryType("PANTS")
-                .build();
-        Category category4 = Category.builder()
-                .categoryId(4L)
-                .categoryType("SKIRT")
-                .build();
-        Category category5 = Category.builder()
-                .categoryId(5L)
-                .categoryType("BAG")
-                .build();
-        Category category6 = Category.builder()
-                .categoryId(6L)
-                .categoryType("HEADWEAR")
-                .build();
+        List<CategoryEntity> categories = new ArrayList<>();
+        categories.add(CategoryEntity.builder().categoryId(1L).categoryType("OUTER").build());
+        categories.add(CategoryEntity.builder().categoryId(2L).categoryType("TOP").build());
+        categories.add(CategoryEntity.builder().categoryId(3L).categoryType("PANTS").build());
+        categories.add(CategoryEntity.builder().categoryId(4L).categoryType("SKIRT").build());
+        categories.add(CategoryEntity.builder().categoryId(5L).categoryType("BAG").build());
+        categories.add(CategoryEntity.builder().categoryId(6L).categoryType("HEADWEAR").build());
 
-        categories.add(category1);
-        categories.add(category2);
-        categories.add(category3);
-        categories.add(category4);
-        categories.add(category5);
-        categories.add(category6);
-
-        BDDMockito.given(categoryMybatisRepository.selectAllCategory()).willReturn(categories);
+        BDDMockito.given(categoryRepository.findAll()).willReturn(categories);
 
         // when
         List<CategoryResponse> response = categoryService.getAllCategories();
 
         // then
-        Mockito.verify(categoryMybatisRepository, Mockito.times(1))
-                .selectAllCategory();
+        Mockito.verify(categoryRepository, Mockito.times(1)).findAll();
         assertThat(response).isNotNull();
-        assertThat(response.size()).isEqualTo(6);
+        assertThat(response).hasSize(6);
         assertThat(response.get(0).getCategoryType()).isEqualTo("OUTER");
         assertThat(response.get(1).getCategoryType()).isEqualTo("TOP");
         assertThat(response.get(2).getCategoryType()).isEqualTo("PANTS");
@@ -93,20 +64,18 @@ class CategoryServiceTest {
     void givenCategoryId_whenCategoryId_thenCategoryReturned() {
         // given
         Long categoryId = 1L;
-
-        Category category = Category.builder()
+        CategoryEntity category = CategoryEntity.builder()
                 .categoryId(1L)
                 .categoryType("OUTER")
                 .build();
 
-        BDDMockito.given(categoryMybatisRepository.selectCategoryById(anyLong())).willReturn(Optional.ofNullable(category));
+        BDDMockito.given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
 
         // when
         CategoryDetailResponse response = categoryService.getCategory(categoryId);
 
         // then
-        Mockito.verify(categoryMybatisRepository, Mockito.times(1))
-                .selectCategoryById(anyLong());
+        Mockito.verify(categoryRepository, Mockito.times(1)).findById(anyLong());
         assertThat(response).isNotNull();
         assertThat(response.getCategoryId()).isEqualTo(1L);
         assertThat(response.getCategoryType()).isEqualTo("OUTER");
@@ -120,26 +89,36 @@ class CategoryServiceTest {
                 .categoryType("OUTER")
                 .build();
 
-        BDDMockito.given(categoryMybatisRepository.save(Mockito.any(Category.class))).willReturn(1);
+        CategoryEntity savedCategory = CategoryEntity.builder()
+                .categoryId(1L)
+                .categoryType("OUTER")
+                .build();
+
+        BDDMockito.given(categoryRepository.save(Mockito.any(CategoryEntity.class))).willReturn(savedCategory);
 
         // when
         Long categoryId = categoryService.createCategory(createCategoryRequest);
 
         // then
-        Mockito.verify(categoryMybatisRepository, Mockito.times(1))
-                .save(Mockito.any(Category.class));
+        ArgumentCaptor<CategoryEntity> categoryCaptor = ArgumentCaptor.forClass(CategoryEntity.class);
+        Mockito.verify(categoryRepository, Mockito.times(1)).save(categoryCaptor.capture());
+
+        CategoryEntity capturedCategory = categoryCaptor.getValue();
+        assertThat(categoryId).isEqualTo(1L);
+        assertThat(capturedCategory.getCategoryType()).isEqualTo("OUTER");
     }
 
     @DisplayName("중복된 카테고리 타입을 생성하려고 시도할 경우, 카테고리 생성에 실패한다.")
     @Test
     void givenDuplicateCategoryType_whenCreateCategory_thenFailToCreateCategory() {
-
+        // 이 테스트 케이스는 아직 구현되지 않았습니다.
     }
 
     @Test
     void updateCategory() {
         // given
         String duplicateCategoryType = "OUTER";
+        // 이 테스트 케이스는 아직 구현되지 않았습니다.
     }
 
 }

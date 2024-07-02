@@ -7,17 +7,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
-import org.store.clothstar.product.domain.Product;
+import org.store.clothstar.category.entity.CategoryEntity;
+import org.store.clothstar.category.repository.CategoryJpaRepository;
+import org.store.clothstar.member.entity.SellerEntity;
+import org.store.clothstar.member.repository.SellerRepository;
 import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineResponse;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
-import org.store.clothstar.productLine.repository.ProductLineRepository;
+import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
+import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,65 +37,86 @@ class ProductLineServiceTest {
     private ProductLineService productLineService;
 
     @Mock
-    private ProductLineRepository productLineMybatisRepository;
+    private ProductLineJPARepository productLineRepository;
+
+    @Mock
+    private CategoryJpaRepository categoryRepository;
+
+    @Mock
+    private SellerRepository sellerRepository;
 
     @DisplayName("상품 리스트 조회에 성공한다.")
     @Test
     public void givenProductLines_whenGetProductLineList_thenGetProductLines() {
         // given
-        ProductLine productLine1 = mock(ProductLine.class);
-        ProductLine productLine2 = mock(ProductLine.class);
-        ProductLine productLine3 = mock(ProductLine.class);
+        ProductLineEntity productLine1 = mock(ProductLineEntity.class);
+        ProductLineEntity productLine2 = mock(ProductLineEntity.class);
+        ProductLineEntity productLine3 = mock(ProductLineEntity.class);
 
+        SellerEntity seller1 = mock(SellerEntity.class);
+        SellerEntity seller2 = mock(SellerEntity.class);
+        SellerEntity seller3 = mock(SellerEntity.class);
+
+        when(productLine1.getProductLineId()).thenReturn(1L);
+        when(productLine1.getSeller()).thenReturn(seller1);
+        when(seller1.getBrandName()).thenReturn("브랜드1");
         when(productLine1.getName()).thenReturn("오구 키링");
         when(productLine1.getPrice()).thenReturn(13000);
         when(productLine1.getStatus()).thenReturn(ProductLineStatus.COMING_SOON);
 
+        when(productLine2.getProductLineId()).thenReturn(2L);
+        when(productLine2.getSeller()).thenReturn(seller2);
+        when(seller2.getBrandName()).thenReturn("브랜드2");
         when(productLine2.getName()).thenReturn("오구 바디 필로우");
         when(productLine2.getPrice()).thenReturn(57000);
         when(productLine2.getStatus()).thenReturn(ProductLineStatus.FOR_SALE);
 
+        when(productLine3.getProductLineId()).thenReturn(3L);
+        when(productLine3.getSeller()).thenReturn(seller3);
+        when(seller3.getBrandName()).thenReturn("브랜드3");
         when(productLine3.getName()).thenReturn("오구 볼펜");
         when(productLine3.getPrice()).thenReturn(7900);
         when(productLine3.getStatus()).thenReturn(ProductLineStatus.SOLD_OUT);
 
-        List<ProductLine> productLines = List.of(productLine1, productLine2, productLine3);
-        when(productLineMybatisRepository.selectAllProductLinesNotDeleted()).thenReturn(productLines);
+        List<ProductLineEntity> productLines = List.of(productLine1, productLine2, productLine3);
+        when(productLineRepository.findByDeletedAtIsNullAndStatusNotIn(any())).thenReturn(productLines);
 
         // when
         List<ProductLineResponse> response = productLineService.getAllProductLines();
 
         // then
-        verify(productLineMybatisRepository, times(1))
-                .selectAllProductLinesNotDeleted();
-        assertThat(response).isNotNull();
-        assertThat(response.size()).isEqualTo(3);
+        verify(productLineRepository, times(1))
+                .findByDeletedAtIsNullAndStatusNotIn(any());
+        assertThat(response).hasSize(3);
         assertThat(response.get(0).getName()).isEqualTo("오구 키링");
         assertThat(response.get(0).getPrice()).isEqualTo(13000);
-//        assertThat(response.get(0).getTotalStock()).isEqualTo(20);
         assertThat(response.get(0).getProductLineStatus()).isEqualTo(ProductLineStatus.COMING_SOON);
+        assertThat(response.get(0).getBrandName()).isEqualTo("브랜드1");
     }
 
     @DisplayName("product_line_id로 상품 단건 조회에 성공한다.")
     @Test
     public void givenProductLineId_whenGetProductLineById_thenProductLineReturned() {
         // given
-        ProductLine productLine = mock(ProductLine.class);
-        when(productLine.getBrandName()).thenReturn("내셔널지오그래픽키즈 제주점");
+        Long productLineId = 1L;
+        ProductLineEntity productLine = mock(ProductLineEntity.class);
+        SellerEntity seller = mock(SellerEntity.class);
+
+        when(productLine.getProductLineId()).thenReturn(productLineId);
+        when(productLine.getSeller()).thenReturn(seller);
+        when(seller.getBrandName()).thenReturn("내셔널지오그래픽키즈 제주점");
         when(productLine.getName()).thenReturn("내셔널지오그래픽 곰돌이 후드티");
         when(productLine.getContent()).thenReturn("귀여운 곰돌이가 그려진 후드티에요!");
         when(productLine.getPrice()).thenReturn(69000);
         when(productLine.getStatus()).thenReturn(ProductLineStatus.ON_SALE);
 
-        given(productLineMybatisRepository.selectByProductLineId(anyLong())).willReturn(Optional.ofNullable(productLine));
+        given(productLineRepository.findById(productLineId)).willReturn(Optional.of(productLine));
 
         // when
-        Optional<ProductLineResponse> response = productLineService.getProductLine(productLine.getProductLineId());
+        Optional<ProductLineResponse> response = productLineService.getProductLine(productLineId);
 
         // then
-        assertThat(response).isPresent(); // Optional이 비어있지 않은지 확인
-
-        // Optional이 비어있지 않은 경우에만 값을 가져와서 검증
+        assertThat(response).isPresent();
         response.ifPresent(productLineResponse -> {
             assertThat(productLineResponse.getBrandName()).isEqualTo("내셔널지오그래픽키즈 제주점");
             assertThat(productLineResponse.getName()).isEqualTo("내셔널지오그래픽 곰돌이 후드티");
@@ -100,7 +124,6 @@ class ProductLineServiceTest {
             assertThat(productLineResponse.getPrice()).isEqualTo(69000);
             assertThat(productLineResponse.getProductLineStatus()).isEqualTo(ProductLineStatus.ON_SALE);
         });
-
     }
 
     @DisplayName("상품 id와 상품과 1:N 관계에 있는 상품 옵션 리스트를 조회한다.")
@@ -108,67 +131,27 @@ class ProductLineServiceTest {
     public void givenProductLineId_whenGetProductLineWithProducts_thenProductLineWithProducts() {
         // given
         Long productLineId = 1L;
-        Product product1 = Product.builder()
-                .productId(1L)
-                .productLineId(1L)
-                .name("블랙")
-                .extraCharge(0)
-                .stock(30L)
-                .build();
+        ProductLineWithProductsJPAResponse mockResponse = mock(ProductLineWithProductsJPAResponse.class);
+        when(mockResponse.getProductLineId()).thenReturn(productLineId);
+        when(mockResponse.getTotalStock()).thenReturn(90L);
 
-        Product product2 = Product.builder()
-                .productId(2L)
-                .productLineId(1L)
-                .name("화이트")
-                .extraCharge(1000)
-                .stock(30L)
-                .build();
-
-        Product product3 = Product.builder()
-                .productId(3L)
-                .productLineId(1L)
-                .name("네이비")
-                .extraCharge(1000)
-                .stock(30L)
-                .build();
-
-        List<Product> productList = new ArrayList<>();
-        productList.add(product1);
-        productList.add(product2);
-        productList.add(product3);
-
-        ProductLineWithProductsResponse productLineWithProductsResponse = ProductLineWithProductsResponse.builder()
-                .productLineId(1L)
-                .memberId(1L)
-                .categoryId(2L)
-                .name("내셔널지오그래픽 곰돌이 후드티")
-                .content("귀여운 곰돌이가 그려진 후드티에요!")
-                .price(69000)
-                .status(ProductLineStatus.ON_SALE)
-                .createdAt(LocalDateTime.now())
-                .modifiedAt(null)
-                .deletedAt(null)
-                .brandName("내셔널지오그래픽키즈 제주점")
-                .biz_no("232-05-02861")
-                .productList(productList)
-                .build();
-
-        given(productLineMybatisRepository.selectProductLineWithOptions(anyLong())).willReturn(Optional.ofNullable(productLineWithProductsResponse));
+        given(productLineRepository.findProductLineWithOptionsById(productLineId)).willReturn(Optional.of(mockResponse));
 
         // when
-        ProductLineWithProductsResponse response = productLineService.getProductLineWithProducts(productLineId);
+        ProductLineWithProductsJPAResponse response = productLineService.getProductLineWithProducts(productLineId);
 
         // then
         assertThat(response).isNotNull();
-        assertThat(response.getProductLineId()).isEqualTo(1L);
+        assertThat(response.getProductLineId()).isEqualTo(productLineId);
         assertThat(response.getTotalStock()).isEqualTo(90L);
     }
 
-    @DisplayName("유효한 상품 생성 Request가 들어오면 상품 생성에 성공한다.")
+    @DisplayName("유효한 상품 라인 생성 Request가 들어오면 상품 라인 생성에 성공한다.")
     @Test
     public void givenValidCreateProductLineRequest_whenCreateProductLine_thenProductLineCreated() {
         // given
         Long productLineId = 1L;
+        Long memberId = 1L; // 하드코딩된 memberId
         CreateProductLineRequest createProductLineRequest = CreateProductLineRequest.builder()
                 .categoryId(1L)
                 .name("데님 자켓")
@@ -177,14 +160,23 @@ class ProductLineServiceTest {
                 .status(ProductLineStatus.ON_SALE)
                 .build();
 
-        given(productLineMybatisRepository.save(any(ProductLine.class))).willReturn(1);
+        SellerEntity mockSeller = mock(SellerEntity.class);
+        CategoryEntity mockCategory = mock(CategoryEntity.class);
+        ProductLineEntity mockProductLine = mock(ProductLineEntity.class);
+
+        when(mockProductLine.getProductLineId()).thenReturn(productLineId);
+        when(sellerRepository.findById(eq(memberId))).thenReturn(Optional.of(mockSeller));
+        when(categoryRepository.findById(eq(1L))).thenReturn(Optional.of(mockCategory));
+        when(productLineRepository.save(any(ProductLineEntity.class))).thenReturn(mockProductLine);
 
         // when
         Long responseProductLineId = productLineService.createProductLine(createProductLineRequest);
 
         // then
-        verify(productLineMybatisRepository, times(1))
-                .save(any(ProductLine.class));
+        assertThat(responseProductLineId).isEqualTo(productLineId);
+        verify(sellerRepository).findById(eq(memberId));
+        verify(categoryRepository).findById(eq(1L));
+        verify(productLineRepository).save(any(ProductLineEntity.class));
     }
 
     @DisplayName("유효한 UpdateProductLineRequest가 들어오면 상품 수정에 성공한다.")
@@ -199,65 +191,32 @@ class ProductLineServiceTest {
                 .status(ProductLineStatus.ON_SALE)
                 .build();
 
-        ProductLine productLine = ProductLine.builder()
-                .productLineId(productLineId)
-                .memberId(1L)
-                .categoryId(1L)
-                .name("데님 자켓")
-                .price(19000)
-                .totalStock(50L)
-                .status(ProductLineStatus.ON_SALE)
-                .createdAt(LocalDateTime.now())
-                .modifiedAt(null)
-                .deletedAt(null)
-                .brandName("내셔널지오그래픽키즈 제주점")
-                .biz_no("232-05-02861")
-                .build();
+        ProductLineEntity productLine = mock(ProductLineEntity.class);
 
-        given(productLineMybatisRepository.selectByProductLineId(anyLong())).willReturn(Optional.ofNullable(productLine));
-        given(productLineMybatisRepository.updateProductLine(any(ProductLine.class))).willReturn(1);
+        given(productLineRepository.findById(productLineId)).willReturn(Optional.of(productLine));
 
         // when
         productLineService.updateProductLine(productLineId, updateProductLineRequest);
 
         // then
-        verify(productLineMybatisRepository, times(1))
-                .selectByProductLineId(anyLong());
-        verify(productLineMybatisRepository, times(1))
-                .updateProductLine(any(ProductLine.class));
+        verify(productLineRepository, times(1)).findById(productLineId);
+        verify(productLine, times(1)).updateProductLine(updateProductLineRequest);
     }
 
-    @DisplayName("유효한 UpdateProductLineRequest가 들어오면 상품 수정에 성공한다.")
+    @DisplayName("상품 삭제 요청 시 deletedAt이 설정된다.")
     @Test
-    public void givenProductLineId_whenDeleteProducctLine_thenSetDeletedAt() {
+    public void givenProductLineId_whenDeleteProductLine_thenSetDeletedAt() {
         // given
         Long productLineId = 1L;
+        ProductLineEntity productLine = mock(ProductLineEntity.class);
 
-        ProductLine productLine = ProductLine.builder()
-                .productLineId(productLineId)
-                .memberId(1L)
-                .categoryId(1L)
-                .name("데님 자켓")
-                .price(19000)
-                .totalStock(50L)
-                .status(ProductLineStatus.ON_SALE)
-                .createdAt(LocalDateTime.now())
-                .modifiedAt(null)
-                .deletedAt(null)
-                .brandName("내셔널지오그래픽키즈 제주점")
-                .biz_no("232-05-02861")
-                .build();
-
-        given(productLineMybatisRepository.selectByProductLineId(anyLong())).willReturn(Optional.ofNullable(productLine));
-        given(productLineMybatisRepository.setDeletedAt(any(ProductLine.class))).willReturn(1);
+        given(productLineRepository.findById(productLineId)).willReturn(Optional.of(productLine));
 
         // when
         productLineService.setDeletedAt(productLineId);
 
         // then
-        verify(productLineMybatisRepository, times(2))
-                .selectByProductLineId(anyLong());
-        verify(productLineMybatisRepository, times(1))
-                .setDeletedAt(any(ProductLine.class));
+        verify(productLineRepository, times(1)).findById(productLineId);
+        verify(productLine, times(1)).delete();
     }
 }
