@@ -57,7 +57,7 @@ public class OrderResponse {
     @Schema(description = "총 결제 금액", example = "18000")
     private int totalPaymentPrice;
 
-    //orderDetail
+    @Builder.Default
     private List<OrderDetailDTO> orderDetailList = new ArrayList<>();
 
     public OrderResponse(OrderEntity orderEntity, OrderDetailEntity orderDetailEntity, MemberEntity memberEntity, AddressEntity addressEntity,
