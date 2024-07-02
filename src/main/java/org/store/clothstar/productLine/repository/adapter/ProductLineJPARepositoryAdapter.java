@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.category.domain.Category;
+import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.category.repository.CategoryJpaRepository;
 import org.store.clothstar.member.entity.SellerEntity;
 import org.store.clothstar.member.repository.SellerRepository;
@@ -85,7 +86,7 @@ public class ProductLineJPARepositoryAdapter implements ProductLineRepository {
         SellerEntity seller = sellerJpaRepository.findById(productLine.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("Member not found with id: " + productLine.getMemberId()));
 
-        Category category = categoryJpaRepository.findById(productLine.getCategoryId())
+        CategoryEntity category = categoryJpaRepository.findById(productLine.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + productLine.getCategoryId()));
 
         List<ProductEntity> productEntities = productJPARepository.findAllByProductId(productLine.getProductLineId());

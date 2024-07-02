@@ -12,7 +12,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.store.clothstar.category.domain.Category;
-import org.store.clothstar.category.domain.QCategory;
+import org.store.clothstar.category.entity.CategoryEntity;
+import org.store.clothstar.category.entity.QCategoryEntity;
 import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.entity.QMemberEntity;
 import org.store.clothstar.member.entity.QSellerEntity;
@@ -35,41 +36,11 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
     private final JPAQueryFactory jpaQueryFactory;
 
     QProductLineEntity qProductLine = QProductLineEntity.productLineEntity;
-    QCategory qCategory = QCategory.category;
+    QCategoryEntity qCategory = QCategoryEntity.categoryEntity;
     QProductEntity qProduct = QProductEntity.productEntity;
     QSellerEntity qSeller = QSellerEntity.sellerEntity;
     QMemberEntity qMember = QMemberEntity.memberEntity;
 
-/*
-    @Override
-    public Page<ProductLineWithProductsJPAResponse> getProductLinesWithOptions(Pageable pageable) {
-
-        List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable.getSort());
-
-        List<ProductLineWithProductsJPAResponse> content = jpaQueryFactory
-                .select(new QProductLineWithProductsJPAResponse(
-                        qProductLine, qCategory, qSeller, qMember, qProduct.stock.sum()))
-                .from(qProductLine)
-                .innerJoin(qProductLine.seller, qSeller)
-                .innerJoin(qSeller.member, qMember)
-                .leftJoin(qProductLine.products, qProduct).fetchJoin()
-//                .innerJoin(qProduct).on()
-                .where(qProductLine.deletedAt.isNull())
-                .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .groupBy(qProductLine.productLineId)
-                .fetch();
-
-        JPAQuery<Long> totalCount = jpaQueryFactory
-                .select(qProductLine.count())
-                .from(qProductLine)
-                .where(qProductLine.deletedAt.isNull());
-
-        return PageableExecutionUtils.getPage(content, pageable, totalCount::fetchOne);
-    }
-
- */
 
     public Page<ProductLineWithProductsJPAResponse> getProductLinesWithOptions(Pageable pageable) {
         List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable.getSort());
@@ -90,7 +61,7 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
         Map<Long, ProductLineWithProductsJPAResponse> productLineMap = new HashMap<>();
         for (Tuple tuple : results) {
             ProductLineEntity productLine = tuple.get(qProductLine);
-            Category category = tuple.get(qCategory);
+            CategoryEntity category = tuple.get(qCategory);
             SellerEntity seller = tuple.get(qSeller);
             MemberEntity member = tuple.get(qMember);
             ProductEntity product = tuple.get(qProduct);
