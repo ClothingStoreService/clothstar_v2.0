@@ -12,7 +12,6 @@ import org.store.clothstar.common.util.URIBuilder;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
-import org.store.clothstar.product.repository.ProductMybatisRepository;
 import org.store.clothstar.product.service.ProductService;
 
 import java.net.URI;
@@ -24,7 +23,6 @@ import java.net.URI;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductMybatisRepository productMybatisRepository;
 
     /*
     @Operation(summary = "전체 상품 옵션 조회", description = "상품 Id의 모든 상품 옵션을 조회한다.")

@@ -14,7 +14,6 @@ import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineResponse;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
-import org.store.clothstar.productLine.repository.ProductLineMybatisRepository;
 import org.store.clothstar.productLine.repository.ProductLineRepository;
 
 import java.time.LocalDateTime;

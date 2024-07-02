@@ -11,7 +11,6 @@ import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
-import org.store.clothstar.product.repository.ProductMybatisRepository;
 import org.store.clothstar.product.repository.ProductRepository;
 
 import java.util.Optional;
