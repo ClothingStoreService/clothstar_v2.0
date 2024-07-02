@@ -23,9 +23,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "주문 조회용 Response")
-public class OrderResponse {
-
+@Schema(description = "주문 페이지 조회용 Response")
+public class OrderPageResponse {
     @Schema(description = "주문 id", example = "1")
     private Long orderId;
 
@@ -57,32 +56,10 @@ public class OrderResponse {
     @Schema(description = "총 결제 금액", example = "18000")
     private int totalPaymentPrice;
 
-    @Builder.Default
-    private List<OrderDetailDTO> orderDetailList = new ArrayList<>();
+    private List<OrderDetailEntity> orderDetails;
 
-    @QueryProjection
-    public OrderResponse(OrderEntity orderEntity,
-                         OrderDetailEntity orderDetailEntity,
-                         MemberEntity memberEntity, AddressEntity addressEntity,
-                         ProductLineEntity productLineEntity){
-        this.orderId = orderEntity.getOrderId();
-        this.ordererName = memberEntity.getName();
-        this.createdAt = orderEntity.getCreatedAt().toLocalDate();
-        this.status = orderEntity.getStatus();
-        this.totalShippingPrice = orderEntity.getTotalShippingPrice();
-        this.totalProductsPrice = orderEntity.getTotalProductsPrice();
-        this.paymentMethod = orderEntity.getPaymentMethod();
-        this.totalPaymentPrice = orderEntity.getTotalPaymentPrice();
-        this.receiverName = addressEntity.getReceiverName();
-        this.addressBasic = addressEntity.getAddressBasic();
-        this.addressDetail = addressEntity.getAddressDetail();
-        this.telNo = addressEntity.getTelNo();
-        this.deliveryRequest = addressEntity.getDeliveryRequest();
-        this.orderDetailList = new ArrayList<>();
-    }
-
-    public static OrderResponse fromOrderEntity(OrderEntity orderEntity) {
-        return OrderResponse.builder()
+    public static OrderPageResponse from(OrderEntity orderEntity) {
+        return OrderPageResponse.builder()
                 .orderId(orderEntity.getOrderId())
                 .ordererName(orderEntity.getMember().getName())
                 .createdAt(orderEntity.getCreatedAt().toLocalDate())
@@ -96,11 +73,6 @@ public class OrderResponse {
                 .receiverName(orderEntity.getAddress().getReceiverName())
                 .addressBasic(orderEntity.getAddress().getAddressBasic())
                 .addressDetail(orderEntity.getAddress().getAddressDetail())
-//                .orderDetailList(orderEntity.getOrderDetails().)
                 .build();
-    }
-
-    public void setterOrderDetailList(List<OrderDetailDTO> orderDetailDTOList){
-        this.orderDetailList=orderDetailDTOList;
     }
 }

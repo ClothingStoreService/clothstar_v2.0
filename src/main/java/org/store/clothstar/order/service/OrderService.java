@@ -3,6 +3,9 @@ package org.store.clothstar.order.service;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.query.Order;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +14,7 @@ import org.store.clothstar.member.entity.AddressEntity;
 import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.AddressRepository;
 import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.order.dto.reponse.OrderPageResponse;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.entity.OrderEntity;
@@ -43,6 +47,16 @@ public class OrderService {
     public OrderResponse getOrder(Long orderId) {
 
         return orderRepository.findOrderWithDetails(orderId);
+    }
+
+    public Page<OrderPageResponse> getAllOrderOffsetPaging(Pageable pageable) {
+        return orderRepository.findAll(pageable)
+                .map(OrderPageResponse::from);
+    }
+
+    public Slice<OrderPageResponse> getAllOrderSlicePaging(Pageable pageable) {
+        return orderRepository.findAllSlicePaging(pageable)
+                .map(OrderPageResponse::from);
     }
 
     @Transactional
