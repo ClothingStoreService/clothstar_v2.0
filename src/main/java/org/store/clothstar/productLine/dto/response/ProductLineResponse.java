@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 @Getter
 @Builder
@@ -22,6 +23,18 @@ public class ProductLineResponse {
         return ProductLineResponse.builder()
                 .productLineId(productLine.getProductLineId())
                 .brandName(productLine.getBrandName())
+                .name(productLine.getName())
+                .content(productLine.getContent())
+                .price(productLine.getPrice())
+//                .totalStock(productLine.getTotalStock())
+                .productLineStatus(productLine.getStatus())
+                .build();
+    }
+
+    public static ProductLineResponse from(ProductLineEntity productLine) {
+        return ProductLineResponse.builder()
+                .productLineId(productLine.getProductLineId())
+                .brandName(productLine.getSeller().getBrandName())
                 .name(productLine.getName())
                 .content(productLine.getContent())
                 .price(productLine.getPrice())

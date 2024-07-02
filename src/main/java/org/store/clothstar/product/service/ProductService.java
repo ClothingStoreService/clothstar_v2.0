@@ -11,12 +11,20 @@ import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
+import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.product.repository.ProductJPARepository;
 import org.store.clothstar.product.repository.ProductRepository;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
+import org.store.clothstar.productLine.repository.ProductLineJPARepository;
+
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
-    private final ProductRepository productRepository;
+
+    private final ProductJPARepository productRepository;
+    private final ProductLineJPARepository productLineRepository;
 
     /*
     @Transactional(readOnly = true)
@@ -28,7 +36,7 @@ public class ProductService {
      */
     @Transactional(readOnly = true)
     public ProductResponse getProduct(Long productId) {
-        return productRepository.selectByProductId(productId)
+        return productRepository.findById(productId)
                 .map(ProductResponse::from)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
@@ -37,31 +45,34 @@ public class ProductService {
 
     @Transactional
     public Long createProduct(@Validated @RequestBody CreateProductRequest createProductRequest) {
-        Product product = createProductRequest.toProduct();
+        ProductLineEntity ProductLine = productLineRepository.findById(createProductRequest.getProductLineId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "productLineId :" + createProductRequest.getProductLineId() + "인 상품 라인 정보를 찾을 수 없습니다."));
+
+        ProductEntity product = createProductRequest.toProductEntity(ProductLine);
         productRepository.save(product);
 
-        return product.getProductLineId();
+        return product.getProductId();
     }
 
     @Transactional
     public void updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
-        Product product = productRepository.selectByProductId(productId)
+        ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
                         "productId :" + productId + "인 상품 옵션 정보를 찾을 수 없습니다."));
 
         product.updateOption(updateProductRequest);
-
-        productRepository.updateProduct(product);
     }
 
     @Transactional
     public void deleteProduct(Long productId) {
-        Product product = productRepository.selectByProductId(productId)
+        ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
                         "productId :" + productId + "인 상품 옵션 정보를 찾을 수 없습니다."));
 
-        productRepository.deleteProduct(productId);
+        productRepository.deleteById(productId);
     }
 }
