@@ -75,14 +75,11 @@ public class ProductService {
     }
 
     @Transactional
-    public void restoreProductStock(
-            List<OrderDetailEntity> orderDetailList
-    ) {
-        ProductEntity productEntity;
-        for (OrderDetailEntity orderDetailEntity : orderDetailList) {
-            productEntity = productJPARepository.findById(orderDetailEntity.getProduct().getProductId())
+    public void restoreProductStock(List<OrderDetailEntity> orderDetailList) {
+        orderDetailList.forEach(orderDetailEntity -> {
+            ProductEntity productEntity = productJPARepository.findById(orderDetailEntity.getProduct().getProductId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
             productEntity.restoreStock(orderDetailEntity.getQuantity());
-        }
+        });
     }
 }
