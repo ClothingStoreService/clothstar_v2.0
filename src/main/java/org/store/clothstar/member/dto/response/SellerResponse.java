@@ -1,7 +1,7 @@
 package org.store.clothstar.member.dto.response;
 
 import lombok.Getter;
-import org.store.clothstar.member.domain.Seller;
+import org.store.clothstar.member.entity.SellerEntity;
 
 import java.time.LocalDateTime;
 
@@ -13,11 +13,11 @@ public class SellerResponse {
     private int totalPaymentPrice;
     private LocalDateTime createdAt;
 
-    public SellerResponse(Seller seller) {
-        this.memberId = seller.getMemberId();
-        this.brandName = seller.getBrandName();
-        this.bizNo = seller.getBizNo();
-        this.totalPaymentPrice = seller.getTotalSellPrice();
-        this.createdAt = seller.getCreatedAt();
+    public SellerResponse(SellerEntity sellerEntity) {
+        this.memberId = sellerEntity.getMemberId();
+        this.brandName = sellerEntity.getBrandName();
+        this.bizNo = sellerEntity.getBizNo();
+        this.totalPaymentPrice = sellerEntity.getTotalSellPrice();
+        this.createdAt = sellerEntity.getCreatedAt();
     }
 }

@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
-import org.store.clothstar.member.repository.MemberJpaRepositoryAdapter;
+import org.store.clothstar.member.repository.MemberRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -31,7 +31,7 @@ class SellerControllerValidationTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    MemberJpaRepositoryAdapter memberJpaRepository;
+    MemberRepository memberRepository;
 
     private static final String SELLER_SIGN_UP_URL = "/v1/sellers/1";
 

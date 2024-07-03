@@ -11,7 +11,7 @@ import org.store.clothstar.member.domain.MemberRole;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.entity.MemberEntity;
-import org.store.clothstar.member.repository.MemberJpaRepository;
+import org.store.clothstar.member.repository.MemberRepository;
 
 import java.time.LocalDateTime;
 
@@ -23,19 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ActiveProfiles("test")
 public class MemberServiceJpaUnitTest {
     @Autowired
-    private MemberBasicServiceImpl memberBasicServiceImpl;
+    private MemberServiceImpl memberServiceImpl;
 
     @Autowired
-    private MemberSignupJpaServiceImpl memberSignupJpaServiceImpl;
-
-    @Autowired
-    private MemberPasswordUpdateServiceImpl memberPasswordUpdateServiceImpl;
-
-    @Autowired
-    private MemberDeleteServiceImpl memberDeleteServiceImpl;
-
-    @Autowired
-    private MemberJpaRepository memberJpaRepository;
+    private MemberRepository memberRepository;
 
     private Long memberId;
     private MemberEntity memberEntity;
@@ -44,8 +35,8 @@ public class MemberServiceJpaUnitTest {
     @BeforeEach
     public void getMemberId_getAccessToken() {
         //given && when
-        memberId = memberSignupJpaServiceImpl.signUp(getCreateMemberRequest());
-        memberEntity = memberJpaRepository.findById(memberId).get();
+        memberId = memberServiceImpl.signUp(getCreateMemberRequest());
+        memberEntity = memberRepository.findById(memberId).get();
 
         //then
         assertThat(memberId).isNotNull();
@@ -64,11 +55,11 @@ public class MemberServiceJpaUnitTest {
                 .build();
 
         //when
-        memberBasicServiceImpl.modifyMember(memberId, modifyMemberRequest);
+        memberServiceImpl.modifyMember(memberId, modifyMemberRequest);
 
         //then
         //Seller 권한으로 변경 되었는지 확인
-        MemberEntity modifiedMember = memberJpaRepository.findById(memberId).get();
+        MemberEntity modifiedMember = memberRepository.findById(memberId).get();
         assertThat(modifiedMember.getRole()).isEqualTo(MemberRole.SELLER);
         assertThat(name).isEqualTo(modifiedMember.getName()); //이름은 변경 안됐는지 확인한다.
     }
@@ -83,11 +74,11 @@ public class MemberServiceJpaUnitTest {
                 .build();
 
         //when
-        memberBasicServiceImpl.modifyMember(memberId, modifyMemberRequest);
+        memberServiceImpl.modifyMember(memberId, modifyMemberRequest);
 
         //then
         //Seller 권한으로 변경 되었는지 확인
-        MemberEntity modifiedMember = memberJpaRepository.findById(memberId).get();
+        MemberEntity modifiedMember = memberRepository.findById(memberId).get();
         assertThat(memberRole).isEqualTo(modifiedMember.getRole()); //권한은 변경 안됐는지 확인 확인한다.
     }
 
@@ -99,10 +90,10 @@ public class MemberServiceJpaUnitTest {
         String modifyPassword = "zxcvasdf123";
 
         //when
-        memberPasswordUpdateServiceImpl.updatePassword(memberId, modifyPassword);
+        memberServiceImpl.updatePassword(memberId, modifyPassword);
 
         //then
-        MemberEntity modifiedMember = memberJpaRepository.findById(memberId).get();
+        MemberEntity modifiedMember = memberRepository.findById(memberId).get();
         assertThat(modifiedMember.getPassword()).isNotEqualTo(originPassword);
     }
 
@@ -113,11 +104,11 @@ public class MemberServiceJpaUnitTest {
         LocalDateTime originDeletedAt = memberEntity.getDeletedAt();
 
         //when
-        memberDeleteServiceImpl.updateDeleteAt(memberId);
+        memberServiceImpl.updateDeleteAt(memberId);
 
         //then
         assertThat(originDeletedAt).isNull();
-        MemberEntity modifiedMember = memberJpaRepository.findById(memberId).get();
+        MemberEntity modifiedMember = memberRepository.findById(memberId).get();
         assertThat(modifiedMember.getDeletedAt()).isNotNull();
     }
 
@@ -125,7 +116,7 @@ public class MemberServiceJpaUnitTest {
     @Test
     void signUpValid_idDuplicateCheck() {
         Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
-            memberSignupJpaServiceImpl.signUp(getCreateMemberRequest());
+            memberServiceImpl.signUp(getCreateMemberRequest());
         });
 
         assertThat(exception.getMessage()).isEqualTo("이미 존재하는 아이디 입니다.");

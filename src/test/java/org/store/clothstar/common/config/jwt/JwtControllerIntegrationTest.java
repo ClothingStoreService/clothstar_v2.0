@@ -11,10 +11,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
-import org.store.clothstar.member.repository.MemberJpaRepositoryAdapter;
-import org.store.clothstar.member.service.MemberSignupJpaServiceImpl;
+import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.service.MemberService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -37,19 +37,19 @@ class JwtControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private MemberSignupJpaServiceImpl memberSignupJpaService;
+    private MemberService memberService;
 
     @Autowired
-    private MemberJpaRepositoryAdapter memberJpaRepositoryAdapter;
+    private MemberRepository memberRepository;
 
     private Long memberId;
-    private Member member;
+    private MemberEntity memberEntity;
 
     @DisplayName("회원가입한 멤버아이디와, 인증에 필요한 access 토큰을 가져옵니다.")
     @BeforeEach
     public void getMemberId_getAccessToken() {
-        memberId = memberSignupJpaService.signUp(getCreateMemberRequest());
-        member = memberJpaRepositoryAdapter.findById(memberId).get();
+        memberId = memberService.signUp(getCreateMemberRequest());
+        memberEntity = memberRepository.findById(memberId).get();
     }
 
     @DisplayName("refresh 토큰으로 access 토큰을 가져온다.")
@@ -57,7 +57,7 @@ class JwtControllerIntegrationTest {
     void accessToken_reissue_by_RefreshToken() throws Exception {
         //given
         String ACCESS_TOKEN_REISSUE_URL = "/v1/access";
-        String refreshToken = jwtUtil.createRefreshToken(member);
+        String refreshToken = jwtUtil.createRefreshToken(memberEntity);
 
         //when
         ResultActions actions = mockMvc.perform(post(ACCESS_TOKEN_REISSUE_URL)

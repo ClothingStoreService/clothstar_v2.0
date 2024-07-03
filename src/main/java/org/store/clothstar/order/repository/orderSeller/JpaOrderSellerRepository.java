@@ -7,7 +7,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.order.entity.OrderEntity;
 
-public interface JpaOrderSellerRepository extends JpaRepository<OrderEntity, Long> {
+public interface JpaOrderSellerRepository extends JpaRepository<OrderEntity, Long>, OrderEntityRepositoryCustom, OrderSellerRepository {
+
     @Transactional
     @Modifying
     @Query("UPDATE orders o SET o.status = 'APPROVE' WHERE o.orderId = :orderId")

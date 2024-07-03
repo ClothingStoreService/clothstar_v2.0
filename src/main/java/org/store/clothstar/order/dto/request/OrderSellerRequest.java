@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.store.clothstar.order.domain.type.ApprovalStatus;
+import org.store.clothstar.order.type.ApprovalStatus;
 
 @Getter
 @AllArgsConstructor

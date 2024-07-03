@@ -16,14 +16,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.common.config.jwt.JwtUtil;
-import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.entity.AddressEntity;
-import org.store.clothstar.member.repository.AddressJpaRepository;
-import org.store.clothstar.member.repository.MemberJpaRepositoryAdapter;
-import org.store.clothstar.member.service.AddressCreateJpaServiceImpl;
-import org.store.clothstar.member.service.MemberSignupJpaServiceImpl;
+import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.repository.AddressRepository;
+import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.service.AddressServiceImpl;
+import org.store.clothstar.member.service.MemberService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -43,16 +43,16 @@ class AddressControllerIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private MemberSignupJpaServiceImpl memberSignupJpaService;
+    private MemberService memberService;
 
     @Autowired
-    private MemberJpaRepositoryAdapter memberJpaRepositoryAdapter;
+    private MemberRepository memberRepository;
 
     @Autowired
-    private AddressJpaRepository addressJpaRepository;
+    private AddressRepository addressRepository;
 
     @Autowired
-    private AddressCreateJpaServiceImpl addressCreateJpaService;
+    private AddressServiceImpl addressServiceImpl;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -60,13 +60,13 @@ class AddressControllerIntegrationTest {
     private static final String ADDRESS_URL = "/v1/members/addresses/";
     private Long memberId;
     private String accessToken;
-    private Member member;
+    private MemberEntity member;
 
     @DisplayName("회원가입한 멤버아이디와, 인증에 필요한 access 토큰을 가져옵니다.")
     @BeforeEach
     public void getMemberId_getAccessToken() {
-        memberId = memberSignupJpaService.signUp(getCreateMemberRequest());
-        member = memberJpaRepositoryAdapter.findById(memberId).get();
+        memberId = memberService.signUp(getCreateMemberRequest());
+        member = memberRepository.findById(memberId).get();
         accessToken = jwtUtil.createAccessToken(member);
     }
 
@@ -94,7 +94,7 @@ class AddressControllerIntegrationTest {
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long addressId = jsonNode.get("id").asLong();
 
-        AddressEntity addressEntity = addressJpaRepository.findById(addressId).get();
+        AddressEntity addressEntity = addressRepository.findById(addressId).get();
         System.out.println("addressEntity.toString() " + addressEntity.toString());
         Assertions.assertThat(addressEntity.getAddressId()).isEqualTo(addressId);
         Assertions.assertThat(addressEntity.getMember().getMemberId()).isEqualTo(memberId);
@@ -107,7 +107,7 @@ class AddressControllerIntegrationTest {
         //given
         final String getMemberAddressURL = ADDRESS_URL + memberId;
         for (int i = 0; i < 5; i++) {
-            addressCreateJpaService.addrSave(memberId, getCreateAddressRequest("서울시 공릉동" + i));
+            addressServiceImpl.addrSave(memberId, getCreateAddressRequest("서울시 공릉동" + i));
         }
 
         //when

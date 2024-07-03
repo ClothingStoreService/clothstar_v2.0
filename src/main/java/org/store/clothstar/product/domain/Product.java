@@ -1,7 +1,10 @@
 package org.store.clothstar.product.domain;
 
 import lombok.*;
+import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
+import org.store.clothstar.product.dto.response.ProductResponse;
+import org.store.clothstar.product.entity.ProductEntity;
 
 @Builder
 @Getter
@@ -27,5 +30,15 @@ public class Product {
 
     public void restoreStock(int quantity) {
         this.stock += quantity;
+    }
+
+    public static Product from(ProductEntity productEntity) {
+        return Product.builder()
+                .productId(productEntity.getProductId())
+                .productLineId(productEntity.getProductLine().getProductLineId())
+                .name(productEntity.getName())
+                .extraCharge(productEntity.getExtraCharge())
+                .stock(productEntity.getStock())
+                .build();
     }
 }

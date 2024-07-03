@@ -15,6 +15,7 @@ import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineResponse;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
 import org.store.clothstar.productLine.repository.ProductLineMybatisRepository;
+import org.store.clothstar.productLine.repository.ProductLineRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ class ProductLineServiceTest {
     private ProductLineService productLineService;
 
     @Mock
-    private ProductLineMybatisRepository productLineMybatisRepository;
+    private ProductLineRepository productLineMybatisRepository;
 
     @DisplayName("상품 리스트 조회에 성공한다.")
     @Test

@@ -1,32 +1,25 @@
 package org.store.clothstar.member.application;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
 import org.store.clothstar.member.dto.response.AddressResponse;
-import org.store.clothstar.member.service.AddressBasicService;
-import org.store.clothstar.member.service.AddressCreateService;
+import org.store.clothstar.member.service.AddressService;
 
 import java.util.List;
 
 @Service
 public class AddressServiceApplication {
-    private final AddressBasicService addressBasicService;
-    private final AddressCreateService addressCreateService;
+    private final AddressService addressService;
 
-    public AddressServiceApplication(
-            AddressBasicService addressBasicService,
-            @Qualifier("addressCreateJpaServiceImpl") AddressCreateService addressCreateService) {
-        //@Qualifier("addressCreateMybatisServiceImpl") AddressCreateService addressCreateService) {
-        this.addressBasicService = addressBasicService;
-        this.addressCreateService = addressCreateService;
+    public AddressServiceApplication(AddressService addressService) {
+        this.addressService = addressService;
     }
 
     public List<AddressResponse> getMemberAllAddress(Long memberId) {
-        return addressBasicService.findMemberAllAddress(memberId);
+        return addressService.findMemberAllAddress(memberId);
     }
 
     public Long addrSave(Long memberId, CreateAddressRequest createAddressRequest) {
-        return addressCreateService.addrSave(memberId, createAddressRequest);
+        return addressService.addrSave(memberId, createAddressRequest);
     }
 }

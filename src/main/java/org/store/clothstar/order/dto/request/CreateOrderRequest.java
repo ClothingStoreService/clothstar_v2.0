@@ -6,11 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.store.clothstar.member.domain.Address;
-import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.domain.type.PaymentMethod;
-import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.member.entity.AddressEntity;
+import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.order.type.PaymentMethod;
+import org.store.clothstar.order.type.Status;
 import org.store.clothstar.order.utils.GenerateOrderId;
 
 import java.time.LocalDateTime;
@@ -35,11 +35,11 @@ public class CreateOrderRequest {
     private Long addressId;
 
 
-    public Order toOrder(Member member, Address address) {
-        return Order.builder()
+    public OrderEntity toOrderEntity(MemberEntity memberEntity, AddressEntity addressEntity) {
+        return OrderEntity.builder()
                 .orderId(GenerateOrderId.generateOrderId())
-                .memberId(member.getMemberId())
-                .addressId(address.getAddressId())
+                .member(memberEntity)
+                .address(addressEntity)
                 .createdAt(LocalDateTime.now())
                 .status(Status.WAITING)
                 .totalShippingPrice(3000)
