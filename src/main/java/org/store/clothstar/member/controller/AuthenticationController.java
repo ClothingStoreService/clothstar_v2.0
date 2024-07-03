@@ -6,23 +6,24 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.store.clothstar.common.dto.SaveResponseDTO;
 import org.store.clothstar.member.application.MemberServiceApplication;
+import org.store.clothstar.member.dto.request.CertifyNumRequest;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.MemberLoginRequest;
 
 @Tag(name = "Auth", description = "회원가입과 인증에 관한 API 입니다.")
-@Controller
+@RestController
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationController {
     private final MemberServiceApplication memberServiceApplication;
 
     @Operation(summary = "회원가입", description = "회원가입시 회원 정보를 저장한다.")
-    @ResponseBody
     @PostMapping("/v1/members")
     public ResponseEntity<SaveResponseDTO> signup(@Validated @RequestBody CreateMemberRequest createMemberDTO) {
         log.info("회원가입 요청 데이터 : {}", createMemberDTO.toString());
@@ -45,9 +46,8 @@ public class AuthenticationController {
     }
 
     @Operation(summary = "이메일로 인증번호 전송", description = "기입한 이메일로 인증번호를 전송합니다.")
-    @ResponseBody
-    @GetMapping("/v1/members/auth/{email}")
-    public void signupEmailAuthentication(@PathVariable("email") String email) {
-        memberServiceApplication.signupCertifyNumEmailSend(email);
+    @PostMapping("/v1/members/auth")
+    public void signupEmailAuthentication(@Validated @RequestBody CertifyNumRequest certifyNumRequest) {
+        memberServiceApplication.signupCertifyNumEmailSend(certifyNumRequest.getEmail());
     }
 }

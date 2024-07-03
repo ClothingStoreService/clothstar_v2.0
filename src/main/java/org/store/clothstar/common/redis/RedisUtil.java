@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Random;
 
 @RequiredArgsConstructor
 @Service
@@ -33,5 +34,26 @@ public class RedisUtil {
 
     public void deleteData(String key) {
         template.delete(key);
+    }
+
+    public void createRedisData(String toEmail, String code) {
+        if (existData(toEmail)) {
+            deleteData(toEmail);
+        }
+
+        setDataExpire(toEmail, code);
+    }
+
+    public String createdCertifyNum() {
+        int leftLimit = 48; // number '0'
+        int rightLimit = 122; // alphabet 'z'
+        int targetStringLength = 6;
+        Random random = new Random();
+
+        return random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 }

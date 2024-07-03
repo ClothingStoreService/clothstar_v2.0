@@ -7,11 +7,14 @@ if (certifyNumEmailSendButton) {
         if (emailValue == null || emailValue == "") {
             alert("이메일을 입력해 주세요");
         } else {
-            fetch(`/v1/members/auth/${emailValue}`, {
-                method: "GET",
+            fetch(`/v1/members/auth`, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
+                body: JSON.stringify({
+                    email: emailValue
+                }),
             }).then((res) => {
                 if (res.ok) {
                     alert("인증번호가 전송 되었습니다.")

@@ -13,8 +13,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
+import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.service.MemberServiceImpl;
 import org.store.clothstar.member.service.SellerServiceImpl;
+import org.store.clothstar.member.util.CreateObject;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,10 +35,14 @@ class SellerControllerIntegrationTest {
     private SellerServiceImpl sellerServiceImpl;
 
     @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
     MemberServiceImpl memberServiceImpl;
 
     private static final String SELLER_URL = "/v1/sellers";
 
+    MemberEntity memberEntity;
     private Long memberId;
     private final String brandName = "나이키";
     private final String bizNo = "102-13-13122";
@@ -45,7 +52,8 @@ class SellerControllerIntegrationTest {
     @Test
     void getSellerTest() throws Exception {
         //given
-        memberId = memberServiceImpl.signUp(getCreateMemberRequest("test1@naver.com"));
+        memberEntity = memberRepository.save(CreateObject.getMemberEntityByCreateMemberRequestDTO());
+        memberId = memberEntity.getMemberId();
         Long sellerId = sellerServiceImpl.sellerSave(memberId, getCreateSellerRequest());
         String sellerMemberIdURL = SELLER_URL + "/" + memberId;
 
@@ -65,9 +73,10 @@ class SellerControllerIntegrationTest {
         String password = "test1234";
         String name = "현수";
         String telNo = "010-1234-1244";
+        String certifyNum = "123asdf";
 
         CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                email, password, name, telNo
+                email, password, name, telNo, certifyNum
         );
 
         return createMemberRequest;

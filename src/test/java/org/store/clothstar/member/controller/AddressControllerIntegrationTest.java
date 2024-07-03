@@ -24,6 +24,7 @@ import org.store.clothstar.member.repository.AddressRepository;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.service.AddressServiceImpl;
 import org.store.clothstar.member.service.MemberService;
+import org.store.clothstar.member.util.CreateObject;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -58,16 +59,17 @@ class AddressControllerIntegrationTest {
     private JwtUtil jwtUtil;
 
     private static final String ADDRESS_URL = "/v1/members/addresses/";
+
+    private MemberEntity memberEntity;
     private Long memberId;
     private String accessToken;
-    private MemberEntity member;
 
     @DisplayName("회원가입한 멤버아이디와, 인증에 필요한 access 토큰을 가져옵니다.")
     @BeforeEach
     public void getMemberId_getAccessToken() {
-        memberId = memberService.signUp(getCreateMemberRequest());
-        member = memberRepository.findById(memberId).get();
-        accessToken = jwtUtil.createAccessToken(member);
+        memberEntity = memberRepository.save(CreateObject.getMemberEntityByCreateMemberRequestDTO());
+        memberId = memberEntity.getMemberId();
+        accessToken = jwtUtil.createAccessToken(memberEntity);
     }
 
     @DisplayName("회원 배송지 저장 통합 테스트")
@@ -155,9 +157,10 @@ class AddressControllerIntegrationTest {
         String password = "testl122sff";
         String name = "name";
         String telNo = "010-1234-1245";
+        String certifyNum = "123asdf";
 
         CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                email, password, name, telNo
+                email, password, name, telNo, certifyNum
         );
 
         return createMemberRequest;

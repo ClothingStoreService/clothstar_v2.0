@@ -7,8 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
+import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.util.CreateObject;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,6 +25,10 @@ class SellerCreateJpaServiceUnitTest {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
+    private MemberEntity memberEntity;
     private Long memberId;
     private Long memberId2;
     private String brandName = "나이키";
@@ -31,8 +37,11 @@ class SellerCreateJpaServiceUnitTest {
     @DisplayName("회원가입과 판매자 신청을 진행 하고 memberId와 sellerId가 정상적으로 반환되는지 확인한다.")
     @BeforeEach
     public void signUp_getMemberId() {
-        memberId = memberService.signUp(getCreateMemberRequest());
-        memberId2 = memberService.signUp(getCreateMemberRequest2());
+        memberEntity = memberRepository.save(CreateObject.getCreateMemberRequest("test1@naver.com").toMemberEntity());
+        memberId = memberEntity.getMemberId();
+
+        memberEntity = memberRepository.save(CreateObject.getCreateMemberRequest("test2@naver.com").toMemberEntity());
+        memberId2 = memberEntity.getMemberId();
 
         Long sellerId = sellerService.sellerSave(memberId, getCreateSellerRequest());
 
@@ -87,31 +96,6 @@ class SellerCreateJpaServiceUnitTest {
         assertThat(exception.getMessage()).isEqualTo("이미 존재하는 사업자 번호 입니다.");
     }
 
-    private CreateMemberRequest getCreateMemberRequest() {
-        String email = "test@test.com";
-        String password = "testl122";
-        String name = "현수";
-        String telNo = "010-1234-1245";
-
-        CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                email, password, name, telNo
-        );
-
-        return createMemberRequest;
-    }
-
-    private CreateMemberRequest getCreateMemberRequest2() {
-        String email = "test2@test.com";
-        String password = "testl122";
-        String name = "현수";
-        String telNo = "010-1234-1245";
-
-        CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                email, password, name, telNo
-        );
-
-        return createMemberRequest;
-    }
 
     private CreateSellerRequest getCreateSellerRequest() {
         CreateSellerRequest createSellerRequest = new CreateSellerRequest(

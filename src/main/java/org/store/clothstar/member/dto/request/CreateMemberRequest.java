@@ -39,4 +39,17 @@ public class CreateMemberRequest {
                 .grade(MemberGrade.BRONZE)
                 .build();
     }
+
+    public MemberEntity toMemberEntity() {
+        return MemberEntity.builder()
+                .email(email)
+                .password(password)
+                .name(name)
+                .telNo(telNo)
+                .totalPaymentPrice(0)
+                .point(0)
+                .role(MemberRole.USER)
+                .grade(MemberGrade.BRONZE)
+                .build();
+    }
 }

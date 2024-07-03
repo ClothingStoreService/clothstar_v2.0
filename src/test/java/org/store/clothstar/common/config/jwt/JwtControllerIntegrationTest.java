@@ -11,10 +11,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.MemberRepository;
-import org.store.clothstar.member.service.MemberService;
+import org.store.clothstar.member.util.CreateObject;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -28,28 +27,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class JwtControllerIntegrationTest {
     @Autowired
-    private JwtController jwtController;
-
-    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private MemberService memberService;
-
-    @Autowired
     private MemberRepository memberRepository;
 
-    private Long memberId;
     private MemberEntity memberEntity;
 
     @DisplayName("회원가입한 멤버아이디와, 인증에 필요한 access 토큰을 가져옵니다.")
     @BeforeEach
     public void getMemberId_getAccessToken() {
-        memberId = memberService.signUp(getCreateMemberRequest());
-        memberEntity = memberRepository.findById(memberId).get();
+        memberEntity = memberRepository.save(CreateObject.getMemberEntityByCreateMemberRequestDTO());
     }
 
     @DisplayName("refresh 토큰으로 access 토큰을 가져온다.")
@@ -68,18 +59,5 @@ class JwtControllerIntegrationTest {
         actions.andExpect(status().isOk());
         actions.andDo(print());
         actions.andExpect(jsonPath("$.accessToken").isNotEmpty());
-    }
-
-    private CreateMemberRequest getCreateMemberRequest() {
-        String email = "test11@naver.com";
-        String password = "testl122sff";
-        String name = "name";
-        String telNo = "010-1234-1245";
-
-        CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                email, password, name, telNo
-        );
-
-        return createMemberRequest;
     }
 }

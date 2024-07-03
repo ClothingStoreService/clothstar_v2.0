@@ -18,7 +18,6 @@ import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.MemberRepository;
 
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -117,7 +116,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     private String sendEmailAuthentication(String toEmail) {
-        String certifyNum = createdCode();
+        String certifyNum = redisUtil.createdCertifyNum();
         String message = mailContentBuilder.build(certifyNum);
         MailSendDTO mailSendDTO = new MailSendDTO(toEmail, "clothstar 회원가입 인증 메일 입니다.", message);
 
@@ -125,7 +124,7 @@ public class MemberServiceImpl implements MemberService {
 
         //메일 전송에 성공하면 redis에 key = email, value = 인증번호를 생성한다.
         //지속시간은 10분
-        createRedis(toEmail, certifyNum);
+        redisUtil.createRedisData(toEmail, certifyNum);
 
         return certifyNum;
     }
@@ -137,26 +136,5 @@ public class MemberServiceImpl implements MemberService {
         }
 
         return codeFoundByEmail.equals(certifyNum);
-    }
-
-    private void createRedis(String toEmail, String code) {
-        if (redisUtil.existData(toEmail)) {
-            redisUtil.deleteData(toEmail);
-        }
-
-        redisUtil.setDataExpire(toEmail, code);
-    }
-
-    private String createdCode() {
-        int leftLimit = 48; // number '0'
-        int rightLimit = 122; // alphabet 'z'
-        int targetStringLength = 6;
-        Random random = new Random();
-
-        return random.ints(leftLimit, rightLimit + 1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                .limit(targetStringLength)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
     }
 }
