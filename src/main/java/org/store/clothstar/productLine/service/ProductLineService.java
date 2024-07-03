@@ -2,6 +2,9 @@ package org.store.clothstar.productLine.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +42,16 @@ public class ProductLineService {
                 .stream()
                 .map(ProductLineResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductLineWithProductsJPAResponse> getAllProductLinesWithProductsOffsetPaging(Pageable pageable) {
+        return productLineRepository.findAllOffsetPaging(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<ProductLineWithProductsJPAResponse> getAllProductLinesWithProductsSlicePaging(Pageable pageable) {
+        return productLineRepository.findAllSlicePaging(pageable);
     }
 
     @Transactional(readOnly = true)

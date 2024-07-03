@@ -3,7 +3,9 @@ package org.store.clothstar.productLine.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,13 +34,6 @@ public class ProductLineController {
     @Operation(summary = "전체 상품 조회", description = "삭제되지 않은 모든 상품을 조회한다.")
     @GetMapping("/v1/productLines")
     public ResponseEntity<List<ProductLineResponse>> getAllProductLines() {
-        List<ProductLineResponse> productLineResponses = productLineService.getAllProductLines();
-        return ResponseEntity.ok().body(productLineResponses);
-    }
-
-    @Operation(summary = "전체 상품 조회", description = "삭제되지 않은 모든 상품을 조회한다.")
-    @GetMapping("/v1/productLines")
-    public ResponseEntity<Page<ProductLineResponse>> getAllProductLines(@PageableDefault(size = 18) Pageable pageable) {
         List<ProductLineResponse> productLineResponses = productLineService.getAllProductLines();
         return ResponseEntity.ok().body(productLineResponses);
     }

@@ -18,7 +18,6 @@
 //import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 //import org.store.clothstar.productLine.dto.response.ProductLineResponse;
 //import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
-//import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 //import org.store.clothstar.productLine.repository.ProductLineRepository;
 //import org.store.clothstar.productLine.service.ProductLineService;
 //
@@ -46,7 +45,7 @@
 //    private ProductLineService productLineService;
 //
 //    @Autowired
-//    private ProductLineJPARepository productLineRepository;
+//    private ProductLineRepository productLineRepository;
 //
 //    private static final String PRODUCT_LINE_URL = "/v1/productLines";
 //
@@ -56,7 +55,7 @@
 //    void whenGetAllProductLines_thenAllExistingAndNewProductLinesAreReturned() throws Exception {
 //        // given
 //        // 기존 데이터 개수 확인
-//        int initialCount = productLineRepository.findByDeletedAtIsNullAndStatusNotIn().size();
+//        int initialCount = productLineRepository.selectAllProductLinesNotDeleted().size();
 //
 //        // 새로운 ProductLine 추가
 //        List<Long> newProductLineIds = createSampleProductLines(3);
@@ -79,7 +78,7 @@
 //
 //        // 새로 추가한 ProductLine 확인
 //        for (Long id : newProductLineIds) {
-//            ProductLine productLine = productLineRepository.findById(id).orElseThrow();
+//            ProductLine productLine = productLineRepository.selectByProductLineId(id).orElseThrow();
 //            ProductLineResponse response = responses.stream()
 //                    .filter(r -> r.getProductLineStatus().equals(id))
 //                    .findFirst()

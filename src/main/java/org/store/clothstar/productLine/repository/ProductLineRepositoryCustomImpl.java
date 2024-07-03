@@ -8,15 +8,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import org.store.clothstar.category.entity.CategoryEntity;
-import org.store.clothstar.category.entity.QCategoryEntity;
-import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.domain.QMember;
-import org.store.clothstar.member.domain.QSeller;
-import org.store.clothstar.member.domain.Seller;
+import org.store.clothstar.member.entity.QSellerEntity;
+import org.store.clothstar.member.entity.SellerEntity;
 import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.entity.QProductEntity;
@@ -35,22 +32,19 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
     private final JPAQueryFactory jpaQueryFactory;
 
     QProductLineEntity qProductLine = QProductLineEntity.productLineEntity;
-    QCategoryEntity qCategory = QCategoryEntity.categoryEntity;
     QProductEntity qProduct = QProductEntity.productEntity;
-    QSeller qSeller = QSeller.seller;
-    QMember qMember = QMember.member;
+    QSellerEntity qSeller = QSellerEntity.sellerEntity;
+    QMemberEntity qMember = QMemberEntity.memberEntity;
 
 
     public Page<ProductLineWithProductsJPAResponse> getProductLinesWithOptions(Pageable pageable) {
         List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable.getSort());
 
         List<Tuple> results = jpaQueryFactory
-                .selectDistinct(qProductLine, qCategory, qSeller, qMember, qProduct)
+                .selectDistinct(qProductLine, qSeller, qProduct)
                 .from(qProductLine)
                 .innerJoin(qProductLine.seller, qSeller).fetchJoin()
-                .innerJoin(qSeller.member, qMember).fetchJoin()
                 .leftJoin(qProductLine.products, qProduct).fetchJoin()
-                .leftJoin(qProductLine.category, qCategory).fetchJoin()
                 .where(qProductLine.deletedAt.isNull())
                 .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
                 .offset(pageable.getOffset())
@@ -61,8 +55,8 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
         for (Tuple tuple : results) {
             ProductLineEntity productLine = tuple.get(qProductLine);
             CategoryEntity category = tuple.get(qCategory);
-            Seller seller = tuple.get(qSeller);
-            Member member = tuple.get(qMember);
+            SellerEntity seller = tuple.get(qSeller);
+            MemberEntity member = tuple.get(qMember);
             ProductEntity product = tuple.get(qProduct);
 
             ProductLineWithProductsJPAResponse response = productLineMap.computeIfAbsent(productLine.getProductLineId(),
@@ -99,7 +93,7 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
                 .leftJoin(qProductLine.products, qProduct)
                 .where(qProductLine.productLineId.eq(productLineId)
                         .and(qProductLine.deletedAt.isNull()))
-                .groupBy(qProductLine.productLineId, qCategory, qSeller, qMember)
+                .groupBy(qProductLine.productLineId, qSeller)
                 .fetchOne();
 
         if (result != null) {
@@ -114,6 +108,16 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
         }
 
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public Page<ProductLineWithProductsJPAResponse> findAllOffsetPaging(Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public Slice<ProductLineWithProductsJPAResponse> findAllSlicePaging(Pageable pageable) {
+        return null;
     }
 
     private List<OrderSpecifier<?>> getOrderSpecifiers(Sort sort) {
