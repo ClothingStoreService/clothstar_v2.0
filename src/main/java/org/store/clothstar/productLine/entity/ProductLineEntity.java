@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
-import org.store.clothstar.category.domain.Category;
+import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.common.entity.BaseTimeEntity;
 import org.store.clothstar.member.entity.SellerEntity;
 import org.store.clothstar.product.entity.ProductEntity;
@@ -37,7 +37,7 @@ public class ProductLineEntity extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    private CategoryEntity category;
 
     private String name;
 

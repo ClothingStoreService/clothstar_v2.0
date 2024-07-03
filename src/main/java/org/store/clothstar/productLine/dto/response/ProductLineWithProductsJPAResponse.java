@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
-import org.store.clothstar.category.domain.Category;
 import org.store.clothstar.category.dto.response.CategoryResponse;
+import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.member.dto.response.MemberSimpleResponse;
 import org.store.clothstar.member.dto.response.SellerSimpleResponse;
 import org.store.clothstar.member.entity.MemberEntity;
@@ -64,14 +64,13 @@ public class ProductLineWithProductsJPAResponse {
 //    }
 
     // 추가된 생성자
-    // 추가된 생성자
-    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Category category, SellerEntity seller, MemberEntity member, Long totalStock, List<ProductResponse> productList) {
+    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, CategoryEntity category, SellerEntity seller, MemberEntity member, Long totalStock, List<ProductResponse> productList) {
         this(productLine, category, seller, member, totalStock);
         this.productList = productList != null ? productList : new ArrayList<>();
     }
 
     @QueryProjection
-    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Category category, SellerEntity seller, MemberEntity member, Long totalStock) {
+    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, CategoryEntity category, SellerEntity seller, MemberEntity member, Long totalStock) {
         this.productLineId = productLine.getProductLineId();
         this.category = CategoryResponse.from(category);
         this.name = productLine.getName();
@@ -84,6 +83,10 @@ public class ProductLineWithProductsJPAResponse {
         this.createdAt = productLine.getCreatedAt();
         this.modifiedAt = productLine.getModifiedAt();
         this.productList = new ArrayList<>();
+    }
+
+    public void setProductList(List<ProductResponse> productList) {
+        this.productList = productList != null ? productList : new ArrayList<>();
     }
 
 }

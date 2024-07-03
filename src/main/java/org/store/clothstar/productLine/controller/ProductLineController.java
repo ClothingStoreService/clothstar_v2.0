@@ -12,7 +12,7 @@ import org.store.clothstar.common.util.URIBuilder;
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineResponse;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
+import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
 import org.store.clothstar.productLine.service.ProductLineService;
 
 import java.net.URI;
@@ -35,8 +35,8 @@ public class ProductLineController {
 
     @Operation(summary = "상품 상세 조회", description = "productLineId로 상품과 하위 옵션들을 상세 조회한다.")
     @GetMapping("/{productLineId}")
-    public ResponseEntity<ProductLineWithProductsResponse> getProductLine(@PathVariable("productLineId") Long productLineId) {
-        ProductLineWithProductsResponse productLineWithProducts = productLineService.getProductLineWithProducts(productLineId);
+    public ResponseEntity<ProductLineWithProductsJPAResponse> getProductLine(@PathVariable("productLineId") Long productLineId) {
+        ProductLineWithProductsJPAResponse productLineWithProducts = productLineService.getProductLineWithProducts(productLineId);
         return ResponseEntity.ok().body(productLineWithProducts);
     }
 

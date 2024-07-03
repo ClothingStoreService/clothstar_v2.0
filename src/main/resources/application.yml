@@ -5,10 +5,8 @@ spring:
     group:
       local:
         - db-local
-        - db-local-jpa  # 또는 db-local-jpa
       dev:
         - db-dev
-        - db-dev-jpa  # 또는 db-dev-jpa
     include:
       - db
 

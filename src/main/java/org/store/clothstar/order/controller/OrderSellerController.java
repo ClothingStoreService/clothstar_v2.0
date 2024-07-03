@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.store.clothstar.common.dto.MessageDTO;
-import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.service.OrderSellerService;
 
