@@ -6,6 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
@@ -58,6 +61,33 @@ class OrderServiceTest {
         then(orderRepository).should(times(1)).findOrderWithDetails(orderId);
         assertThat(orderResponse.getOrderId()).isEqualTo(orderId);
     }
+
+    @Test
+    @DisplayName("getAllOrderOffsetPaging: Offset 페이징 - 메서드 호출 테스트")
+    void getAllOrderOffsetPaging_verify_test() {
+        //given
+        Pageable pageable = mock(Pageable.class);
+
+        //when
+        orderService.getAllOrderOffsetPaging(pageable);
+
+        //then
+        then(orderRepository).should(times(1)).findAllOffsetPaging(pageable);
+    }
+
+    @Test
+    @DisplayName("getAllOrderSlicePaging: Slice 페이징 - 메서드 호출 테스트")
+    void getAllOrderSlicePaging_verify_test() {
+        //given
+        Pageable pageable = mock(Pageable.class);
+
+        //when
+        orderService.getAllOrderSlicePaging(pageable);
+
+        //then
+        then(orderRepository).should(times(1)).findAllSlicePaging(pageable);
+    }
+
 
     @Test
     @DisplayName("saveOrder: 주문 생성 - 메서드 호출 테스트")
