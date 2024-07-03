@@ -13,7 +13,6 @@ import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineResponse;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
 import org.store.clothstar.productLine.service.ProductLineService;
 
 import java.net.URI;

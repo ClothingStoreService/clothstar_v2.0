@@ -1,9 +1,7 @@
 package org.store.clothstar.product.domain;
 
 import lombok.*;
-import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
-import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.entity.ProductEntity;
 
 @Builder

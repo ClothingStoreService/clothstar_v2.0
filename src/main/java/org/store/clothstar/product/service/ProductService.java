@@ -7,17 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
-import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.repository.ProductJPARepository;
-import org.store.clothstar.product.repository.ProductRepository;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
-
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

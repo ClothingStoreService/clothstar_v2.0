@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
-import org.store.clothstar.category.domain.Category;
 import org.store.clothstar.category.dto.response.CategoryResponse;
 import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.member.dto.response.MemberSimpleResponse;

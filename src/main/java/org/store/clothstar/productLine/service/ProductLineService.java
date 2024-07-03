@@ -9,17 +9,12 @@ import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.category.repository.CategoryJpaRepository;
 import org.store.clothstar.member.entity.SellerEntity;
-import org.store.clothstar.member.repository.SellerJpaRepository;
 import org.store.clothstar.member.repository.SellerRepository;
-import org.store.clothstar.product.domain.Product;
-import org.store.clothstar.product.entity.ProductEntity;
-import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineResponse;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 

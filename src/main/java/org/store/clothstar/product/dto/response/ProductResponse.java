@@ -2,7 +2,6 @@ package org.store.clothstar.product.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.entity.ProductEntity;
 
 @Getter
