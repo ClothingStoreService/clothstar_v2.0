@@ -45,13 +45,13 @@ public class ProductLineService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductLineWithProductsJPAResponse> getAllProductLinesWithProductsOffsetPaging(Pageable pageable) {
-        return productLineRepository.findAllOffsetPaging(pageable);
+    public Page<ProductLineWithProductsJPAResponse> getAllProductLinesWithProductsOffsetPaging(Pageable pageable, String keyword) {
+        return productLineRepository.findAllOffsetPaging(pageable, keyword);
     }
 
     @Transactional(readOnly = true)
-    public Slice<ProductLineWithProductsJPAResponse> getAllProductLinesWithProductsSlicePaging(Pageable pageable) {
-        return productLineRepository.findAllSlicePaging(pageable);
+    public Slice<ProductLineWithProductsJPAResponse> getAllProductLinesWithProductsSlicePaging(Pageable pageable, String keyword) {
+        return productLineRepository.findAllSlicePaging(pageable, keyword);
     }
 
     @Transactional(readOnly = true)

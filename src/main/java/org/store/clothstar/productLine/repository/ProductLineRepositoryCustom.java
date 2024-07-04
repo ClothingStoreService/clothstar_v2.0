@@ -14,7 +14,7 @@ public interface ProductLineRepositoryCustom {
 
     Optional<ProductLineWithProductsJPAResponse> findProductLineWithOptionsById(Long productLineId);
 
-    Page<ProductLineWithProductsJPAResponse> findAllOffsetPaging(Pageable pageable);
+    Page<ProductLineWithProductsJPAResponse> findAllOffsetPaging(Pageable pageable, String keyword);
 
-    Slice<ProductLineWithProductsJPAResponse> findAllSlicePaging(Pageable pageable);
+    Slice<ProductLineWithProductsJPAResponse> findAllSlicePaging(Pageable pageable, String keyword);
 }
