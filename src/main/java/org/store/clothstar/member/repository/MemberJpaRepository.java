@@ -12,11 +12,11 @@ import java.util.Optional;
 public interface MemberJpaRepository extends JpaRepository<MemberEntity, Long>, MemberRepository {
     Optional<MemberEntity> findByEmail(String email);
 
-    @Query(value = "select m from member m",
+    @Query(value = "select m from member m where m.deletedAt is null order by m.createdAt desc",
             countQuery = "select count(m) from member m")
     Page<MemberEntity> findAllOffsetPaging(Pageable pageable);
 
-    @Query(value = "select m from member m",
+    @Query(value = "select m from member m where m.deletedAt is null order by m.createdAt desc",
             countQuery = "select count(m) from member m")
     Slice<MemberEntity> findAllSlicePaging(Pageable pageable);
 }
