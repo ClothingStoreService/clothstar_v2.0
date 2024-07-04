@@ -25,7 +25,10 @@ jwt:
   accessTokenValidTimeMillis: 1200000
   refreshTokenValidTimeMillis: 12000000
 
-
+spring:
+  jpa:
+    hibernate:
+      default_batch_fetch_size: 100
 
 --- # local 공통 설정
 spring:
@@ -45,7 +48,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        default_batch_fetch_size: 100
 
 
 --- # dev 공통 설정
@@ -66,4 +68,3 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        default_batch_fetch_size: 100

@@ -48,31 +48,31 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
 
     @Override
     public Optional<ProductLineWithProductsJPAResponse> findProductLineWithOptionsById(Long productLineId) {
-        NumberExpression<Long> totalStockExpression = qProduct.stock.sum();
-
+        // 1. ProductLine과 관련된 Seller와 총 재고량을 가져옴
         ProductLineWithProductsJPAResponse result = jpaQueryFactory
                 .select(new QProductLineWithProductsJPAResponse(
                         qProductLine,
                         qSeller,
-                        totalStockExpression
+                        qProduct.stock.sum()
                 ))
                 .from(qProductLine)
-                .innerJoin(qProductLine.seller, qSeller)
+                .innerJoin(qProductLine.seller, qSeller).fetchJoin()
                 .leftJoin(qProductLine.products, qProduct)
                 .where(qProductLine.productLineId.eq(productLineId)
                         .and(qProductLine.deletedAt.isNull()))
                 .groupBy(qProductLine.productLineId, qSeller)
                 .fetchOne();
 
+        // 2. ProductLine에 속한 Product들을 가져옴
         if (result != null) {
-            List<ProductEntity> products = jpaQueryFactory
+            List<ProductResponse> productResponses = jpaQueryFactory
                     .selectFrom(qProduct)
                     .where(qProduct.productLine.productLineId.eq(productLineId))
-                    .fetch();
-
-            result.setProductList(products.stream()
+                    .fetch()
+                    .stream()
                     .map(ProductResponse::from)
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toList());
+            result.setProductList(productResponses);
         }
 
         return Optional.ofNullable(result);
@@ -107,35 +107,43 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
         List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable.getSort());
         BooleanExpression searchCondition = getSearchCondition(keyword);
 
-        JPAQuery<ProductLineWithProductsJPAResponse> query = jpaQueryFactory
+        // 1. 모든 ProductLine을 가져옴
+        List<ProductLineWithProductsJPAResponse> productLines = jpaQueryFactory
                 .select(new QProductLineWithProductsJPAResponse(
                         qProductLine,
                         qSeller,
                         qProduct.stock.sum()
                 ))
                 .from(qProductLine)
-                .innerJoin(qProductLine.seller, qSeller)
+                .innerJoin(qProductLine.seller, qSeller).fetchJoin()
                 .leftJoin(qProductLine.products, qProduct)
                 .where(qProductLine.deletedAt.isNull().and(searchCondition))
+                .groupBy(qProductLine.productLineId, qSeller)
                 .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
-                .groupBy(qProductLine.productLineId, qSeller);
-
-        List<ProductLineWithProductsJPAResponse> content = query
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        content.forEach(response -> {
-            List<ProductEntity> products = jpaQueryFactory
-                    .selectFrom(qProduct)
-                    .where(qProduct.productLine.productLineId.eq(response.getProductLineId()))
-                    .fetch();
-            response.setProductList(products.stream()
-                    .map(ProductResponse::from)
-                    .collect(Collectors.toList()));
-        });
+        // 2. 모든 Product를 가져옴
+        Map<Long, List<ProductResponse>> productMap = jpaQueryFactory
+                .selectFrom(qProduct)
+                .where(qProduct.productLine.productLineId.in(
+                        productLines.stream()
+                                .map(ProductLineWithProductsJPAResponse::getProductLineId)
+                                .collect(Collectors.toList())
+                ))
+                .fetch()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        p -> p.getProductLine().getProductLineId(),
+                        Collectors.mapping(ProductResponse::from, Collectors.toList())
+                ));
 
-        return content;
+        // 3. ProductLine에 Product를 매핑
+        productLines.forEach(productLine ->
+                productLine.setProductList(productMap.get(productLine.getProductLineId())));
+
+        return productLines;
     }
 
     private BooleanExpression getSearchCondition(String keyword) {

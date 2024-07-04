@@ -12,12 +12,14 @@ import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.dto.response.MemberSimpleResponse;
 import org.store.clothstar.member.dto.response.SellerSimpleResponse;
 import org.store.clothstar.product.dto.response.ProductResponse;
+import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 @Getter
@@ -45,7 +47,7 @@ public class ProductLineWithProductsJPAResponse {
     private ProductLineStatus status;
 
     @Schema(description = "상품 옵션")
-    private List<ProductResponse> productList;
+    private List<ProductResponse> productList = new ArrayList<>();
 
     @Schema(description = "상품 판매량", example = "10")
     private Long saleCount;  // ~개 판매중
@@ -72,11 +74,10 @@ public class ProductLineWithProductsJPAResponse {
         this.seller = SellerSimpleResponse.from(seller);
         this.createdAt = productLine.getCreatedAt();
         this.modifiedAt = productLine.getModifiedAt();
-        this.productList = new ArrayList<>();
+//        this.productList = productLine.getProducts().stream().map(ProductResponse::from).collect(Collectors.toList());
     }
 
     public void setProductList(List<ProductResponse> productList) {
         this.productList = productList != null ? productList : new ArrayList<>();
     }
-
 }
