@@ -10,8 +10,6 @@ import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
 import org.store.clothstar.member.service.MemberService;
 
-import java.util.List;
-
 @Service
 @Slf4j
 public class MemberServiceApplication {
@@ -19,10 +17,6 @@ public class MemberServiceApplication {
 
     public MemberServiceApplication(MemberService memberService) {
         this.memberService = memberService;
-    }
-
-    public List<MemberResponse> getAllMember() {
-        return memberService.getAllMember();
     }
 
     public Page<MemberResponse> getAllMemberOffsetPaging(Pageable pageable) {

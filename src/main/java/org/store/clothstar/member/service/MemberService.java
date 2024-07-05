@@ -7,11 +7,7 @@ import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
 
-import java.util.List;
-
 public interface MemberService {
-    List<MemberResponse> getAllMember();
-
     Page<MemberResponse> getAllMemberOffsetPaging(Pageable pageable);
 
     Slice<MemberResponse> getAllMemberSlicePaging(Pageable pageable);

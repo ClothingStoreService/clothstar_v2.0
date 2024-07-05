@@ -45,10 +45,19 @@
     });
 
     function loadMembers(page = 0) {
-        const url = `/v2/members?page=${page}`;
+        const url = `/v1/members?page=${page}`;
+        const accessToken = localStorage.getItem("ACCESS_TOKEN");
+        let headersObj = new Object();
+        headersObj["Content-Type"] = "application/json";
 
-        fetch(url)
-            .then(response => response.json())
+        if (accessToken) {
+            headersObj["Authorization"] = accessToken;
+        }
+
+        fetch(url, {
+            method: "GET",
+            headers: headersObj,
+        }).then(response => response.json())
             .then(data => {
                 const tableBody = document.getElementById('members-table-body');
                 tableBody.innerHTML = ''; // 기존 내용을 지웁니다.
