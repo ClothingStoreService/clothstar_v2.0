@@ -20,6 +20,12 @@ spring:
           auth: true
           starttls:
             enable: true
+  # Redis
+  data:
+    redis:
+      host: ENC(GUuFDW7HjE98e7N28Vkb/xoIEgLeOCb5)
+      port: 6379
+      duration: 600
 
   jpa:
     hibernate:

@@ -31,6 +31,17 @@ public class CreateObject {
         return createMemberRequest;
     }
 
+    public static CreateMemberRequest getCreateMemberRequest(String email, String certifyNum) {
+        String password = "testl122";
+        String name = "현수";
+        String telNo = "010-1234-1245";
+
+        CreateMemberRequest createMemberRequest = new CreateMemberRequest(
+                email, password, name, telNo, certifyNum
+        );
+
+        return createMemberRequest;
+    }
 
     public static MemberEntity getMemberEntityByCreateMemberRequestDTO() {
         return getCreateMemberRequest().toMemberEntity();

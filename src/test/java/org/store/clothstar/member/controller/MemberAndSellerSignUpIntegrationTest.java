@@ -1,8 +1,6 @@
 package org.store.clothstar.member.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +12,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-import org.store.clothstar.common.config.jwt.JwtUtil;
+import org.store.clothstar.common.redis.RedisUtil;
 import org.store.clothstar.member.domain.MemberRole;
-import org.store.clothstar.member.dto.request.CreateSellerRequest;
-import org.store.clothstar.member.dto.request.ModifyMemberRequest;
-import org.store.clothstar.member.dto.request.ModifyPasswordRequest;
+import org.store.clothstar.member.dto.request.*;
 import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.util.CreateObject;
@@ -41,23 +37,27 @@ class MemberAndSellerSignUpIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private MemberRepository memberRepository;
 
     @Autowired
-    private MemberRepository memberRepository;
+    private RedisUtil redisUtil;
 
     private static final String MEMBER_URL = "/v1/members";
     private static final String SELLER_URL = "/v1/sellers";
     private MemberEntity memberEntity;
 
-    @DisplayName("회원가입을 완료한 후 memberId와 accessToken을 받아서 판매자 가입을 신청한 테스트이다.")
+    @DisplayName("회원가입 통합테스트")
     @WithMockUser
-    @Disabled
     @Test
-    void signUpAndSellerTest() throws Exception {
+    void signUpIntegrationTest() throws Exception {
         //회원가입 통합 테스트
         //given
-        final String requestBody = objectMapper.writeValueAsString(CreateObject.getCreateMemberRequest());
+        String email = "test@naver.com";
+        String certifyNum = redisUtil.createdCertifyNum();
+        redisUtil.createRedisData(email, certifyNum);
+
+        CreateMemberRequest createMemberRequest = CreateObject.getCreateMemberRequest(email, certifyNum);
+        final String requestBody = objectMapper.writeValueAsString(createMemberRequest);
 
         //when
         ResultActions actions = mockMvc.perform(post(MEMBER_URL)
@@ -66,22 +66,39 @@ class MemberAndSellerSignUpIntegrationTest {
 
         //then
         actions.andExpect(status().isCreated());
+    }
 
-        String responseBody = actions.andReturn().getResponse().getContentAsString();
-        JsonNode jsonNode = objectMapper.readTree(responseBody);
-        Long memberId = jsonNode.get("id").asLong();
-        MemberEntity memberEntity = memberRepository.findById(memberId).get();
-        String accessToken = jwtUtil.createAccessToken(memberEntity);
-
-        //회원가입해서 받은 memberId로 판매자 신청 테스트
+    @DisplayName("회원가입시 인증번호 전송 통합테스트")
+    @WithMockUser
+    @Test
+    void certifyNumEmailSendTest() throws Exception {
         //given
+        CertifyNumRequest certifyNumRequest = new CertifyNumRequest("test@naver.com");
+        final String url = "/v1/members/auth";
+        final String requestBody = objectMapper.writeValueAsString(certifyNumRequest);
+
+        //when
+        ResultActions actions = mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody));
+
+        //then
+        actions.andExpect(status().isOk()).andDo(print());
+    }
+
+    @DisplayName("판매자(Seller) 가입 통합테스트")
+    @WithMockUser(roles = "SELLER")
+    @Test
+    void sellerSignUpIntegrationTest() throws Exception {
+        //given
+        memberEntity = memberRepository.save(CreateObject.getMemberEntityByCreateMemberRequestDTO());
+        Long memberId = memberEntity.getMemberId();
         final String sellerUrl = SELLER_URL + "/" + memberId;
         CreateSellerRequest createSellerRequest = getCreateSellerRequest(memberId);
         final String sellerRequestBody = objectMapper.writeValueAsString(createSellerRequest);
 
         //when
         ResultActions sellerActions = mockMvc.perform(post(sellerUrl)
-                .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(sellerRequestBody));
 

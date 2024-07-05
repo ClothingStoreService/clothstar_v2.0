@@ -27,7 +27,7 @@ spring:
   # Redis
   data:
     redis:
-      host: localhost
+      host: ENC(GUuFDW7HjE98e7N28Vkb/xoIEgLeOCb5)
       port: 6379
       duration: 600
 

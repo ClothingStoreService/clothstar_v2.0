@@ -99,7 +99,7 @@ public class MemberServiceImpl implements MemberService {
         MemberEntity memberEntity = createMemberDTO.toMemberEntity(encodedPassword);
 
         //인증코드 확인
-        boolean certifyStatus = verifyEmailCode(memberEntity.getEmail(), createMemberDTO.getCertifyNum());
+        boolean certifyStatus = verifyEmailCertifyNum(memberEntity.getEmail(), createMemberDTO.getCertifyNum());
         if (certifyStatus) {
             memberEntity = memberRepository.save(memberEntity);
         } else {
@@ -129,12 +129,12 @@ public class MemberServiceImpl implements MemberService {
         return certifyNum;
     }
 
-    public Boolean verifyEmailCode(String email, String certifyNum) {
-        String codeFoundByEmail = redisUtil.getData(email);
-        if (codeFoundByEmail == null) {
+    public Boolean verifyEmailCertifyNum(String email, String certifyNum) {
+        String certifyNumFoundByRedis = redisUtil.getData(email);
+        if (certifyNumFoundByRedis == null) {
             return false;
         }
 
-        return codeFoundByEmail.equals(certifyNum);
+        return certifyNumFoundByRedis.equals(certifyNum);
     }
 }
