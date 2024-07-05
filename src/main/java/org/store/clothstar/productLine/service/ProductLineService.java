@@ -117,10 +117,10 @@ public class ProductLineService {
     }
 
     private ProductLineWithProductsJPAResponse convertToDtoWithProducts(ProductLineEntity productLine) {
-        // 전체 재고량을 계산
+        // 전체 재고량 계산
         Long totalStock = productLine.getProducts().stream().mapToLong(ProductEntity::getStock).sum();
 
-        // ProductLineWithProductsJPAResponse 객체를 생성
+        // ProductLineWithProductsJPAResponse 객체 생성
         ProductLineWithProductsJPAResponse dto = new ProductLineWithProductsJPAResponse(
                 productLine,
                 productLine.getSeller(),

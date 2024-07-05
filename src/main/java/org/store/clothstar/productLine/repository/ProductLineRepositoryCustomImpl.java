@@ -182,7 +182,6 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
                 .where(qProductLine.category.categoryId.eq(categoryId)
                         .and(qProductLine.deletedAt.isNull())
                         .and(searchCondition))
-                .groupBy(qProductLine.productLineId, qSeller)
                 .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
