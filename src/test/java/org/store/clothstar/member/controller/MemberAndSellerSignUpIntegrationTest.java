@@ -106,23 +106,46 @@ class MemberAndSellerSignUpIntegrationTest {
         sellerActions.andDo(print()).andExpect(status().isCreated());
     }
 
-    @DisplayName("전체 회원 조회에 대한 통합테스트")
+    @DisplayName("전체 회원 조회(Offset) 통합테스트")
     @WithMockUser(roles = "ADMIN")
     @Test
-    void getAllMemberTest() throws Exception {
-        //given 3명의 회원을 만든다.
-        memberRepository.save(CreateObject.getCreateMemberRequest("test1@naver.com").toMemberEntity());
-        memberRepository.save(CreateObject.getCreateMemberRequest("test2@naver.com").toMemberEntity());
-        memberRepository.save(CreateObject.getCreateMemberRequest("test3@naver.com").toMemberEntity());
+    void getAllMemberOffsetTest() throws Exception {
+        //given 5명의 회원을 만든다.
+        for (int i = 0; i < 5; i++) {
+            String email = "test" + i + "@naver.com";
+            memberRepository.save(CreateObject.getCreateMemberRequest(email).toMemberEntity());
+        }
+        final String url = "/v1/members?page=0";
 
         //when
-        ResultActions actions = mockMvc.perform(get(MEMBER_URL)
+        ResultActions actions = mockMvc.perform(get(url)
                 .contentType(MediaType.APPLICATION_JSON));
 
         //then
         actions.andExpect(status().isOk());
         actions.andDo(print());
-        actions.andExpect(jsonPath("$.length()").value(3));
+        actions.andExpect(jsonPath("$.content.length()").value(5));
+    }
+
+    @DisplayName("전체 회원 조회(Slice) 통합테스트")
+    @WithMockUser(roles = "ADMIN")
+    @Test
+    void getAllMemberSliceTest() throws Exception {
+        //given 5명의 회원을 만든다.
+        for (int i = 0; i < 5; i++) {
+            String email = "test" + i + "@naver.com";
+            memberRepository.save(CreateObject.getCreateMemberRequest(email).toMemberEntity());
+        }
+        final String url = "/v1/members?page=0";
+
+        //when
+        ResultActions actions = mockMvc.perform(get(url)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        actions.andExpect(status().isOk());
+        actions.andDo(print());
+        actions.andExpect(jsonPath("$.content.length()").value(5));
     }
 
     @DisplayName("회원 상세 정보 조회에 대한 통합테스트 이다.")
