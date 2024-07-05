@@ -57,7 +57,8 @@ public class SecurityConfiguration {
                         "/v1/categories/**", "/v1/products/**", "/v1/productLines/**", "/v2/productLines/**",
                         "/v1/orderdetails", "/v1/orders",
                         "/v1/seller/orders/**", "/v1/seller/orders", "/v1/orders/**",
-                        "/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs/**", "/v1/members/auth/**"
+                        "/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs/**", "/v1/members/auth/**",
+                        "v2/members", "membersPagingOffset"
                 ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/v1/members").permitAll()
                 .requestMatchers(HttpMethod.POST, "/v1/sellers/**").authenticated()
