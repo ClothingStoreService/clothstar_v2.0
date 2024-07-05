@@ -55,7 +55,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/", "/login", "/userPage", "/sellerPage", "/adminPage", "/main"
                         , "/v1/members/login", "/signup", "/v1/members/email/**", "/v1/access",
                         "/v1/categories/**", "/v1/products/**", "/v1/productLines/**", "/v2/productLines/**",
-                        "/v1/orderdetails", "/v1/orders",
+                        "/v1/orderdetails", "/v1/orders", "membersPagingOffset", "membersPagingSlice",
                         "/v1/seller/orders/**", "/v1/seller/orders", "/v1/orders/**",
                         "/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs/**", "/v1/members/auth/**"
                 ).permitAll()
@@ -63,6 +63,7 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.POST, "/v1/sellers/**").authenticated()
                 .requestMatchers("/seller/**", "/v1/sellers/**").hasRole("SELLER")
                 .requestMatchers("/admin/**", "/v1/admin/**").hasRole("ADMIN")
+                .requestMatchers("v2/members", "v3/members").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/v1/members").hasRole("ADMIN")
                 .anyRequest().authenticated()
         );

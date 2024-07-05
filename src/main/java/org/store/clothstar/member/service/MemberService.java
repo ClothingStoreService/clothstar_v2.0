@@ -1,13 +1,16 @@
 package org.store.clothstar.member.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
 
-import java.util.List;
-
 public interface MemberService {
-    List<MemberResponse> findAll();
+    Page<MemberResponse> getAllMemberOffsetPaging(Pageable pageable);
+
+    Slice<MemberResponse> getAllMemberSlicePaging(Pageable pageable);
 
     MemberResponse getMemberById(Long memberId);
 

@@ -3,6 +3,9 @@ package org.store.clothstar.member.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.common.error.ErrorCode;
@@ -16,9 +19,6 @@ import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
 import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.MemberRepository;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 기존 Mybatis기능과 Jpa기능이 같이 있는 서비스 로직을 구현한 클래스
@@ -37,10 +37,15 @@ public class MemberServiceImpl implements MemberService {
     private final RedisUtil redisUtil;
 
     @Override
-    public List<MemberResponse> findAll() {
-        return memberRepository.findAll().stream()
-                .map(MemberResponse::new)
-                .collect(Collectors.toList());
+    public Page<MemberResponse> getAllMemberOffsetPaging(Pageable pageable) {
+        return memberRepository.findAllOffsetPaging(pageable)
+                .map(MemberResponse::new);
+    }
+
+    @Override
+    public Slice<MemberResponse> getAllMemberSlicePaging(Pageable pageable) {
+        return memberRepository.findAllSlicePaging(pageable)
+                .map(MemberResponse::new);
     }
 
     @Override

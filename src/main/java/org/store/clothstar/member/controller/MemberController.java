@@ -4,6 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,8 +19,6 @@ import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyPasswordRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
 
-import java.util.List;
-
 @Tag(name = "Member", description = "회원 정보 관리에 대한 API 입니다.")
 @RestController
 @RequiredArgsConstructor
@@ -24,11 +26,20 @@ import java.util.List;
 public class MemberController {
     private final MemberServiceApplication memberServiceApplication;
 
-    @Operation(summary = "전체 회원 조회", description = "전체 회원 리스트를 가져온다.")
+    @Operation(summary = "전체 회원 조회 offset 페이징", description = "전체 회원 리스트를 offset 페이징 형식으로 가져온다.")
     @GetMapping("/v1/members")
-    public ResponseEntity<List<MemberResponse>> getAllMember() {
-        List<MemberResponse> memberList = memberServiceApplication.getAllMember();
-        return ResponseEntity.ok(memberList);
+    public ResponseEntity<Page<MemberResponse>> getAllMemberOffsetPaging(
+            @PageableDefault(size = 18) Pageable pageable) {
+        Page<MemberResponse> memberPages = memberServiceApplication.getAllMemberOffsetPaging(pageable);
+        return ResponseEntity.ok(memberPages);
+    }
+
+    @Operation(summary = "전체 회원 조회 slice 페이징", description = "전체 회원 리스트를 slice 페이징 형식으로 가져온다.")
+    @GetMapping("/v2/members")
+    public ResponseEntity<Slice<MemberResponse>> getAllMemberSlicePaging(
+            @PageableDefault(size = 18) Pageable pageable) {
+        Slice<MemberResponse> memberPages = memberServiceApplication.getAllMemberSlicePaging(pageable);
+        return ResponseEntity.ok(memberPages);
     }
 
     @Operation(summary = "회원 상세정보 조회", description = "회원 한 명에 대한 상세 정보를 가져온다.")
