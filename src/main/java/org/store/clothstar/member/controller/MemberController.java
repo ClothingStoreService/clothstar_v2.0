@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +32,14 @@ public class MemberController {
     public ResponseEntity<List<MemberResponse>> getAllMember() {
         List<MemberResponse> memberList = memberServiceApplication.getAllMember();
         return ResponseEntity.ok(memberList);
+    }
+
+    @Operation(summary = "전체 회원 조회", description = "전체 회원 리스트를 가져온다.")
+    @GetMapping("/v2/members")
+    public ResponseEntity<Page<MemberResponse>> getAllMemberOffsetPaging(
+            @PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
+        Page<MemberResponse> memberPages = memberServiceApplication.getAllMemberOffsetPaging(pageable);
+        return ResponseEntity.ok(memberPages);
     }
 
     @Operation(summary = "회원 상세정보 조회", description = "회원 한 명에 대한 상세 정보를 가져온다.")

@@ -3,6 +3,8 @@ package org.store.clothstar.member.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.common.error.ErrorCode;
@@ -37,10 +39,16 @@ public class MemberServiceImpl implements MemberService {
     private final RedisUtil redisUtil;
 
     @Override
-    public List<MemberResponse> findAll() {
+    public List<MemberResponse> getAllMember() {
         return memberRepository.findAll().stream()
                 .map(MemberResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<MemberResponse> getAllMemberOffsetPaging(Pageable pageable) {
+        return memberRepository.findAllOffsetPaging(pageable)
+                .map(MemberResponse::new);
     }
 
     @Override
