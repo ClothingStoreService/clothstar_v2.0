@@ -10,6 +10,7 @@ class ApplicationTests {
     @Test
     void contextLoads() {
         Assertions.assertThat(true).isFalse();
+        Assertions.assertThat(true).isFalse();
     }
 
 }
