@@ -12,7 +12,7 @@ class JasyptConfigTest {
         String url = "";
         String username = "";
         String password = "";
-        
+
         System.out.println(jasyptEncoding(url));
         System.out.println(jasyptEncoding(username));
         System.out.println(jasyptEncoding(password));

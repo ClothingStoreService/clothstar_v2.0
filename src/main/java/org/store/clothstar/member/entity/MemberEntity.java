@@ -36,6 +36,7 @@ public class MemberEntity extends BaseEntity {
     private MemberRole role;
     @Enumerated(EnumType.STRING)
     private MemberGrade grade;
+    private boolean enabled;
 
     public MemberEntity(Member member) {
         this.memberId = member.getMemberId();
@@ -63,5 +64,9 @@ public class MemberEntity extends BaseEntity {
 
     public void updateDeletedAt() {
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void updateEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

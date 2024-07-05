@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.store.clothstar.member.domain.MemberRole;
-import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.util.CreateObject;
 
 import java.time.LocalDateTime;
 
@@ -35,9 +35,9 @@ public class MemberServiceJpaUnitTest {
     @BeforeEach
     public void getMemberId_getAccessToken() {
         //given && when
-        memberId = memberServiceImpl.signUp(getCreateMemberRequest());
-        memberEntity = memberRepository.findById(memberId).get();
-
+        memberEntity = memberRepository.save(CreateObject.getMemberEntityByCreateMemberRequestDTO());
+        memberId = memberEntity.getMemberId();
+        
         //then
         assertThat(memberId).isNotNull();
     }
@@ -116,22 +116,11 @@ public class MemberServiceJpaUnitTest {
     @Test
     void signUpValid_idDuplicateCheck() {
         Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
-            memberServiceImpl.signUp(getCreateMemberRequest());
+            memberServiceImpl.signUp(CreateObject.getCreateMemberRequest());
         });
 
         assertThat(exception.getMessage()).isEqualTo("이미 존재하는 아이디 입니다.");
     }
 
-    private CreateMemberRequest getCreateMemberRequest() {
-        String email = "test3@test.com";
-        String password = "testl122";
-        String name = "현수";
-        String telNo = "010-1234-1245";
 
-        CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                email, password, name, telNo
-        );
-
-        return createMemberRequest;
-    }
 }

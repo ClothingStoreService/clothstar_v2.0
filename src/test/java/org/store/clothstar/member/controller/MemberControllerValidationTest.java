@@ -13,10 +13,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+import org.store.clothstar.common.error.exception.SignupCertifyNumAuthFailedException;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyPasswordRequest;
 import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.service.MemberService;
+import org.store.clothstar.member.util.CreateObject;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,9 +40,24 @@ public class MemberControllerValidationTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    MemberService memberService;
+
     private static final String MEMBER_SIGN_UP_URL = "/v1/members";
 
-    @DisplayName("회원가입시 이메일 양식을 지켜야 한다..")
+    @DisplayName("회원가입시 인증번호가 틀리면 회원가입이 안돼야 한다.")
+    @Test
+    void signUpCertifyNumFailTest() {
+        //given
+        CreateMemberRequest createMemberRequest = CreateObject.getCreateMemberRequest();
+
+        //when & then
+        Throwable exception = assertThrows(SignupCertifyNumAuthFailedException.class, () -> {
+            memberService.signUp(createMemberRequest);
+        });
+    }
+
+    @DisplayName("회원가입시 이메일 양식을 지켜야 한다.")
     @Test
     void signUp_emailValidationTest() throws Exception {
         //given

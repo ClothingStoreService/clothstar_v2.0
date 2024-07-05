@@ -68,6 +68,12 @@ dependencies {
     //yml 암호화, 공식문서: https://github.com/ulisesbocchio/jasypt-spring-boot
     //참고 블로그: https://velog.io/@bey1548/SpringBoot-application.yml-%EA%B0%92-%EC%95%94%ED%98%B8%ED%99%94%ED%95%98%EA%B8%B0jasypt
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+    //mail 전송 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    //Redis 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {

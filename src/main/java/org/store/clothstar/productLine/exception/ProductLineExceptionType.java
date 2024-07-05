@@ -17,7 +17,6 @@ public enum ProductLineExceptionType implements ExceptionType {
         return status;
     }
 
-    @Override
     public int exceptionCode() {
         return exceptionCode;
     }

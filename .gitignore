@@ -40,3 +40,5 @@ out/
 ### Custom Private Keys ###
 src/main/resources/app.key
 src/main/resources/app.pub
+
+/src/main/generated/

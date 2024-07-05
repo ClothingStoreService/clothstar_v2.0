@@ -3,6 +3,7 @@ package org.store.clothstar.common.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +34,16 @@ public class GlobalExceptionHandler {
         ValidErrorResponseDTO validErrorResponseDTO = new ValidErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), errorMap);
 
         return new ResponseEntity<>(validErrorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponseDTO> mailException(MailException ex) {
+        log.error("[MailException Handler] {}", ex.getMessage());
+        ex.fillInStackTrace();
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

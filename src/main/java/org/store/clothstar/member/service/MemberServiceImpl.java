@@ -1,11 +1,16 @@
 package org.store.clothstar.member.service;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.SignupCertifyNumAuthFailedException;
+import org.store.clothstar.common.mail.MailContentBuilder;
+import org.store.clothstar.common.mail.MailSendDTO;
+import org.store.clothstar.common.mail.MailService;
+import org.store.clothstar.common.redis.RedisUtil;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
@@ -22,16 +27,14 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 @Transactional
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public MemberServiceImpl(
-            @Qualifier("memberJpaRepository") MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
-    }
+    private final MailContentBuilder mailContentBuilder;
+    private final MailService mailService;
+    private final RedisUtil redisUtil;
 
     @Override
     public List<MemberResponse> findAll() {
@@ -94,8 +97,44 @@ public class MemberServiceImpl implements MemberService {
 
         String encodedPassword = passwordEncoder.encode(createMemberDTO.getPassword());
         MemberEntity memberEntity = createMemberDTO.toMemberEntity(encodedPassword);
-        memberEntity = memberRepository.save(memberEntity);
+
+        //인증코드 확인
+        boolean certifyStatus = verifyEmailCertifyNum(memberEntity.getEmail(), createMemberDTO.getCertifyNum());
+        if (certifyStatus) {
+            memberEntity = memberRepository.save(memberEntity);
+        } else {
+            throw new SignupCertifyNumAuthFailedException(ErrorCode.INVALID_AUTH_CERTIFY_NUM);
+        }
 
         return memberEntity.getMemberId();
+    }
+
+    @Override
+    public void signupCertifyNumEmailSend(String email) {
+        sendEmailAuthentication(email);
+        log.info("인증번호 전송 완료, email = {}", email);
+    }
+
+    private String sendEmailAuthentication(String toEmail) {
+        String certifyNum = redisUtil.createdCertifyNum();
+        String message = mailContentBuilder.build(certifyNum);
+        MailSendDTO mailSendDTO = new MailSendDTO(toEmail, "clothstar 회원가입 인증 메일 입니다.", message);
+
+        mailService.sendMail(mailSendDTO);
+
+        //메일 전송에 성공하면 redis에 key = email, value = 인증번호를 생성한다.
+        //지속시간은 10분
+        redisUtil.createRedisData(toEmail, certifyNum);
+
+        return certifyNum;
+    }
+
+    public Boolean verifyEmailCertifyNum(String email, String certifyNum) {
+        String certifyNumFoundByRedis = redisUtil.getData(email);
+        if (certifyNumFoundByRedis == null) {
+            return false;
+        }
+
+        return certifyNumFoundByRedis.equals(certifyNum);
     }
 }
