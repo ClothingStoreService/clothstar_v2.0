@@ -1,4 +1,4 @@
-package org.store.clothstar.product.controller;
+package org.store.clothstar.productLine.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
