@@ -2,6 +2,7 @@ package org.store.clothstar.member.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.store.clothstar.member.entity.MemberEntity;
@@ -14,4 +15,8 @@ public interface MemberJpaRepository extends JpaRepository<MemberEntity, Long>, 
     @Query(value = "select m from member m",
             countQuery = "select count(m) from member m")
     Page<MemberEntity> findAllOffsetPaging(Pageable pageable);
+
+    @Query(value = "select m from member m",
+            countQuery = "select count(m) from member m")
+    Slice<MemberEntity> findAllSlicePaging(Pageable pageable);
 }

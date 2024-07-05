@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.common.error.ErrorCode;
@@ -48,6 +49,12 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Page<MemberResponse> getAllMemberOffsetPaging(Pageable pageable) {
         return memberRepository.findAllOffsetPaging(pageable)
+                .map(MemberResponse::new);
+    }
+
+    @Override
+    public Slice<MemberResponse> getAllMemberSlicePaging(Pageable pageable) {
+        return memberRepository.findAllSlicePaging(pageable)
                 .map(MemberResponse::new);
     }
 

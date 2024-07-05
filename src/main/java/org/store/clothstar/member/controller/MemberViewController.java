@@ -18,7 +18,12 @@ public class MemberViewController {
 
     @GetMapping("/membersPagingOffset")
     public String membersPagingOffset() {
-        return "memberList";
+        return "memberOffsetList";
+    }
+
+    @GetMapping("/membersPagingSlice")
+    public String membersPagingSlice() {
+        return "memberSliceList";
     }
 
     @GetMapping("/signup")
