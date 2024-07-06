@@ -20,10 +20,8 @@ import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
-import org.store.clothstar.orderDetail.repository.JpaOrderDetailRepository;
 import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
-import org.store.clothstar.product.service.ProductService;
 
 import java.util.List;
 
@@ -53,7 +51,6 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponse getOrder(Long orderId) {
-
         return orderRepository.findOrderWithDetails(orderId);
     }
 

@@ -155,7 +155,8 @@ public class OrderEntityRepositoryCustomImpl implements OrderEntityRepositoryCus
                                 qOrderDetailEntity
                         ))
                         .from(qOrderDetailEntity)
-                        .where(qOrderDetailEntity.order.orderId.eq(result.getOrderId()))
+                        .where(qOrderDetailEntity.order.orderId.eq(result.getOrderId())
+                                .and(qOrderDetailEntity.deletedAt.isNull()))
                         .fetch();
 
                 result.setterOrderDetailList(orderDetailList);
@@ -190,7 +191,8 @@ public class OrderEntityRepositoryCustomImpl implements OrderEntityRepositoryCus
                             qOrderDetailEntity
                     ))
                     .from(qOrderDetailEntity)
-                    .where(qOrderDetailEntity.order.orderId.eq(orderId))
+                    .where(qOrderDetailEntity.order.orderId.eq(orderId)
+                            .and(qOrderDetailEntity.deletedAt.isNull()))
                     .fetch();
 
             result.setterOrderDetailList(orderDetailList);
