@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.store.clothstar.common.entity.BaseEntity;
 import org.store.clothstar.member.entity.AddressEntity;
 import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.order.type.PaymentMethod;
@@ -19,16 +20,16 @@ import java.util.List;
 @Getter
 @Builder
 @Entity(name = "orders")
-public class OrderEntity {
+public class OrderEntity extends BaseEntity {
     @Id
     private Long orderId;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailEntity> orderDetails;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+//    @Temporal(TemporalType.TIMESTAMP)
+//    @Column(name = "created_at")
+//    private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -59,4 +60,7 @@ public class OrderEntity {
         this.totalPaymentPrice = totalPaymentPrice;
     }
 
+    public void updateDeletedAt() {
+        this.deletedAt = LocalDateTime.now();
+    }
 }

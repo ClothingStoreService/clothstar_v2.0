@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.store.clothstar.common.entity.BaseEntity;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
@@ -14,7 +15,7 @@ import org.store.clothstar.productLine.entity.ProductLineEntity;
 @NoArgsConstructor
 @Builder
 @Entity(name = "order_detail")
-public class OrderDetailEntity {
+public class OrderDetailEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderDetailId;

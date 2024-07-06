@@ -40,7 +40,6 @@ public class CreateOrderRequest {
                 .orderId(GenerateOrderId.generateOrderId())
                 .member(memberEntity)
                 .address(addressEntity)
-                .createdAt(LocalDateTime.now())
                 .status(Status.WAITING)
                 .totalShippingPrice(3000)
                 .totalProductsPrice(0)

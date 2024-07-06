@@ -5,15 +5,18 @@ CREATE TABLE orders
     `order_id`             bigint       NOT NULL,
     `member_id`            bigint       NOT NULL,
     `address_id`           bigint       NOT NULL,
-    `created_at`           timestamp    NOT NULL,
     `status`               varchar(255) NOT NULL,
     `total_shipping_price` int          NOT NULL,
     `total_products_price` int          NOT NULL,
     `payment_method`       varchar(255) NOT NULL,
     `total_payment_price`  int          NOT NULL,
+    `created_at`          timestamp    NOT NULL,
+    `updated_at`         timestamp    NULL,
+    `deleted_at`          timestamp    NULL,
 
     PRIMARY KEY (`order_id`)
 );
+
 
 ALTER TABLE orders
     DROP PRIMARY KEY;
