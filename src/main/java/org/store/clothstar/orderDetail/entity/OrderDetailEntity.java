@@ -10,6 +10,8 @@ import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 
+import java.time.LocalDateTime;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,4 +41,8 @@ public class OrderDetailEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private ProductEntity product;
+
+    public void updateDeletedAt() {
+        this.deletedAt = LocalDateTime.now();
+    }
 }

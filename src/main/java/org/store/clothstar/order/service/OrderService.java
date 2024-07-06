@@ -83,4 +83,16 @@ public class OrderService {
 
         orderRepository.deliveredToConfirmOrder(orderId);
     }
+
+    @Transactional
+    public void updateDeleteAt(Long orderId) {
+        OrderEntity orderEntity = orderRepository.findById(orderId)
+                        .orElseThrow(() -> new IllegalArgumentException("주문 번호를 찾을 수 없습니다."));
+
+        if(orderEntity.getDeletedAt() != null){
+            throw new IllegalArgumentException("이미 삭제된 주문입니다.");
+        }
+
+        orderEntity.updateDeletedAt();
+    }
 }

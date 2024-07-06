@@ -26,11 +26,7 @@ public class OrderEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailEntity> orderDetails;
-
-//    @Temporal(TemporalType.TIMESTAMP)
-//    @Column(name = "created_at")
-//    private LocalDateTime createdAt;
-
+    
     @Enumerated(EnumType.STRING)
     private Status status;
 
