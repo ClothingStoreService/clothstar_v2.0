@@ -9,10 +9,6 @@ CREATE TABLE `order_detail`
     `quantity`            int          NOT NULL,
     `fixed_price`         int          NOT NULL,
     `onekind_total_price` int          NOT NULL,
-    `name`                VARCHAR(255) NOT NULL,
-    `stock`               VARCHAR(255) NOT NULL,
-    `option_name`         VARCHAR(255) NOT NULL,
-    `brand_name`          VARCHAR(255) NOT NULL,
 
     PRIMARY KEY (`order_detail_id`)
 );

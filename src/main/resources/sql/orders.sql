@@ -81,7 +81,7 @@ select distinct oe1_0.order_id,oe1_0.address_id,oe1_0.created_at,oe1_0.member_id
 drop index FK_member_TO_orders_1 on orders;
 
 DELETE
-FROM orders where total_products_price=10000;
+FROM orders where member_id=1;
 
 INSERT INTO orders (order_id, member_id, address_id, created_at, status, total_shipping_price, total_products_price,
                     payment_method, total_payment_price)

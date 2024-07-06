@@ -81,7 +81,7 @@ public class OrderResponse {
         this.orderDetailList = new ArrayList<>();
     }
 
-    public static OrderResponse fromOrderEntity(OrderEntity orderEntity) {
+    public static OrderResponse from(OrderEntity orderEntity) {
         return OrderResponse.builder()
                 .orderId(orderEntity.getOrderId())
                 .ordererName(orderEntity.getMember().getName())
@@ -96,7 +96,6 @@ public class OrderResponse {
                 .receiverName(orderEntity.getAddress().getReceiverName())
                 .addressBasic(orderEntity.getAddress().getAddressBasic())
                 .addressDetail(orderEntity.getAddress().getAddressDetail())
-//                .orderDetailList(orderEntity.getOrderDetails().)
                 .build();
     }
 

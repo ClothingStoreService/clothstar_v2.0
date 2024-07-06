@@ -9,7 +9,6 @@ import org.store.clothstar.member.entity.QAddressEntity;
 import org.store.clothstar.member.entity.QMemberEntity;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.reponse.QOrderResponse;
-import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.entity.QOrderEntity;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.dto.OrderDetailDTO;

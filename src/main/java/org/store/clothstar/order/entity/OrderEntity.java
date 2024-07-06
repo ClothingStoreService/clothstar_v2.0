@@ -53,19 +53,8 @@ public class OrderEntity {
     @OneToOne
     @JoinColumn(name = "address_id")
     private AddressEntity address;
-//
-//    @ManyToOne
-//    private OrderDetailEntity orderDetail;
 
-    public void setTotalProductsPrice(int totalProductsPrice) {
-        this.totalProductsPrice = totalProductsPrice;
-    }
-
-    public void setTotalPaymentPrice(int totalPaymentPrice) {
-        this.totalPaymentPrice = totalPaymentPrice;
-    }
-
-        public void updatePrices(int totalProductsPrice, int totalPaymentPrice) {
+    public void updatePrices(int totalProductsPrice, int totalPaymentPrice) {
         this.totalProductsPrice = totalProductsPrice;
         this.totalPaymentPrice = totalPaymentPrice;
     }

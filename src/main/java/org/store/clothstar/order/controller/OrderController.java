@@ -20,8 +20,6 @@ import org.store.clothstar.order.utils.URIBuilder;
 
 import java.net.URI;
 
-
-
 @Tag(name = "Order", description = "주문(Order) 정보 관리에 대한 API 입니다.")
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +31,7 @@ public class OrderController {
 
     @Operation(summary = "단일 주문 조회", description = "단일 주문의 정보를 조회한다.")
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderResponse> getOrder(@Validated @PathVariable Long orderId) {
+    public ResponseEntity<OrderResponse> getOrder(@PathVariable Long orderId) {
         OrderResponse orderResponse = orderService.getOrder(orderId);
         return ResponseEntity.ok(orderResponse);
     }

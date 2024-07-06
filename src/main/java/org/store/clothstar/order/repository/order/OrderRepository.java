@@ -3,7 +3,6 @@ package org.store.clothstar.order.repository.order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.entity.OrderEntity;
 

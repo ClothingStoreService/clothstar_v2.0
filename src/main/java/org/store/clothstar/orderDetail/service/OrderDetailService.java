@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
@@ -70,7 +71,6 @@ public class OrderDetailService {
                 orderEntity.getTotalProductsPrice() + orderEntity.getTotalShippingPrice() + orderDetailEntity.getOneKindTotalPrice();
 
         orderEntity.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
-//        orderDetailRepository.updateOrderPrices(orderEntity);
 
         // 주문 수량만큼 상품 재고 차감
         updateProductStock(productEntity,orderDetailEntity.getQuantity());

@@ -38,8 +38,4 @@ public class OrderDetailEntity {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private ProductEntity product;
-//
-//    public updateOrderDetails(){
-//
-//    }
 }
