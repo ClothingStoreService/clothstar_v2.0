@@ -17,9 +17,6 @@ import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
 import org.store.clothstar.order.service.OrderApplicationService;
 import org.store.clothstar.order.service.OrderService;
-import org.store.clothstar.order.utils.URIBuilder;
-
-import java.net.URI;
 
 @Tag(name = "Order", description = "주문(Order) 정보 관리에 대한 API 입니다.")
 @RestController
@@ -54,7 +51,7 @@ public class OrderController {
     }
 
     @Operation(summary = "주문 생성", description = "단일 주문을 생성한다.")
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<SaveResponseDTO> saveOrder(@RequestBody @Validated OrderRequestWrapper orderRequestWrapper) {
         Long orderId = orderApplicationService.saveOrderWithTransaction(orderRequestWrapper);
         return ResponseEntity.ok(new SaveResponseDTO(

@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
-import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
@@ -42,7 +41,6 @@ public class OrderDetailService {
         this.productJPARepository = productJPARepository;
         this.productLineJPARepository = productLineJPARepository;
     }
-
 
     // 주문 생성시 같이 호출되는 주문 상세 생성 메서드 - 하나의 트랜잭션으로 묶임
     @Transactional
@@ -108,7 +106,20 @@ public class OrderDetailService {
     }
 
     @Transactional
-    void updateProductStock(ProductEntity productEntity, int quantity) {
+    public void updateDeleteAt(Long orderDetailId) {
+        OrderDetailEntity orderDetailEntity = orderDetailRepository.findById(orderDetailId)
+                .orElseThrow(() -> new IllegalArgumentException("주문상세 번호를 찾을 수 없습니다."));
+
+        if(orderDetailEntity.getDeletedAt() != null){
+            throw new IllegalArgumentException("이미 삭제된 주문입니다.");
+        }
+
+        restoreStockByOrderDetail(orderDetailId);
+        orderDetailEntity.updateDeletedAt();
+    }
+
+    @Transactional
+    public void updateProductStock(ProductEntity productEntity, int quantity) {
         long updatedStock = productEntity.getStock() - quantity;
         productEntity.updateStock(updatedStock);
     }
@@ -116,6 +127,13 @@ public class OrderDetailService {
     @Transactional
     public void restoreStockByOrder(Long orderId) {
         List<OrderDetailEntity> orderDetailList = orderDetailRepository.findOrderDetailListByOrderId(orderId);
-        productService.restoreProductStock(orderDetailList);
+        productService.restoreProductStockByOrder(orderDetailList);
+    }
+
+    @Transactional
+    public void restoreStockByOrderDetail(Long orderDetailId) {
+        OrderDetailEntity orderDetailEntity = orderDetailRepository.findById(orderDetailId)
+                .orElseThrow(() -> new IllegalArgumentException("주문상세 번호를 찾을 수 없습니다."));
+        productService.restoreProductStockByOrderDetail(orderDetailEntity);
     }
 }

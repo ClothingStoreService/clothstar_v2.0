@@ -13,8 +13,6 @@ import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.order.utils.GenerateOrderId;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Builder
 @NoArgsConstructor

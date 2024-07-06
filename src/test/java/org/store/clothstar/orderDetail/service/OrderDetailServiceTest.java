@@ -213,6 +213,6 @@ class OrderDetailServiceTest {
         orderDetailService.restoreStockByOrder(orderId);
 
         //then
-        then(productService).should(times(1)).restoreProductStock(orderDetailList);
+        then(productService).should(times(1)).restoreProductStockByOrder(orderDetailList);
     }
 }
