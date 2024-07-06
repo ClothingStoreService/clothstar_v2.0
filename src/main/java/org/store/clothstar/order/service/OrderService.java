@@ -19,7 +19,13 @@ import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.type.Status;
+import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
+import org.store.clothstar.orderDetail.repository.JpaOrderDetailRepository;
+import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
+import org.store.clothstar.product.service.ProductService;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -28,16 +34,21 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
+    private final OrderDetailRepository orderDetailRepository;
+    private final OrderDetailService orderDetailService;
 
     public OrderService(
             @Qualifier("jpaOrderRepository") OrderRepository orderRepository
             ,@Qualifier("memberJpaRepository") MemberRepository memberRepository
             ,@Qualifier("addressJpaRepository") AddressRepository addressRepository
-            , OrderDetailService orderDetailService
-    ) {
+            ,OrderDetailService orderDetailService
+            ,OrderDetailRepository orderDetailRepository
+) {
         this.orderRepository = orderRepository;
         this.memberRepository = memberRepository;
         this.addressRepository = addressRepository;
+        this.orderDetailRepository = orderDetailRepository;
+        this.orderDetailService = orderDetailService;
     }
 
     @Transactional(readOnly = true)
@@ -86,6 +97,9 @@ public class OrderService {
     public void updateDeleteAt(Long orderId) {
         OrderEntity orderEntity = orderRepository.findById(orderId)
                         .orElseThrow(() -> new IllegalArgumentException("주문 번호를 찾을 수 없습니다."));
+
+        List<OrderDetailEntity> orderDetailList = orderDetailRepository.findOrderDetailListByOrderId(orderId);
+        orderDetailList.forEach(OrderDetailEntity::updateDeletedAt);
 
         if(orderEntity.getDeletedAt() != null){
             throw new IllegalArgumentException("이미 삭제된 주문입니다.");
