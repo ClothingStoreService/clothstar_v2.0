@@ -56,11 +56,11 @@ public class OrderDetailResponse {
                 .quantity(orderDetailEntity.getQuantity())
                 .fixedPrice(orderDetailEntity.getFixedPrice())
                 .oneKindTotalPrice(orderDetailEntity.getOneKindTotalPrice())
-                .name(orderDetailEntity.getName())
-                .stock(orderDetailEntity.getStock())
-                .optionName(orderDetailEntity.getOptionName())
-//                .extraCharge(orderDetail.getExtraCharge())
-                .brandName(orderDetailEntity.getBrandName())
+                .name(orderDetailEntity.getProductLine().getName())
+                .stock(orderDetailEntity.getProduct().getStock())
+                .optionName(orderDetailEntity.getProduct().getName())
+                .extraCharge(orderDetailEntity.getProduct().getExtraCharge())
+                .brandName(orderDetailEntity.getProductLine().getSeller().getBrandName())
                 .build();
     }
 }
