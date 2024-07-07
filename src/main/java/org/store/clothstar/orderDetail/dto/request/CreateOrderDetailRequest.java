@@ -41,11 +41,6 @@ public class CreateOrderDetailRequest {
                 .quantity(quantity)
                 .fixedPrice(productLineEntity.getPrice())
                 .oneKindTotalPrice(quantity * productLineEntity.getPrice())
-                .name(productLineEntity.getName())
-                .stock(productEntity.getStock())
-                .optionName(productEntity.getName())
-//                .extraCharge(product.getExtraCharge())
-                .brandName(productLineEntity.getSeller().getBrandName())
                 .build();
     }
 }
