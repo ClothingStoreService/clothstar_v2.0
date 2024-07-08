@@ -28,9 +28,9 @@ public class OrderDetailDTO {
         this.quantity = orderDetailEntity.getQuantity();
         this.productPrice = orderDetailEntity.getFixedPrice();
         this.totalPrice = orderDetailEntity.getOneKindTotalPrice();
-        this.ProductName = orderDetailEntity.getName();
-        this.optionName = orderDetailEntity.getOptionName();
-        this.brandName = orderDetailEntity.getBrandName();
+        this.ProductName = orderDetailEntity.getProductLine().getName();
+        this.optionName = orderDetailEntity.getProduct().getName();
+        this.brandName = orderDetailEntity.getProductLine().getSeller().getBrandName();
         this.extraCharge = orderDetailEntity.getProduct().getExtraCharge();
     }
 }
