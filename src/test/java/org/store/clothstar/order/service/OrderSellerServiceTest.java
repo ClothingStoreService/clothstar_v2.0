@@ -15,7 +15,6 @@ import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
-import org.store.clothstar.order.repository.orderSeller.JpaOrderSellerRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
@@ -58,27 +57,16 @@ class OrderSellerServiceTest {
     @DisplayName("getWaitingOrders: '승인대기' 주문 조회 - 메서드 호출 & 반환값 테스트")
     void getWaitingOrder_test() {
         //given
-        OrderEntity order1 = mock(OrderEntity.class);
-//        given(order1.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(order1.getTotalShippingPrice()).willReturn(1000);
-//        given(order1.getMember()).willReturn(mockMemberEntity);
-//        given(order1.getAddress()).willReturn(mockAddressEntity);
+        OrderResponse orderResponse1 = mock(OrderResponse.class);
+        given(orderResponse1.getTotalShippingPrice()).willReturn(1000);
+        OrderResponse orderResponse2 = mock(OrderResponse.class);
+        OrderResponse orderResponse3 = mock(OrderResponse.class);
 
-        OrderEntity order2 = mock(OrderEntity.class);
-//        given(order2.getCreatedAt()).willReturn(LocalDateTime.now());
-//        given(order2.getMember()).willReturn(mockMemberEntity);
-//        given(order2.getAddress()).willReturn(mockAddressEntity);
-
-        OrderEntity order3 = mock(OrderEntity.class);
-//        given(order3.getCreatedAt()).willReturn(LocalDateTime.now());
-//        given(order3.getMember()).willReturn(mockMemberEntity);
-//        given(order3.getAddress()).willReturn(mockAddressEntity);
-
-        List<OrderEntity> orders = List.of(order1, order2, order3);
-        given(orderSellerRepository.findWaitingOrders()).willReturn(orders);
+        List<OrderResponse> orderList = List.of(orderResponse1, orderResponse2, orderResponse3);
+        given(orderSellerRepository.findWaitingOrders()).willReturn(orderList);
 
         //when
-        List<OrderEntity> response = orderSellerService.getWaitingOrder();
+        List<OrderResponse> response = orderSellerService.getWaitingOrder();
 
         //then
         then(orderSellerRepository).should(times(1)).findWaitingOrders();
@@ -92,17 +80,14 @@ class OrderSellerServiceTest {
         //given
         Long orderId = 1L;
         given(mockOrderEntity.getStatus()).willReturn(Status.WAITING);
-        given(mockOrderEntity.getCreatedAt()).willReturn(LocalDateTime.now());
         given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrderEntity));
-        given(mockOrderEntity.getMember()).willReturn(mockMemberEntity);
-        given(mockOrderEntity.getAddress()).willReturn(mockAddressEntity);
 
         //when
         MessageDTO messageDTO = orderSellerService.approveOrder(orderId);
 
         //then
         then(orderSellerRepository).should(times(1)).approveOrder(orderId);
-        then(orderRepository).should(times(2)).findById(orderId);
+        then(orderRepository).should(times(1)).findById(orderId);
         assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 승인 되었습니다.");
     }
@@ -113,17 +98,14 @@ class OrderSellerServiceTest {
         // given
         Long orderId = 1L;
         given(mockOrderEntity.getStatus()).willReturn(Status.WAITING);
-        given(mockOrderEntity.getCreatedAt()).willReturn(LocalDateTime.now());
         given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrderEntity));
-        given(mockOrderEntity.getMember()).willReturn(mockMemberEntity);
-        given(mockOrderEntity.getAddress()).willReturn(mockAddressEntity);
 
         //when
         MessageDTO messageDTO = orderSellerService.cancelOrder(orderId);
 
         //then
         then(orderSellerRepository).should(times(1)).cancelOrder(orderId);
-        then(orderRepository).should(times(2)).findById(orderId);
+        then(orderRepository).should(times(1)).findById(orderId);
         assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 취소 되었습니다.");
     }

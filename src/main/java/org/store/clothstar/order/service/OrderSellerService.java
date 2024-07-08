@@ -35,7 +35,7 @@ public class OrderSellerService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderEntity> getWaitingOrder() {
+    public List<OrderResponse> getWaitingOrder() {
 
         return orderSellerRepository.findWaitingOrders().stream()
                 .collect(Collectors.toList());
@@ -53,10 +53,6 @@ public class OrderSellerService {
         orderSellerRepository.approveOrder(orderId);
         messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.");
 
-        orderRepository.findById(orderId)
-                .map(OrderResponse::fromOrderEntity)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "처리 후 주문 정보를 찾을 수 없습니다."));
-
         return messageDTO;
     }
 
@@ -72,10 +68,6 @@ public class OrderSellerService {
         orderSellerRepository.cancelOrder(orderId);
         orderDetailService.restoreStockByOrder(orderId);
         messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.");
-
-        orderRepository.findById(orderId)
-                .map(OrderResponse::fromOrderEntity)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "처리 후 주문 정보를 찾을 수 없습니다."));
 
         return messageDTO;
     }
