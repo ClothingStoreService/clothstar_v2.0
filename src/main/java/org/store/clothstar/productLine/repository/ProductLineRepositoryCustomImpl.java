@@ -171,17 +171,13 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
 
     private List<ProductLineEntity> getProductLineEntitiesByCategory(Long categoryId, Pageable pageable, String keyword) {
         List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable.getSort());
-        BooleanExpression searchCondition = getSearchCondition(keyword);
 
         // 카테고리별로 ProductLine 엔티티를 가져옴
         return jpaQueryFactory
                 .selectDistinct(qProductLine)
                 .from(qProductLine)
-                .innerJoin(qProductLine.seller, qSeller).fetchJoin()
-                .leftJoin(qProductLine.products, qProduct).fetchJoin()
                 .where(qProductLine.category.categoryId.eq(categoryId)
-                        .and(qProductLine.deletedAt.isNull())
-                        .and(searchCondition))
+                        .and(qProductLine.deletedAt.isNull()))
                 .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
