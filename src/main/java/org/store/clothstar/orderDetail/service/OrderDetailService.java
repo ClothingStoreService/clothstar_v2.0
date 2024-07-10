@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
@@ -89,6 +90,10 @@ public class OrderDetailService {
 
         if (addOrderDetailRequest.getQuantity() > productEntity.getStock()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 개수가 재고보다 더 많습니다.");
+        }
+
+        if(!orderEntity.getStatus().equals(Status.WAITING)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문이 이미 처리된 상태에서는 추가 주문이 불가능합니다.");
         }
 
         OrderDetailEntity orderDetailEntity = addOrderDetailRequest.toOrderDetailEntity(orderEntity, productLineEntity, productEntity);
