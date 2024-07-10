@@ -19,10 +19,16 @@ import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.type.Status;
+import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
+import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.product.repository.ProductJPARepository;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
+import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -34,33 +40,75 @@ public class OrderService {
     private final AddressRepository addressRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final OrderDetailService orderDetailService;
+    private final ProductJPARepository productJPARepository;
+    private final ProductLineJPARepository productLineJPARepository;
 
     public OrderService(
             @Qualifier("jpaOrderRepository") OrderRepository orderRepository
-            ,@Qualifier("memberJpaRepository") MemberRepository memberRepository
-            ,@Qualifier("addressJpaRepository") AddressRepository addressRepository
-            ,OrderDetailService orderDetailService
-            ,OrderDetailRepository orderDetailRepository
-) {
+            , @Qualifier("memberJpaRepository") MemberRepository memberRepository
+            , @Qualifier("addressJpaRepository") AddressRepository addressRepository
+            , OrderDetailService orderDetailService
+            , OrderDetailRepository orderDetailRepository,
+            ProductJPARepository productJPARepository, ProductLineJPARepository productLineJPARepository) {
         this.orderRepository = orderRepository;
         this.memberRepository = memberRepository;
         this.addressRepository = addressRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.orderDetailService = orderDetailService;
+        this.productJPARepository = productJPARepository;
+        this.productLineJPARepository = productLineJPARepository;
     }
 
     @Transactional(readOnly = true)
     public OrderResponse getOrder(Long orderId) {
-        return orderRepository.findOrderWithDetails(orderId);
+        OrderEntity orderEntity = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다"));
+
+        // 주문자 정보 조회
+        MemberEntity memberEntity = memberRepository.findById(orderEntity.getMemberId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다"));
+
+        AddressEntity addressEntity = addressRepository.findById(orderEntity.getAddressId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "배송지를 찾을 수 없습니다"));
+
+        // 주문 Response 객체 생성
+        OrderResponse orderResponse = OrderResponse.from(orderEntity,memberEntity,addressEntity);
+
+        // 주문 상세 정보 설정
+        List<OrderDetailDTO> orderDetailDTOList = new ArrayList<>();
+        for (OrderDetailEntity orderDetailEntity : orderEntity.getOrderDetails()) {
+            ProductEntity productEntity = productJPARepository.findById(orderDetailEntity.getProductId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품옵션정보를 찾을 수 없습니다"));
+            ProductLineEntity productLineEntity = productLineJPARepository.findById(orderDetailEntity.getProductLineId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다"));
+
+            OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder()
+                    .orderDetailId(orderDetailEntity.getOrderDetailId())
+                    .productName(productLineEntity.getName())
+                    .optionName(productEntity.getName())
+                    .brandName(productLineEntity.getSeller().getBrandName())
+                    .productPrice(productLineEntity.getPrice())
+                    .extraCharge(productEntity.getExtraCharge())
+                    .quantity(orderDetailEntity.getQuantity())
+                    .totalPrice(orderDetailEntity.getOneKindTotalPrice())
+                    .build();
+
+            orderDetailDTOList.add(orderDetailDTO);
+        }
+        orderResponse.setterOrderDetailList(orderDetailDTOList);
+
+        return orderResponse;
+
+//        return orderRepository.findOrderWithDetails(orderId);
     }
 
-    public Page<OrderResponse> getAllOrderOffsetPaging(Pageable pageable) {
-        return orderRepository.findAllOffsetPaging(pageable);
-    }
-
-    public Slice<OrderResponse> getAllOrderSlicePaging(Pageable pageable) {
-        return orderRepository.findAllSlicePaging(pageable);
-    }
+//    public Page<OrderResponse> getAllOrderOffsetPaging(Pageable pageable) {
+//        return orderRepository.findAllOffsetPaging(pageable);
+//    }
+//
+//    public Slice<OrderResponse> getAllOrderSlicePaging(Pageable pageable) {
+//        return orderRepository.findAllSlicePaging(pageable);
+//    }
 
     @Transactional
     public Long saveOrder(CreateOrderRequest createOrderRequest) {

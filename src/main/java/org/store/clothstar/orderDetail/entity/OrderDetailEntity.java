@@ -34,13 +34,11 @@ public class OrderDetailEntity extends BaseEntity {
     @JoinColumn(name = "order_id")
     private OrderEntity order;
 
-    @ManyToOne
     @JoinColumn(name = "product_line_id")
-    private ProductLineEntity productLine;
+    private Long productLineId;
 
-    @ManyToOne
     @JoinColumn(name = "product_id")
-    private ProductEntity product;
+    private Long productId;
 
     public void updateDeletedAt() {
         this.deletedAt = LocalDateTime.now();

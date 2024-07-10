@@ -14,7 +14,7 @@ import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 public class OrderDetailDTO {
 
     private Long orderDetailId;
-    private String ProductName; // 상품명
+    private String productName; // 상품명
     private String optionName;
     private String brandName;
     private int productPrice; // 고정된 상품 가격 ( 주문 당시 가격 )
@@ -22,16 +22,16 @@ public class OrderDetailDTO {
     private int quantity;
     private int totalPrice; // 상품 종류 하나당 총 가격
 
-    @QueryProjection
-    public OrderDetailDTO(OrderDetailEntity orderDetailEntity) {
-        this.orderDetailId= orderDetailEntity.getOrderDetailId();
-        this.quantity = orderDetailEntity.getQuantity();
-        this.productPrice = orderDetailEntity.getFixedPrice();
-        this.totalPrice = orderDetailEntity.getOneKindTotalPrice();
-        this.ProductName = orderDetailEntity.getProductLine().getName();
-        this.optionName = orderDetailEntity.getProduct().getName();
-        this.brandName = orderDetailEntity.getProductLine().getSeller().getBrandName();
-        this.extraCharge = orderDetailEntity.getProduct().getExtraCharge();
-    }
+//    @QueryProjection
+//    public OrderDetailDTO(OrderDetailEntity orderDetailEntity) {
+//        this.orderDetailId= orderDetailEntity.getOrderDetailId();
+//        this.quantity = orderDetailEntity.getQuantity();
+//        this.productPrice = orderDetailEntity.getFixedPrice();
+//        this.totalPrice = orderDetailEntity.getOneKindTotalPrice();
+//        this.productName = orderDetailEntity.getProductLine().getName();
+//        this.optionName = orderDetailEntity.getProduct().getName();
+//        this.brandName = orderDetailEntity.getProductLine().getSeller().getBrandName();
+//        this.extraCharge = orderDetailEntity.getProduct().getExtraCharge();
+//    }
 }
 

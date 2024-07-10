@@ -13,11 +13,11 @@ public interface OrderRepository {
 
     Optional<OrderEntity> findById(Long orderId);
 
-    OrderResponse findOrderWithDetails(Long orderId);
+//    OrderResponse findOrderWithDetails(Long orderId);
 
-    Page<OrderResponse> findAllOffsetPaging(Pageable pageable);
+//    Page<OrderResponse> findAllOffsetPaging(Pageable pageable);
 
-    Slice<OrderResponse> findAllSlicePaging(Pageable pageable);
+//    Slice<OrderResponse> findAllSlicePaging(Pageable pageable);
 
     OrderEntity save(OrderEntity orderEntity);
 

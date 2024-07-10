@@ -33,12 +33,12 @@ public class OrderSellerService {
         this.orderDetailService=orderDetailService;
     }
 
-    @Transactional(readOnly = true)
-    public List<OrderResponse> getWaitingOrder() {
-
-        return orderSellerRepository.findWaitingOrders().stream()
-                .collect(Collectors.toList());
-    }
+//    @Transactional(readOnly = true)
+//    public List<OrderResponse> getWaitingOrder() {
+//
+//        return orderSellerRepository.findWaitingOrders().stream()
+//                .collect(Collectors.toList());
+//    }
 
     @Transactional
     public MessageDTO approveOrder(Long orderId) {

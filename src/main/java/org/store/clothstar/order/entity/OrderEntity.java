@@ -43,13 +43,11 @@ public class OrderEntity extends BaseEntity {
     @Column(name = "total_payment_price")
     private int totalPaymentPrice;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @Column(name = "member_id")
+    private Long memberId;
 
-    @OneToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
+    @Column(name = "address_id")
+    private Long addressId;
 
     public void updatePrices(int totalProductsPrice, int totalPaymentPrice) {
         this.totalProductsPrice = totalProductsPrice;

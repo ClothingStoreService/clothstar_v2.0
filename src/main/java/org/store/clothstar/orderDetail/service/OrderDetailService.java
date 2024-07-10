@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.type.Status;
+import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
@@ -20,6 +21,7 @@ import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,6 +43,26 @@ public class OrderDetailService {
         this.productService = productService;
         this.productJPARepository = productJPARepository;
         this.productLineJPARepository = productLineJPARepository;
+    }
+
+    public List<OrderDetailDTO> getOrderDetails(OrderEntity orderEntity, ProductLineEntity productLineEntity, ProductEntity productEntity) {
+        List<OrderDetailEntity> orderDetailEntities = orderDetailRepository.findByOrder(orderEntity);
+
+        // Convert entities to DTOs
+        List<OrderDetailDTO> orderDetailDTOList = orderDetailEntities.stream()
+                .map(orderDetailEntity -> OrderDetailDTO.builder()
+                        .orderDetailId(orderDetailEntity.getOrderDetailId())
+                        .productName(productLineEntity.getName())
+                        .optionName(productEntity.getName())
+                        .brandName(productLineEntity.getSeller().getBrandName())
+                        .productPrice(productLineEntity.getPrice())
+                        .extraCharge(productEntity.getExtraCharge())
+                        .quantity(orderDetailEntity.getQuantity())
+                        .totalPrice(orderDetailEntity.getOneKindTotalPrice())
+                        .build())
+                .collect(Collectors.toList());
+
+        return orderDetailDTOList;
     }
 
     // 주문 생성시 같이 호출되는 주문 상세 생성 메서드 - 하나의 트랜잭션으로 묶임

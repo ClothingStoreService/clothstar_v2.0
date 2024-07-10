@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
+import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 @Getter
 @Builder
@@ -47,20 +49,20 @@ public class OrderDetailResponse {
     private String brandName;
 
 
-    public static OrderDetailResponse fromOrderDetailEntity(OrderDetailEntity orderDetailEntity) {
-        return OrderDetailResponse.builder()
-                .orderDetailId(orderDetailEntity.getOrderDetailId())
-                .orderId(orderDetailEntity.getOrder().getOrderId())
-                .productLineId(orderDetailEntity.getProductLine().getProductLineId())
-                .productId(orderDetailEntity.getProduct().getProductId())
-                .quantity(orderDetailEntity.getQuantity())
-                .fixedPrice(orderDetailEntity.getFixedPrice())
-                .oneKindTotalPrice(orderDetailEntity.getOneKindTotalPrice())
-                .name(orderDetailEntity.getProductLine().getName())
-                .stock(orderDetailEntity.getProduct().getStock())
-                .optionName(orderDetailEntity.getProduct().getName())
-                .extraCharge(orderDetailEntity.getProduct().getExtraCharge())
-                .brandName(orderDetailEntity.getProductLine().getSeller().getBrandName())
-                .build();
-    }
+//    public static OrderDetailResponse fromOrderDetailEntity(OrderDetailEntity orderDetailEntity, ProductLineEntity productLineEntity, ProductEntity productEntity) {
+//        return OrderDetailResponse.builder()
+//                .orderDetailId(orderDetailEntity.getOrderDetailId())
+//                .orderId(orderDetailEntity.getOrder().getOrderId())
+//                .productLineId(orderDetailEntity.getProductLineId())
+//                .productId(orderDetailEntity.getProductId())
+//                .quantity(orderDetailEntity.getQuantity())
+//                .fixedPrice(orderDetailEntity.getFixedPrice())
+//                .oneKindTotalPrice(orderDetailEntity.getOneKindTotalPrice())
+//                .name(orderDetailEntity.getName())
+//                .stock(orderDetailEntity.getStock())
+//                .optionName(orderDetailEntity.getName())
+//                .extraCharge(orderDetailEntity.getExtraCharge())
+//                .brandName(orderDetailEntity.getSeller().getBrandName())
+//                .build();
+//    }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface OrderSellerRepository {
 
-    List<OrderResponse> findWaitingOrders();
+//    List<OrderResponse> findWaitingOrders();
 
     void approveOrder(Long orderId);
 
