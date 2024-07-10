@@ -18,7 +18,7 @@ public class MemberResponse {
         this.email = member.getEmail();
         this.name = member.getName();
         this.telNo = member.getTelNo();
-        this.totalPaymentPrice = member.getTotalPaymentPrice();
-        this.grade = member.getGrade();
+        this.totalPaymentPrice = member.getMemberShoppingActivity().getTotalPaymentPrice();
+        this.grade = member.getMemberShoppingActivity().getGrade();
     }
 }

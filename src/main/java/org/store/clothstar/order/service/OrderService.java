@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.store.clothstar.common.error.ErrorCode;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.repository.AddressRepository;
@@ -65,7 +66,7 @@ public class OrderService {
     public Long saveOrder(CreateOrderRequest createOrderRequest) {
 
         Member member = memberRepository.findById(createOrderRequest.getMemberId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_MEMBER.getMessage()));
 
         Address address = addressRepository.findById(createOrderRequest.getAddressId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "배송지 정보를 찾을 수 없습니다."));

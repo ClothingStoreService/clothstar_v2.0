@@ -3,8 +3,8 @@ package org.store.clothstar.member.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.ColumnDefault;
 import org.store.clothstar.common.entity.BaseEntity;
+import org.store.clothstar.member.domain.vo.MemberShoppingActivity;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 
 import java.time.LocalDateTime;
@@ -23,16 +23,15 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String email;
     private String password;
+
     private String name;
     private String telNo;
-    @ColumnDefault(value = "0")
-    private int totalPaymentPrice;
-    @ColumnDefault(value = "0")
-    private int point;
+
     @Enumerated(EnumType.STRING)
     private MemberRole role;
-    @Enumerated(EnumType.STRING)
-    private MemberGrade grade;
+
+    @Embedded
+    MemberShoppingActivity memberShoppingActivity;
 
     public void updateMember(ModifyMemberRequest modifyMemberRequest, Member member) {
         this.name = (modifyMemberRequest.getName() == null || modifyMemberRequest.getName() == "")

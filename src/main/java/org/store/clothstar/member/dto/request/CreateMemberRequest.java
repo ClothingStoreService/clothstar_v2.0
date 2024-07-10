@@ -3,8 +3,8 @@ package org.store.clothstar.member.dto.request;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.domain.MemberGrade;
 import org.store.clothstar.member.domain.MemberRole;
+import org.store.clothstar.member.domain.vo.MemberShoppingActivity;
 
 @Getter
 @AllArgsConstructor
@@ -33,10 +33,8 @@ public class CreateMemberRequest {
                 .password(encryptedPassword)
                 .name(name)
                 .telNo(telNo)
-                .totalPaymentPrice(0)
-                .point(0)
                 .role(MemberRole.USER)
-                .grade(MemberGrade.BRONZE)
+                .memberShoppingActivity(new MemberShoppingActivity().init())
                 .build();
     }
 
@@ -46,10 +44,8 @@ public class CreateMemberRequest {
                 .password(password)
                 .name(name)
                 .telNo(telNo)
-                .totalPaymentPrice(0)
-                .point(0)
                 .role(MemberRole.USER)
-                .grade(MemberGrade.BRONZE)
+                .memberShoppingActivity(new MemberShoppingActivity().init())
                 .build();
     }
 }

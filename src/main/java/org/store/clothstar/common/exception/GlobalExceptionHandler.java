@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.store.clothstar.common.dto.ErrorResponseDTO;
 import org.store.clothstar.common.dto.ValidErrorResponseDTO;
+import org.store.clothstar.common.error.exception.DuplicatedEmailException;
+import org.store.clothstar.common.error.exception.NotFoundMemberException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +20,26 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundMemberException.class)
+    protected ResponseEntity<ErrorResponseDTO> memberNotFoundException(NotFoundMemberException ex) {
+        log.error("memberNotFoundException", ex);
+        ex.fillInStackTrace();
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DuplicatedEmailException.class)
+    protected ResponseEntity<ErrorResponseDTO> memberNotFoundException(DuplicatedEmailException ex) {
+        log.error("DuplicatedEmailException", ex);
+        ex.fillInStackTrace();
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ValidErrorResponseDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {

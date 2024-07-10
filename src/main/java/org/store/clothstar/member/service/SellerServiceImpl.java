@@ -3,6 +3,8 @@ package org.store.clothstar.member.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.NotFoundMemberException;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
@@ -27,7 +29,7 @@ public class SellerServiceImpl implements SellerService {
     @Override
     public Seller getSellerById(Long memberId) {
         return sellerRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
     @Override
@@ -42,7 +44,7 @@ public class SellerServiceImpl implements SellerService {
 
     private void validCheck(Long memberId, CreateSellerRequest createSellerRequest) {
         member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
 
         sellerRepository.findById(memberId).ifPresent(m -> {
             throw new IllegalArgumentException("이미 판매자 가입이 되어 있습니다.");

@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.NotFoundMemberException;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.repository.MemberRepository;
 
@@ -32,7 +34,7 @@ public class JwtService {
     public String getAccessTokenByRefreshToken(String refreshToken) {
         Long memberId = jwtUtil.getMemberId(refreshToken);
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
 
         return jwtUtil.createAccessToken(member);
     }

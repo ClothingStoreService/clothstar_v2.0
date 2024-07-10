@@ -9,8 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.domain.MemberGrade;
-import org.store.clothstar.member.domain.MemberRole;
+import org.store.clothstar.member.util.CreateObject;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -24,7 +23,7 @@ class JwtUnitTest {
     @Test
     void createAccessTokenTest() {
         //given
-        Member member = getMember();
+        Member member = CreateObject.getMemberByCreateMemberRequestDTO();
 
         //when
         String accessToken = jwtUtil.createAccessToken(member);
@@ -40,7 +39,7 @@ class JwtUnitTest {
     @Test
     void createRefreshTokenTest() {
         //given
-        Member member = getMember();
+        Member member = CreateObject.getMemberByCreateMemberRequestDTO();
 
         //when
         String refreshToken = jwtUtil.createRefreshToken(member);
@@ -49,16 +48,5 @@ class JwtUnitTest {
         //then
         Assertions.assertThat(refreshToken).isNotNull();
         Assertions.assertThat(tokenType).isEqualTo("REFRESH_TOKEN");
-    }
-
-    private Member getMember() {
-        return Member.builder()
-                .memberId(1L)
-                .email("test@test.com")
-                .password("test")
-                .telNo("010-1234-1234")
-                .role(MemberRole.USER)
-                .grade(MemberGrade.BRONZE)
-                .build();
     }
 }

@@ -3,6 +3,8 @@ package org.store.clothstar.member.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.NotFoundMemberException;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
@@ -29,7 +31,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Long addrSave(Long memberId, CreateAddressRequest createAddressRequest) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
 
         Address address = createAddressRequest.toAddress(member);
         address = addressRepository.save(address);

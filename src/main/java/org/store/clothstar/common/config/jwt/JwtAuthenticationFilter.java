@@ -10,6 +10,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.NotFoundMemberException;
 import org.store.clothstar.member.domain.CustomUserDetails;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.repository.MemberRepository;
@@ -49,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("refresh 토큰 memberId: {}", memberId);
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
 
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
 

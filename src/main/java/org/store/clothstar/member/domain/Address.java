@@ -2,6 +2,7 @@ package org.store.clothstar.member.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.store.clothstar.member.domain.vo.AddressInfo;
 
 @ToString
 @Getter
@@ -14,12 +15,11 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long addressId;
     private String receiverName;
-    private String zipNo;
-    private String addressBasic;
-    private String addressDetail;
     private String telNo;
-    private String deliveryRequest;
     private boolean defaultAddress;
+
+    @Embedded
+    AddressInfo addressInfo;
 
     @ManyToOne
     @JoinColumn(name = "member_id")

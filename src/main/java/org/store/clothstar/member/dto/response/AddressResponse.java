@@ -3,6 +3,7 @@ package org.store.clothstar.member.dto.response;
 import lombok.Getter;
 import org.store.clothstar.member.domain.Address;
 
+
 @Getter
 public class AddressResponse {
     private Long memberId;
@@ -17,11 +18,11 @@ public class AddressResponse {
     public AddressResponse(Address address) {
         this.memberId = address.getMember().getMemberId();
         this.receiverName = address.getReceiverName();
-        this.zipNo = address.getZipNo();
-        this.addressBasic = address.getAddressBasic();
-        this.addressDetail = address.getAddressDetail();
+        this.zipNo = address.getAddressInfo().getZipNo();
+        this.addressBasic = address.getAddressInfo().getAddressBasic();
+        this.addressDetail = address.getAddressInfo().getAddressDetail();
         this.telNo = address.getTelNo();
-        this.deliveryRequest = address.getDeliveryRequest();
+        this.deliveryRequest = address.getAddressInfo().getDeliveryRequest();
         this.defaultAddress = address.isDefaultAddress();
     }
 }

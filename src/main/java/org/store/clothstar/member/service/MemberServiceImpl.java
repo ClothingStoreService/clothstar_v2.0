@@ -9,6 +9,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.DuplicatedEmailException;
+import org.store.clothstar.common.error.exception.NotFoundMemberException;
 import org.store.clothstar.common.error.exception.SignupCertifyNumAuthFailedException;
 import org.store.clothstar.common.mail.MailContentBuilder;
 import org.store.clothstar.common.mail.MailSendDTO;
@@ -50,36 +52,42 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponse getMemberById(Long memberId) {
+        log.info("회원 상세 조회 memberId = {}", memberId);
         return memberRepository.findById(memberId)
                 .map(MemberResponse::new)
-                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
     @Override
-    public boolean getMemberByEmail(String email) {
-        return memberRepository.findByEmail(email).isPresent();
+    public void getMemberByEmail(String email) {
+        if (memberRepository.findByEmail(email).isPresent()) {
+            throw new DuplicatedEmailException(ErrorCode.DUPLICATED_EMAIL);
+        }
     }
 
     @Override
     public void modifyMember(Long memberId, ModifyMemberRequest modifyMemberRequest) {
+        log.info("회원 정보 수정 memberId = {}, name = {}, role = {}", memberId, modifyMemberRequest.getName(), modifyMemberRequest.getRole());
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
 
         member.updateMember(modifyMemberRequest, member);
     }
 
     @Override
     public void updateDeleteAt(Long memberId) {
+        log.info("회원 삭제 memberId = {}", memberId);
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
 
         member.updateDeletedAt();
     }
 
     @Override
     public void updatePassword(Long memberId, String password) {
+        log.info("회원 비밀번호 변경 memberId = {}", memberId);
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
 
         String encodedPassword = passwordEncoder.encode(password);
         validCheck(member, encodedPassword);
