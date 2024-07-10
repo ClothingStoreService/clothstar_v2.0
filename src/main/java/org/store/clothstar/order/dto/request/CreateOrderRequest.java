@@ -13,8 +13,6 @@ import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.order.utils.GenerateOrderId;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Builder
 @NoArgsConstructor
@@ -40,7 +38,6 @@ public class CreateOrderRequest {
                 .orderId(GenerateOrderId.generateOrderId())
                 .member(memberEntity)
                 .address(addressEntity)
-                .createdAt(LocalDateTime.now())
                 .status(Status.WAITING)
                 .totalShippingPrice(3000)
                 .totalProductsPrice(0)

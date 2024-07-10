@@ -38,12 +38,8 @@ public class OrderResponse {
     @Schema(description = "주문 상태", example = "WAITING")
     private Status status;
 
-    //address
-    private String receiverName;
-    private String addressBasic;
-    private String addressDetail;
-    private String telNo;
-    private String deliveryRequest;
+    @Schema(description = "주소 정보")
+    private AddressDTO address;
 
     @Schema(description = "결제 수단", example = "CARD")
     private PaymentMethod paymentMethod;
@@ -60,15 +56,6 @@ public class OrderResponse {
     @Builder.Default
     private List<OrderDetailDTO> orderDetailList = new ArrayList<>();
 
-    public OrderResponse(OrderEntity orderEntity, OrderDetailEntity orderDetailEntity, MemberEntity memberEntity, AddressEntity addressEntity,
-                         ProductLineEntity productLineEntity, List<OrderDetailDTO> orderDetailList) {
-        this(orderEntity,
-                orderDetailEntity,
-                memberEntity, addressEntity, productLineEntity);
-        this.orderDetailList = orderDetailList != null ? orderDetailList : new ArrayList<>();
-    }
-
-
     @QueryProjection
     public OrderResponse(OrderEntity orderEntity,
                          OrderDetailEntity orderDetailEntity,
@@ -82,15 +69,17 @@ public class OrderResponse {
         this.totalProductsPrice = orderEntity.getTotalProductsPrice();
         this.paymentMethod = orderEntity.getPaymentMethod();
         this.totalPaymentPrice = orderEntity.getTotalPaymentPrice();
-        this.receiverName = addressEntity.getReceiverName();
-        this.addressBasic = addressEntity.getAddressBasic();
-        this.addressDetail = addressEntity.getAddressDetail();
-        this.telNo = addressEntity.getTelNo();
-        this.deliveryRequest = addressEntity.getDeliveryRequest();
+        this.address = AddressDTO.builder()
+                .receiverName(addressEntity.getReceiverName())
+                .addressBasic(addressEntity.getAddressBasic())
+                .addressDetail(addressEntity.getAddressDetail())
+                .telNo(addressEntity.getTelNo())
+                .deliveryRequest(addressEntity.getDeliveryRequest())
+                .build();
         this.orderDetailList = new ArrayList<>();
     }
 
-    public static OrderResponse fromOrderEntity(OrderEntity orderEntity) {
+    public static OrderResponse from(OrderEntity orderEntity) {
         return OrderResponse.builder()
                 .orderId(orderEntity.getOrderId())
                 .ordererName(orderEntity.getMember().getName())
@@ -100,6 +89,13 @@ public class OrderResponse {
                 .totalProductsPrice(orderEntity.getTotalProductsPrice())
                 .paymentMethod(orderEntity.getPaymentMethod())
                 .totalPaymentPrice(orderEntity.getTotalPaymentPrice())
+                .address(AddressDTO.builder()
+                        .receiverName(orderEntity.getAddress().getReceiverName())
+                        .addressBasic(orderEntity.getAddress().getAddressBasic())
+                        .addressDetail(orderEntity.getAddress().getAddressDetail())
+                        .telNo(orderEntity.getAddress().getTelNo())
+                        .deliveryRequest(orderEntity.getAddress().getDeliveryRequest())
+                        .build())
                 .build();
     }
 
