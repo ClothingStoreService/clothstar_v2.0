@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
@@ -19,6 +20,7 @@ import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +48,9 @@ class OrderDetailServiceTest {
 
     @Mock
     private ProductJPARepository productJPARepository;
+
+    @Mock
+    private OrderDetailEntity orderDetailEntity;
 
     @DisplayName("saveOrderDetailWithOrder: 주문상세 생성 - 메서드 호출 테스트")
     @Test
@@ -91,9 +96,8 @@ class OrderDetailServiceTest {
         given(mockProduct.getStock()).willReturn(1L);
 
         //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            orderDetailService.saveOrderDetailWithOrder(mockRequest,orderId);
-        });
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderDetailService.saveOrderDetailWithOrder(mockRequest,orderId));
 
         //then
         assertEquals("400 BAD_REQUEST \"주문 개수가 재고보다 더 많습니다.\"", thrown.getMessage());
@@ -115,9 +119,8 @@ class OrderDetailServiceTest {
         given(mockProduct.getStock()).willReturn(1L);
 
         //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            orderDetailService.addOrderDetail(mockRequest);
-        });
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderDetailService.addOrderDetail(mockRequest));
 
         //then
         assertEquals("400 BAD_REQUEST \"주문 개수가 재고보다 더 많습니다.\"", thrown.getMessage());
@@ -135,6 +138,7 @@ class OrderDetailServiceTest {
         OrderEntity mockOrder = mock(OrderEntity.class);
 
         given(mockOrderDetail.getOrderDetailId()).willReturn(1L);
+        given(mockOrder.getStatus()).willReturn(Status.WAITING);
         given(orderRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(mockOrder));
         given(productLineJPARepository.findById(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productJPARepository.findById(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
@@ -157,6 +161,7 @@ class OrderDetailServiceTest {
         ProductEntity mockProduct = mock(ProductEntity.class);
         OrderEntity mockOrder = mock(OrderEntity.class);
 
+        given(mockOrder.getStatus()).willReturn(Status.WAITING);
         given(orderRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(mockOrder));
         given(productLineJPARepository.findById(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productJPARepository.findById(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
@@ -170,8 +175,6 @@ class OrderDetailServiceTest {
         then(productLineJPARepository).should(times(1)).findById(mockRequest.getProductLineId());
         then(productJPARepository).should(times(1)).findById(mockRequest.getProductId());
         then(orderDetailRepository).should(times(1)).save(mockOrderDetail);
-//        then(orderRepository).should(times(1)).updateOrderPrices(mockOrder);
-//        then(productJPARepository).should(times(1)).updateProduct(mockProduct);
     }
 
     @DisplayName("addOrderDetail: 주문상세 추가 - 주문 유효성 검사 예외처리 테스트")
@@ -190,12 +193,80 @@ class OrderDetailServiceTest {
         given(mockProduct.getStock()).willReturn(1L);
 
         //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            orderDetailService.addOrderDetail(mockRequest);
-        });
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderDetailService.addOrderDetail(mockRequest));
 
         //then
         assertEquals("400 BAD_REQUEST \"주문 개수가 재고보다 더 많습니다.\"", thrown.getMessage());
+    }
+
+    @DisplayName("addOrderDetail: 주문상세 추가 - 주문 상태 검사 예외처리 테스트")
+    @Test
+    void addOrderDetail_noWAITING_exception_test() {
+        //given
+        AddOrderDetailRequest mockRequest = mock(AddOrderDetailRequest.class);
+        ProductLineEntity mockProductLine = mock(ProductLineEntity.class);
+        ProductEntity mockProduct = mock(ProductEntity.class);
+        OrderEntity mockOrder = mock(OrderEntity.class);
+
+        given(mockOrder.getStatus()).willReturn(Status.CANCEL);
+        given(orderRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(mockOrder));
+        given(productLineJPARepository.findById(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
+        given(productJPARepository.findById(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
+
+        //when
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderDetailService.addOrderDetail(mockRequest));
+
+        //then
+        assertEquals("400 BAD_REQUEST \"주문이 이미 처리된 상태에서는 추가 주문이 불가능합니다.\"", thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("updateDeleteAt: 주문 상세 삭제 - 메서드 호출 테스트")
+    void updateDeleteAt_verify_test() {
+        //given
+        long orderDetailId = 1L;
+        given(orderDetailRepository.findById(orderDetailId)).willReturn(Optional.of(orderDetailEntity));
+
+        //when
+            orderDetailService.updateDeleteAt(orderDetailId);
+
+        //then
+        then(orderDetailRepository).should(times(2)).findById(orderDetailId);
+        then(productService).should(times(1)).restoreProductStockByOrderDetail(orderDetailEntity);
+        then(orderDetailEntity).should(times(1)).updateDeletedAt();
+    }
+
+    @Test
+    @DisplayName("updateDeleteAt: 주문 상세 삭제 - OrderDetail null 예외처리 테스트")
+    void updateDeleteAt_null_exception_test() {
+        //given
+        long orderDetailId = 1L;
+        given(orderDetailRepository.findById(orderDetailId)).willReturn(Optional.empty());
+
+        //when
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderDetailService.updateDeleteAt(orderDetailId));
+
+        //then
+        assertEquals("404 NOT_FOUND \"주문상세 번호를 찾을 수 없습니다.\"", thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("updateDeleteAt: 주문 상세 삭제 - 이미 삭제된 경우 예외처리 테스트")
+    void updateDeleteAt_alreadyDelete_exception_test() {
+        //given
+        long orderDetailId = 1L;
+        given(orderDetailRepository.findById(orderDetailId)).willReturn(Optional.of(orderDetailEntity));
+        given(orderDetailEntity.getDeletedAt()).willReturn(LocalDateTime.now());
+
+        //when
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderDetailService.updateDeleteAt(orderDetailId));
+
+        //then
+        assertEquals("404 NOT_FOUND \"이미 삭제된 주문입니다.\"", thrown.getMessage());
     }
 
     @Test
@@ -213,6 +284,36 @@ class OrderDetailServiceTest {
         orderDetailService.restoreStockByOrder(orderId);
 
         //then
-        then(productService).should(times(1)).restoreProductStock(orderDetailList);
+        then(productService).should(times(1)).restoreProductStockByOrder(orderDetailList);
+    }
+
+    @Test
+    @DisplayName("restoreStockByOrderDetail: 주문 상세 삭제시, 상품 재고 반환 - 메서드 호출 테스트")
+    void restoreStockByOrderDetail_verify_test() {
+        //given
+        long orderDetailId = 1L;
+        OrderDetailEntity mockOrderDetail = mock(OrderDetailEntity.class);
+        given(orderDetailRepository.findById(orderDetailId)).willReturn(Optional.of(mockOrderDetail));
+
+        //when
+        orderDetailService.restoreStockByOrderDetail(orderDetailId);
+
+        //then
+        then(productService).should(times(1)).restoreProductStockByOrderDetail(mockOrderDetail);
+    }
+
+    @Test
+    @DisplayName("restoreStockByOrderDetail: 주문 상세 삭제시, 상품 재고 반환 - orderDetail null 예외처리 테스트")
+    void restoreStockByOrderDetail_null_exception_test() {
+        //given
+        long orderDetailId = 1L;
+        given(orderDetailRepository.findById(orderDetailId)).willReturn(Optional.empty());
+
+        //when
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderDetailService.restoreStockByOrderDetail(orderDetailId));
+
+        //then
+        assertEquals("404 NOT_FOUND \"주문상세 번호를 찾을 수 없습니다.\"", thrown.getMessage());
     }
 }

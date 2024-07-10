@@ -9,13 +9,15 @@ CREATE TABLE `order_detail`
     `quantity`            int          NOT NULL,
     `fixed_price`         int          NOT NULL,
     `onekind_total_price` int          NOT NULL,
-    `name`                VARCHAR(255) NOT NULL,
-    `stock`               VARCHAR(255) NOT NULL,
-    `option_name`         VARCHAR(255) NOT NULL,
-    `brand_name`          VARCHAR(255) NOT NULL,
+    `created_at`          timestamp    NOT NULL,
+    `updated_at`         timestamp    NULL,
+    `deleted_at`          timestamp    NULL,
 
     PRIMARY KEY (`order_detail_id`)
 );
+
+ALTER TABLE order_detail MODIFY COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
 
 select *
 from order_detail;

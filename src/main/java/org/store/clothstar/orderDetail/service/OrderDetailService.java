@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
@@ -42,7 +43,6 @@ public class OrderDetailService {
         this.productLineJPARepository = productLineJPARepository;
     }
 
-
     // 주문 생성시 같이 호출되는 주문 상세 생성 메서드 - 하나의 트랜잭션으로 묶임
     @Transactional
     public void saveOrderDetailWithOrder(CreateOrderDetailRequest createOrderDetailRequest, long orderId) {
@@ -70,7 +70,6 @@ public class OrderDetailService {
                 orderEntity.getTotalProductsPrice() + orderEntity.getTotalShippingPrice() + orderDetailEntity.getOneKindTotalPrice();
 
         orderEntity.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
-//        orderDetailRepository.updateOrderPrices(orderEntity);
 
         // 주문 수량만큼 상품 재고 차감
         updateProductStock(productEntity,orderDetailEntity.getQuantity());
@@ -93,6 +92,10 @@ public class OrderDetailService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 개수가 재고보다 더 많습니다.");
         }
 
+        if(!orderEntity.getStatus().equals(Status.WAITING)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문이 이미 처리된 상태에서는 추가 주문이 불가능합니다.");
+        }
+
         OrderDetailEntity orderDetailEntity = addOrderDetailRequest.toOrderDetailEntity(orderEntity, productLineEntity, productEntity);
         orderDetailRepository.save(orderDetailEntity);
 
@@ -108,7 +111,20 @@ public class OrderDetailService {
     }
 
     @Transactional
-    void updateProductStock(ProductEntity productEntity, int quantity) {
+    public void updateDeleteAt(Long orderDetailId) {
+        OrderDetailEntity orderDetailEntity = orderDetailRepository.findById(orderDetailId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문상세 번호를 찾을 수 없습니다."));
+
+        if(orderDetailEntity.getDeletedAt() != null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "이미 삭제된 주문입니다.");
+        }
+
+        restoreStockByOrderDetail(orderDetailId);
+        orderDetailEntity.updateDeletedAt();
+    }
+
+    @Transactional
+    public void updateProductStock(ProductEntity productEntity, int quantity) {
         long updatedStock = productEntity.getStock() - quantity;
         productEntity.updateStock(updatedStock);
     }
@@ -116,6 +132,13 @@ public class OrderDetailService {
     @Transactional
     public void restoreStockByOrder(Long orderId) {
         List<OrderDetailEntity> orderDetailList = orderDetailRepository.findOrderDetailListByOrderId(orderId);
-        productService.restoreProductStock(orderDetailList);
+        productService.restoreProductStockByOrder(orderDetailList);
+    }
+
+    @Transactional
+    public void restoreStockByOrderDetail(Long orderDetailId) {
+        OrderDetailEntity orderDetailEntity = orderDetailRepository.findById(orderDetailId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문상세 번호를 찾을 수 없습니다."));
+        productService.restoreProductStockByOrderDetail(orderDetailEntity);
     }
 }
