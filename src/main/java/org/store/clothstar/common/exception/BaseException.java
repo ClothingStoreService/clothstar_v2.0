@@ -8,8 +8,4 @@ public class BaseException extends RuntimeException {
         super(exceptionType.message());
         this.exceptionType = exceptionType;
     }
-
-    public ExceptionType getExceptionType() {
-        return exceptionType;
-    }
 }

@@ -7,12 +7,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
-import org.store.clothstar.member.dto.response.AddressResponse;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
+import org.store.clothstar.member.domain.vo.AddressInfo;
+import org.store.clothstar.member.dto.response.AddressResponse;
 import org.store.clothstar.member.repository.AddressRepository;
+import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.util.CreateObject;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.*;
@@ -23,6 +27,9 @@ import static org.mockito.Mockito.mock;
 class AddressServiceJpaMockUnitTest {
     @Mock
     AddressRepository addressRepository;
+
+    @Mock
+    MemberRepository memberRepository;
 
     @InjectMocks
     AddressServiceImpl AddressServiceImpl;
@@ -35,9 +42,12 @@ class AddressServiceJpaMockUnitTest {
         //given
         Address address = mock(Address.class);
         Member member = mock(Member.class);
+        AddressInfo addressInfo = mock(AddressInfo.class);
         given(address.getMember()).willReturn(member);
+        given(address.getAddressInfo()).willReturn(addressInfo);
         List<Address> addresses = List.of(address, address);
         given(addressRepository.findAddressListByMemberId(any())).willReturn(addresses);
+        given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(CreateObject.getMemberByCreateMemberRequestDTO()));
 
         //when
         List<AddressResponse> memberAddressResponseList = AddressServiceImpl.findMemberAllAddress(memberId);

@@ -23,6 +23,9 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<AddressResponse> findMemberAllAddress(Long memberId) {
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
+
         return addressRepository.findAddressListByMemberId(memberId).stream()
                 .map(AddressResponse::new)
                 .toList();

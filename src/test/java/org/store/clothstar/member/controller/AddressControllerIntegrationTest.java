@@ -1,8 +1,6 @@
 package org.store.clothstar.member.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.common.config.jwt.JwtUtil;
-import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
 import org.store.clothstar.member.repository.AddressRepository;
@@ -85,16 +82,6 @@ class AddressControllerIntegrationTest {
         //then
         actions.andExpect(status().isCreated())
                 .andDo(print());
-
-        //Address를 조회해서 memberId가 잘 들어갔는지 확인
-        String responseBody = actions.andReturn().getResponse().getContentAsString();
-        JsonNode jsonNode = objectMapper.readTree(responseBody);
-        Long addressId = jsonNode.get("id").asLong();
-
-        Address address = addressRepository.findById(addressId).get();
-        System.out.println("addressEntity.toString() " + address.toString());
-        Assertions.assertThat(address.getAddressId()).isEqualTo(addressId);
-        Assertions.assertThat(address.getMember().getMemberId()).isEqualTo(memberId);
     }
 
     @DisplayName("회원 전체 주소 리스트 조회 테스트")

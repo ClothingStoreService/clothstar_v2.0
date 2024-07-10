@@ -178,7 +178,7 @@ class MemberAndSellerSignUpIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON));
 
         //then
-        actions.andExpect(status().isOk());
+        actions.andExpect(status().isBadRequest());
         actions.andExpect(jsonPath("$.message").value("이미 사용중인 이메일 입니다."));
     }
 

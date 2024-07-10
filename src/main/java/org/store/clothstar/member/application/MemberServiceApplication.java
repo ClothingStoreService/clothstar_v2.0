@@ -31,8 +31,8 @@ public class MemberServiceApplication {
         return memberService.getMemberById(memberId);
     }
 
-    public boolean emailCheck(String email) {
-        return memberService.getMemberByEmail(email);
+    public void emailCheck(String email) {
+        memberService.getMemberByEmail(email);
     }
 
     public void modifyMember(Long memberId, ModifyMemberRequest modifyMemberRequest) {
