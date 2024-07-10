@@ -113,10 +113,10 @@ public class OrderDetailService {
     @Transactional
     public void updateDeleteAt(Long orderDetailId) {
         OrderDetailEntity orderDetailEntity = orderDetailRepository.findById(orderDetailId)
-                .orElseThrow(() -> new IllegalArgumentException("주문상세 번호를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문상세 번호를 찾을 수 없습니다."));
 
         if(orderDetailEntity.getDeletedAt() != null){
-            throw new IllegalArgumentException("이미 삭제된 주문입니다.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "이미 삭제된 주문입니다.");
         }
 
         restoreStockByOrderDetail(orderDetailId);
@@ -138,7 +138,7 @@ public class OrderDetailService {
     @Transactional
     public void restoreStockByOrderDetail(Long orderDetailId) {
         OrderDetailEntity orderDetailEntity = orderDetailRepository.findById(orderDetailId)
-                .orElseThrow(() -> new IllegalArgumentException("주문상세 번호를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문상세 번호를 찾을 수 없습니다."));
         productService.restoreProductStockByOrderDetail(orderDetailEntity);
     }
 }

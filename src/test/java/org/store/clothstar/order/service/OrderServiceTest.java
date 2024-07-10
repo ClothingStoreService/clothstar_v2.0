@@ -6,9 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
@@ -22,7 +20,11 @@ import org.store.clothstar.order.dto.request.OrderRequestWrapper;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.type.Status;
+import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
+import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,10 +42,16 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
+    private OrderDetailRepository orderDetailRepository;
+
+    @Mock
     private MemberRepository memberRepository;
 
     @Mock
     private AddressRepository addressRepository;
+
+    @Mock
+    private OrderDetailEntity orderDetailEntity;
 
     @Test
     @DisplayName("getOrder: 주문 조회 - 메서드 호출 & 반환값 테스트")
@@ -159,9 +167,8 @@ class OrderServiceTest {
         given(memberRepository.findById(1L)).willReturn(Optional.empty());
 
         //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            orderService.saveOrder(orderRequestWrapper.getCreateOrderRequest());
-        });
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderService.saveOrder(orderRequestWrapper.getCreateOrderRequest()));
 
         //then
         assertEquals("400 BAD_REQUEST \"회원 정보를 찾을 수 없습니다.\"", thrown.getMessage());
@@ -184,9 +191,8 @@ class OrderServiceTest {
         given(addressRepository.findById(2L)).willReturn(Optional.empty());
 
         //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            orderService.saveOrder(orderRequestWrapper.getCreateOrderRequest());
-        });
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderService.saveOrder(orderRequestWrapper.getCreateOrderRequest()));
 
         //then
         assertEquals("400 BAD_REQUEST \"배송지 정보를 찾을 수 없습니다.\"", thrown.getMessage());
@@ -222,11 +228,67 @@ class OrderServiceTest {
         given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrder));
 
         //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            orderService.deliveredToConfirmOrder(orderId);
-        });
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderService.deliveredToConfirmOrder(orderId));
 
         //then
         assertEquals("400 BAD_REQUEST \"주문 상태가 '배송완료'가 아니기 때문에 주문확정이 불가능합니다.\"", thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("updateDeleteAt: 주문 삭제 - 메서드 호출 테스트")
+    void updateDeleteAt_verify_test() {
+        //given
+        Long orderId = 1L;
+        OrderEntity orderEntity = mock(OrderEntity.class);
+        OrderDetailEntity mockOrderDetail1 = mock(OrderDetailEntity.class);
+        OrderDetailEntity mockOrderDetail2 = mock(OrderDetailEntity.class);
+        OrderDetailEntity mockOrderDetail3 = mock(OrderDetailEntity.class);
+        List<OrderDetailEntity> orderDetailList = List.of(mockOrderDetail1, mockOrderDetail2, mockOrderDetail3);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(orderEntity));
+        given(orderDetailRepository.findOrderDetailListByOrderId(orderId)).willReturn(orderDetailList);
+
+        //when
+        orderService.updateDeleteAt(orderId);
+
+        //then
+        verify(mockOrderDetail1, times(1)).updateDeletedAt();
+        verify(mockOrderDetail2, times(1)).updateDeletedAt();
+        verify(mockOrderDetail3, times(1)).updateDeletedAt();
+        then(orderRepository).should(times(1)).findById(orderId);
+        then(orderDetailRepository).should().findOrderDetailListByOrderId(orderId);
+        then(orderEntity).should(times(1)).updateDeletedAt();
+    }
+
+    @Test
+    @DisplayName("updateDeleteAt: 주문 삭제 - orderEntity null 예외처리 테스트")
+    void updateDeleteAt_orderEntityNull_exception_test() {
+        //given
+        Long orderId = 1L;
+        given(orderRepository.findById(1L)).willReturn(Optional.empty());
+
+        //when
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderService.updateDeleteAt(orderId));
+
+        //then
+        assertEquals("404 NOT_FOUND \"주문 번호를 찾을 수 없습니다.\"", thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("updateDeleteAt: 주문 삭제 - 이미 삭제된 경우 예외처리 테스트")
+    void updateDeleteAt_alreadyDelete_exception_test() {
+        //given
+        Long orderId = 1L;
+        OrderEntity orderEntity = mock(OrderEntity.class);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(orderEntity));
+        given(orderEntity.getDeletedAt()).willReturn(LocalDateTime.now());
+
+        //when
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderService.updateDeleteAt(orderId));
+
+        //then
+        assertEquals("400 BAD_REQUEST \"이미 삭제된 주문입니다.\"", thrown.getMessage());
     }
 }

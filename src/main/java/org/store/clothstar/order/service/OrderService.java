@@ -1,7 +1,6 @@
 package org.store.clothstar.order.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.query.Order;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -93,14 +92,14 @@ public class OrderService {
     @Transactional
     public void updateDeleteAt(Long orderId) {
         OrderEntity orderEntity = orderRepository.findById(orderId)
-                        .orElseThrow(() -> new IllegalArgumentException("주문 번호를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 번호를 찾을 수 없습니다."));
+
+        if(orderEntity.getDeletedAt() != null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 삭제된 주문입니다.");
+        }
 
         List<OrderDetailEntity> orderDetailList = orderDetailRepository.findOrderDetailListByOrderId(orderId);
         orderDetailList.forEach(OrderDetailEntity::updateDeletedAt);
-
-        if(orderEntity.getDeletedAt() != null){
-            throw new IllegalArgumentException("이미 삭제된 주문입니다.");
-        }
 
         orderEntity.updateDeletedAt();
     }
