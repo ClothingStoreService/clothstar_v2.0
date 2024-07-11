@@ -26,24 +26,20 @@ import java.util.List;
 public class ProductLineWithProductsJPAResponse {
 
     private Long productLineId;
-    private CategoryResponse category;
     private String name;
     private String content;
     private int price;
     private Long totalStock;
     private ProductLineStatus status;
-    //    private List<ProductEntity> productList;
     private List<ProductResponse> productList;
     private Long saleCount;  // ~개 판매중
-    private MemberSimpleResponse member;
     private SellerSimpleResponse seller;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-//    private LocalDateTime deletedAt;
 
 //    @QueryProjection
-//    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Category category, SellerEntity seller, Member member, Long totalStock) {
+//    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Category category, SellerEntity seller, MemberEntity member, Long totalStock) {
 //        this.productLineId = productLine.getProductLineId();
 //        this.category = CategoryResponse.from(category);
 //        this.name = productLine.getName();
@@ -64,21 +60,19 @@ public class ProductLineWithProductsJPAResponse {
 //    }
 
     // 추가된 생성자
-    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, CategoryEntity category, Seller seller, Member member, Long totalStock, List<ProductResponse> productList) {
+    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, CategoryEntity category, SellerEntity seller, MemberEntity member, Long totalStock, List<ProductResponse> productList) {
         this(productLine, category, seller, member, totalStock);
         this.productList = productList != null ? productList : new ArrayList<>();
     }
 
     @QueryProjection
-    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, CategoryEntity category, Seller seller, Member member, Long totalStock) {
+    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, SellerEntity seller, Long totalStock) {
         this.productLineId = productLine.getProductLineId();
-        this.category = CategoryResponse.from(category);
         this.name = productLine.getName();
         this.price = productLine.getPrice();
         this.totalStock = totalStock;
         this.status = productLine.getStatus();
         this.saleCount = productLine.getSaleCount();
-        this.member = MemberSimpleResponse.from(member);
         this.seller = SellerSimpleResponse.from(seller);
         this.createdAt = productLine.getCreatedAt();
         this.modifiedAt = productLine.getModifiedAt();
