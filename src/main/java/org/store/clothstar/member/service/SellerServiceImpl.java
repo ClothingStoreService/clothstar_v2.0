@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.DuplicatedBizNoException;
+import org.store.clothstar.common.error.exception.DuplicatedBrandNameException;
 import org.store.clothstar.common.error.exception.DuplicatedSellerException;
 import org.store.clothstar.common.error.exception.NotFoundMemberException;
 import org.store.clothstar.member.domain.Member;
@@ -52,11 +54,11 @@ public class SellerServiceImpl implements SellerService {
         });
 
         sellerRepository.findByBizNo(createSellerRequest.getBizNo()).ifPresent(m -> {
-            throw new DuplicatedSellerException(ErrorCode.DUPLICATED_BIZNO);
+            throw new DuplicatedBizNoException(ErrorCode.DUPLICATED_BIZNO);
         });
 
         sellerRepository.findByBrandName(createSellerRequest.getBrandName()).ifPresent(m -> {
-            throw new DuplicatedSellerException(ErrorCode.DUPLICATED_BRAND_NAME);
+            throw new DuplicatedBrandNameException(ErrorCode.DUPLICATED_BRAND_NAME);
         });
     }
 }

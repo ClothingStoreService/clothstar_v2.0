@@ -7,6 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.DuplicatedBizNoException;
+import org.store.clothstar.common.error.exception.DuplicatedBrandNameException;
+import org.store.clothstar.common.error.exception.DuplicatedSellerException;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
 import org.store.clothstar.member.repository.MemberRepository;
@@ -53,12 +57,12 @@ class SellerCreateJpaServiceUnitTest {
     @Test
     void sellerSaveDuplicateTest() {
         //given & when
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable exception = assertThrows(DuplicatedSellerException.class, () -> {
             sellerService.sellerSave(memberId, getCreateSellerRequest());
         });
 
         //then
-        assertThat(exception.getMessage()).isEqualTo("이미 판매자 가입이 되어 있습니다.");
+        assertThat(exception.getMessage()).isEqualTo(ErrorCode.DUPLICATED_SELLER.getMessage());
     }
 
     @DisplayName("같은 브랜드명으로 판매자 신청하면 에러 메시지를 응답한다.")
@@ -69,12 +73,12 @@ class SellerCreateJpaServiceUnitTest {
                 brandName, "102-13-13123"
         );
 
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable exception = assertThrows(DuplicatedBrandNameException.class, () -> {
             sellerService.sellerSave(memberId2, createSellerRequest);
         });
 
         //then
-        assertThat(exception.getMessage()).isEqualTo("이미 존재하는 브랜드 이름 입니다.");
+        assertThat(exception.getMessage()).isEqualTo(ErrorCode.DUPLICATED_BRAND_NAME.getMessage());
     }
 
     @DisplayName("같은 사업자번호로 판매자 신청하면 에러 메시지를 응답한다.")
@@ -85,12 +89,12 @@ class SellerCreateJpaServiceUnitTest {
                 "아디다스", bizNo
         );
 
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable exception = assertThrows(DuplicatedBizNoException.class, () -> {
             sellerService.sellerSave(memberId2, createSellerRequest);
         });
 
         //then
-        assertThat(exception.getMessage()).isEqualTo("이미 존재하는 사업자 번호 입니다.");
+        assertThat(exception.getMessage()).isEqualTo(ErrorCode.DUPLICATED_BIZNO.getMessage());
     }
 
 
