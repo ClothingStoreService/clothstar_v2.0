@@ -1,24 +1,15 @@
 package org.store.clothstar.productLine.repository;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import org.store.clothstar.category.entity.CategoryEntity;
-import org.store.clothstar.category.entity.QCategoryEntity;
-import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.domain.QMember;
-import org.store.clothstar.member.domain.QSeller;
-import org.store.clothstar.member.domain.Seller;
+import org.store.clothstar.member.entity.QSellerEntity;
 import org.store.clothstar.product.dto.response.ProductResponse;
-import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.entity.QProductEntity;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
 import org.store.clothstar.productLine.dto.response.QProductLineWithProductsJPAResponse;
@@ -35,46 +26,13 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
     private final JPAQueryFactory jpaQueryFactory;
 
     QProductLineEntity qProductLine = QProductLineEntity.productLineEntity;
-    QCategoryEntity qCategory = QCategoryEntity.categoryEntity;
     QProductEntity qProduct = QProductEntity.productEntity;
-    QSeller qSeller = QSeller.seller;
-    QMember qMember = QMember.member;
+    QSellerEntity qSeller = QSellerEntity.sellerEntity;
+    QMemberEntity qMember = QMemberEntity.memberEntity;
 
-
+    @Override
     public Page<ProductLineWithProductsJPAResponse> getProductLinesWithOptions(Pageable pageable) {
-        List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable.getSort());
-
-        List<Tuple> results = jpaQueryFactory
-                .selectDistinct(qProductLine, qCategory, qSeller, qMember, qProduct)
-                .from(qProductLine)
-                .innerJoin(qProductLine.seller, qSeller).fetchJoin()
-                .innerJoin(qSeller.member, qMember).fetchJoin()
-                .leftJoin(qProductLine.products, qProduct).fetchJoin()
-                .leftJoin(qProductLine.category, qCategory).fetchJoin()
-                .where(qProductLine.deletedAt.isNull())
-                .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        Map<Long, ProductLineWithProductsJPAResponse> productLineMap = new HashMap<>();
-        for (Tuple tuple : results) {
-            ProductLineEntity productLine = tuple.get(qProductLine);
-            CategoryEntity category = tuple.get(qCategory);
-            Seller seller = tuple.get(qSeller);
-            Member member = tuple.get(qMember);
-            ProductEntity product = tuple.get(qProduct);
-
-            ProductLineWithProductsJPAResponse response = productLineMap.computeIfAbsent(productLine.getProductLineId(),
-                    id -> new ProductLineWithProductsJPAResponse(productLine, seller, productLine.getProducts().stream().mapToLong(ProductEntity::getStock).sum()));
-
-            if (product != null) {
-                response.getProductList().add(ProductResponse.from(product));
-            }
-        }
-
-
-        List<ProductLineWithProductsJPAResponse> content = new ArrayList<>(productLineMap.values());
+        List<ProductLineWithProductsJPAResponse> content = getProductLines(pageable, null);
 
         JPAQuery<Long> totalCount = jpaQueryFactory
                 .select(qProductLine.count())
@@ -86,34 +44,152 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
 
     @Override
     public Optional<ProductLineWithProductsJPAResponse> findProductLineWithOptionsById(Long productLineId) {
-        NumberExpression<Long> totalStockExpression = qProduct.stock.sum();
-
+        // 1. ProductLine과 관련된 Seller와 총 재고량을 가져옴
         ProductLineWithProductsJPAResponse result = jpaQueryFactory
                 .select(new QProductLineWithProductsJPAResponse(
                         qProductLine,
                         qSeller,
-                        totalStockExpression
+                        qProduct.stock.sum()
                 ))
                 .from(qProductLine)
-                .innerJoin(qProductLine.seller, qSeller)
+                .innerJoin(qProductLine.seller, qSeller).fetchJoin()
                 .leftJoin(qProductLine.products, qProduct)
                 .where(qProductLine.productLineId.eq(productLineId)
                         .and(qProductLine.deletedAt.isNull()))
-                .groupBy(qProductLine.productLineId, qCategory, qSeller, qMember)
+                .groupBy(qProductLine.productLineId, qSeller)
                 .fetchOne();
 
+        // 2. ProductLine에 속한 Product들을 가져옴
         if (result != null) {
-            List<ProductEntity> products = jpaQueryFactory
+            List<ProductResponse> productResponses = jpaQueryFactory
                     .selectFrom(qProduct)
                     .where(qProduct.productLine.productLineId.eq(productLineId))
-                    .fetch();
-
-            result.setProductList(products.stream()
+                    .fetch()
+                    .stream()
                     .map(ProductResponse::from)
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toList());
+            result.setProductList(productResponses);
         }
 
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public Page<ProductLineWithProductsJPAResponse> findAllOffsetPaging(Pageable pageable, String keyword) {
+        List<ProductLineWithProductsJPAResponse> content = getProductLines(pageable, keyword);
+
+        JPAQuery<Long> totalCount = jpaQueryFactory
+                .select(qProductLine.count())
+                .from(qProductLine)
+                .where(qProductLine.deletedAt.isNull().and(getSearchCondition(keyword)));
+
+        return PageableExecutionUtils.getPage(content, pageable, totalCount::fetchOne);
+    }
+
+    @Override
+    public Slice<ProductLineWithProductsJPAResponse> findAllSlicePaging(Pageable pageable, String keyword) {
+        List<ProductLineWithProductsJPAResponse> content = getProductLines(pageable, keyword);
+
+        boolean hasNext = false;
+        if (content.size() > pageable.getPageSize()) {
+            content.remove(content.size() - 1);
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(content, pageable, hasNext);
+    }
+
+    @Override
+    public Page<ProductLineEntity> findEntitiesByCategoryWithOffsetPaging(Long categoryId, Pageable pageable, String keyword) {
+        List<ProductLineEntity> content = getProductLineEntitiesByCategory(categoryId, pageable, keyword);
+
+        JPAQuery<Long> totalCount = jpaQueryFactory
+                .select(qProductLine.countDistinct())
+                .from(qProductLine)
+                .where(qProductLine.category.categoryId.eq(categoryId)
+                        .and(qProductLine.deletedAt.isNull())
+                        .and(getSearchCondition(keyword)));
+
+        return PageableExecutionUtils.getPage(content, pageable, totalCount::fetchOne);
+    }
+
+    @Override
+    public Slice<ProductLineEntity> findEntitiesByCategoryWithSlicePaging(Long categoryId, Pageable pageable, String keyword) {
+        List<ProductLineEntity> content = getProductLineEntitiesByCategory(categoryId, pageable, keyword);
+
+        boolean hasNext = false;
+        if (content.size() > pageable.getPageSize()) {
+            content.remove(content.size() - 1);
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(content, pageable, hasNext);
+    }
+
+    private List<ProductLineWithProductsJPAResponse> getProductLines(Pageable pageable, String keyword) {
+        List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable.getSort());
+        BooleanExpression searchCondition = getSearchCondition(keyword);
+
+        // 1. 모든 ProductLine을 가져옴
+        List<ProductLineWithProductsJPAResponse> productLines = jpaQueryFactory
+                .select(new QProductLineWithProductsJPAResponse(
+                        qProductLine,
+                        qSeller,
+                        qProduct.stock.sum()
+                ))
+                .from(qProductLine)
+                .innerJoin(qProductLine.seller, qSeller).fetchJoin()
+                .leftJoin(qProductLine.products, qProduct)
+                .where(qProductLine.deletedAt.isNull().and(searchCondition))
+                .groupBy(qProductLine.productLineId, qSeller)
+                .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        // 2. 모든 Product를 가져옴
+        Map<Long, List<ProductResponse>> productMap = jpaQueryFactory
+                .selectFrom(qProduct)
+                .where(qProduct.productLine.productLineId.in(
+                        productLines.stream()
+                                .map(ProductLineWithProductsJPAResponse::getProductLineId)
+                                .collect(Collectors.toList())
+                ))
+                .fetch()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        p -> p.getProductLine().getProductLineId(),
+                        Collectors.mapping(ProductResponse::from, Collectors.toList())
+                ));
+
+        // 3. ProductLine에 Product를 매핑
+        productLines.forEach(productLine ->
+                productLine.setProductList(productMap.get(productLine.getProductLineId())));
+
+        return productLines;
+    }
+
+    private List<ProductLineEntity> getProductLineEntitiesByCategory(Long categoryId, Pageable pageable, String keyword) {
+        List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable.getSort());
+
+        // 카테고리별로 ProductLine 엔티티를 가져옴
+        return jpaQueryFactory
+                .selectDistinct(qProductLine)
+                .from(qProductLine)
+                .where(qProductLine.category.categoryId.eq(categoryId)
+                        .and(qProductLine.deletedAt.isNull()))
+                .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+    }
+
+    private BooleanExpression getSearchCondition(String keyword) {
+        if (keyword == null || keyword.isEmpty()) {
+            return qProductLine.isNotNull();  // 조건이 없을 경우 항상 true를 반환
+        }
+        return qProductLine.name.containsIgnoreCase(keyword)
+                .or(qProductLine.content.containsIgnoreCase(keyword));
     }
 
     private List<OrderSpecifier<?>> getOrderSpecifiers(Sort sort) {

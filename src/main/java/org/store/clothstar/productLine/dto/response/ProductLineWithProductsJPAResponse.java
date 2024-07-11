@@ -3,6 +3,7 @@ package org.store.clothstar.productLine.dto.response;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.querydsl.core.annotations.QueryProjection;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.store.clothstar.category.dto.response.CategoryResponse;
 import org.store.clothstar.category.entity.CategoryEntity;
@@ -11,12 +12,14 @@ import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.dto.response.MemberSimpleResponse;
 import org.store.clothstar.member.dto.response.SellerSimpleResponse;
 import org.store.clothstar.product.dto.response.ProductResponse;
+import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 @Getter
@@ -25,50 +28,45 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductLineWithProductsJPAResponse {
 
+    @Schema(description = "상품 id", example = "1")
     private Long productLineId;
+
+    @Schema(description = "상품 이름", example = "우유 모자")
     private String name;
+
+    @Schema(description = "상품 설명", example = "우유 모자입니다.")
     private String content;
+
+    @Schema(description = "상품 가격", example = "10000")
     private int price;
+
+    @Schema(description = "상품 전체 재고", example = "100")
     private Long totalStock;
+
+    @Schema(description = "상품 상태", example = "FOR_SALE")
     private ProductLineStatus status;
-    private List<ProductResponse> productList;
+
+    @Schema(description = "상품 옵션")
+    private List<ProductResponse> productList = new ArrayList<>();
+
+    @Schema(description = "상품 판매량", example = "10")
     private Long saleCount;  // ~개 판매중
+
+    @Schema(description = "판매자 정보")
     private SellerSimpleResponse seller;
+
+    @Schema(description = "생성일시")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createdAt;
+
+    @Schema(description = "수정일시")
     private LocalDateTime modifiedAt;
-
-//    @QueryProjection
-//    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Category category, SellerEntity seller, MemberEntity member, Long totalStock) {
-//        this.productLineId = productLine.getProductLineId();
-//        this.category = CategoryResponse.from(category);
-//        this.name = productLine.getName();
-//        this.price = productLine.getPrice();
-//        this.totalStock = totalStock;
-//        this.status = productLine.getStatus();
-//        this.productList = productLine.getProducts()
-//                .stream()
-//                .map(ProductResponse::from)
-//                .toList();
-////        this.productList = productLine.getProducts();
-//        this.saleCount = productLine.getSaleCount();
-//        this.member = MemberSimpleResponse.from(member);
-//        this.seller = SellerSimpleResponse.from(seller);
-//        this.createdAt = productLine.getCreatedAt();
-//        this.modifiedAt = productLine.getModifiedAt();
-////        this.deletedAt = productLine.getDeletedAt();
-//    }
-
-    // 추가된 생성자
-    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, CategoryEntity category, SellerEntity seller, MemberEntity member, Long totalStock, List<ProductResponse> productList) {
-        this(productLine, category, seller, member, totalStock);
-        this.productList = productList != null ? productList : new ArrayList<>();
-    }
 
     @QueryProjection
     public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, SellerEntity seller, Long totalStock) {
         this.productLineId = productLine.getProductLineId();
         this.name = productLine.getName();
+        this.content = productLine.getContent();
         this.price = productLine.getPrice();
         this.totalStock = totalStock;
         this.status = productLine.getStatus();
@@ -76,11 +74,10 @@ public class ProductLineWithProductsJPAResponse {
         this.seller = SellerSimpleResponse.from(seller);
         this.createdAt = productLine.getCreatedAt();
         this.modifiedAt = productLine.getModifiedAt();
-        this.productList = new ArrayList<>();
+//        this.productList = productLine.getProducts().stream().map(ProductResponse::from).collect(Collectors.toList());
     }
 
     public void setProductList(List<ProductResponse> productList) {
         this.productList = productList != null ? productList : new ArrayList<>();
     }
-
 }

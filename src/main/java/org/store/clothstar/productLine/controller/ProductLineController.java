@@ -3,7 +3,9 @@ package org.store.clothstar.productLine.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,10 +38,21 @@ public class ProductLineController {
         return ResponseEntity.ok().body(productLineResponses);
     }
 
-    @Operation(summary = "전체 상품 조회", description = "삭제되지 않은 모든 상품을 조회한다.")
-    @GetMapping("/v1/productLines")
-    public ResponseEntity<Page<ProductLineResponse>> getAllProductLines(@PageableDefault(size = 18) Pageable pageable) {
-        List<ProductLineResponse> productLineResponses = productLineService.getAllProductLines();
+    @Operation(summary = "전체 상품 Offset Paging 조회", description = "삭제되지 않은 모든 상품을 조회한다.")
+    @GetMapping("/v1/productLines/offset")
+    public ResponseEntity<Page<ProductLineWithProductsJPAResponse>> getAllProductLinesOffsetPaging(
+            @PageableDefault(size = 18) Pageable pageable,
+            @RequestParam(required = false) String keyword){
+        Page<ProductLineWithProductsJPAResponse> productLineResponses = productLineService.getAllProductLinesWithProductsOffsetPaging(pageable, keyword);
+        return ResponseEntity.ok().body(productLineResponses);
+    }
+
+    @Operation(summary = "전체 상품 Slice Paging 조회", description = "삭제되지 않은 모든 상품을 조회한다.")
+    @GetMapping("/v1/productLines/slice")
+    public ResponseEntity<Slice<ProductLineWithProductsJPAResponse>> getAllProductLinesSlicePaging(
+            @PageableDefault(size = 18) Pageable pageable,
+            @RequestParam(required = false) String keyword) {
+        Slice<ProductLineWithProductsJPAResponse> productLineResponses = productLineService.getAllProductLinesWithProductsSlicePaging(pageable, keyword);
         return ResponseEntity.ok().body(productLineResponses);
     }
 
