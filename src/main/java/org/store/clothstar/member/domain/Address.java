@@ -1,18 +1,18 @@
 package org.store.clothstar.member.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.store.clothstar.member.entity.AddressEntity;
+import jakarta.persistence.*;
+import lombok.*;
 
+@ToString
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity(name = "address")
 public class Address {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long addressId;
-    private Long memberId;
     private String receiverName;
     private String zipNo;
     private String addressBasic;
@@ -21,15 +21,7 @@ public class Address {
     private String deliveryRequest;
     private boolean defaultAddress;
 
-    public Address(AddressEntity addressEntity) {
-        this.addressId = addressEntity.getAddressId();
-        this.memberId = addressEntity.getMember().getMemberId();
-        this.receiverName = addressEntity.getReceiverName();
-        this.zipNo = addressEntity.getZipNo();
-        this.addressBasic = addressEntity.getAddressBasic();
-        this.addressDetail = addressEntity.getAddressDetail();
-        this.telNo = addressEntity.getTelNo();
-        this.deliveryRequest = addressEntity.getDeliveryRequest();
-        this.defaultAddress = addressEntity.isDefaultAddress();
-    }
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 }

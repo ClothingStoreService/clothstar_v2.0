@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.MemberRole;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
-import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.util.CreateObject;
 
@@ -29,15 +29,15 @@ public class MemberServiceJpaUnitTest {
     private MemberRepository memberRepository;
 
     private Long memberId;
-    private MemberEntity memberEntity;
+    private Member member;
 
     @DisplayName("회원가입후 memberId를 반환한다.")
     @BeforeEach
     public void getMemberId_getAccessToken() {
         //given && when
-        memberEntity = memberRepository.save(CreateObject.getMemberEntityByCreateMemberRequestDTO());
-        memberId = memberEntity.getMemberId();
-        
+        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO());
+        memberId = member.getMemberId();
+
         //then
         assertThat(memberId).isNotNull();
     }
@@ -46,8 +46,8 @@ public class MemberServiceJpaUnitTest {
     @Test
     void modifyMemberAuthUnitTest() {
         //회원가입시 기본 User 권한으로 적용 되었는지 확인
-        assertThat(memberEntity.getRole()).isEqualTo(MemberRole.USER);
-        String name = memberEntity.getName();
+        assertThat(member.getRole()).isEqualTo(MemberRole.USER);
+        String name = member.getName();
 
         //given
         ModifyMemberRequest modifyMemberRequest = ModifyMemberRequest.builder()
@@ -59,7 +59,7 @@ public class MemberServiceJpaUnitTest {
 
         //then
         //Seller 권한으로 변경 되었는지 확인
-        MemberEntity modifiedMember = memberRepository.findById(memberId).get();
+        Member modifiedMember = memberRepository.findById(memberId).get();
         assertThat(modifiedMember.getRole()).isEqualTo(MemberRole.SELLER);
         assertThat(name).isEqualTo(modifiedMember.getName()); //이름은 변경 안됐는지 확인한다.
     }
@@ -68,7 +68,7 @@ public class MemberServiceJpaUnitTest {
     @Test
     void modifyMemberNameUnitTest() {
         //given
-        MemberRole memberRole = memberEntity.getRole();
+        MemberRole memberRole = member.getRole();
         ModifyMemberRequest modifyMemberRequest = ModifyMemberRequest.builder()
                 .name("아이언맨")
                 .build();
@@ -78,7 +78,7 @@ public class MemberServiceJpaUnitTest {
 
         //then
         //Seller 권한으로 변경 되었는지 확인
-        MemberEntity modifiedMember = memberRepository.findById(memberId).get();
+        Member modifiedMember = memberRepository.findById(memberId).get();
         assertThat(memberRole).isEqualTo(modifiedMember.getRole()); //권한은 변경 안됐는지 확인 확인한다.
     }
 
@@ -86,14 +86,14 @@ public class MemberServiceJpaUnitTest {
     @Test
     void modifyPasswordUnitTest() {
         //given
-        String originPassword = memberEntity.getPassword();
+        String originPassword = member.getPassword();
         String modifyPassword = "zxcvasdf123";
 
         //when
         memberServiceImpl.updatePassword(memberId, modifyPassword);
 
         //then
-        MemberEntity modifiedMember = memberRepository.findById(memberId).get();
+        Member modifiedMember = memberRepository.findById(memberId).get();
         assertThat(modifiedMember.getPassword()).isNotEqualTo(originPassword);
     }
 
@@ -101,14 +101,14 @@ public class MemberServiceJpaUnitTest {
     @Test
     void memberDeleteAtUnitTest() {
         //given
-        LocalDateTime originDeletedAt = memberEntity.getDeletedAt();
+        LocalDateTime originDeletedAt = member.getDeletedAt();
 
         //when
         memberServiceImpl.updateDeleteAt(memberId);
 
         //then
         assertThat(originDeletedAt).isNull();
-        MemberEntity modifiedMember = memberRepository.findById(memberId).get();
+        Member modifiedMember = memberRepository.findById(memberId).get();
         assertThat(modifiedMember.getDeletedAt()).isNotNull();
     }
 

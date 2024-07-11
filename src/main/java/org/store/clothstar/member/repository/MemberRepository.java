@@ -3,21 +3,18 @@ package org.store.clothstar.member.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.domain.Member;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository {
-    List<MemberEntity> findAll();
+    Page<Member> findAllOffsetPaging(Pageable pageable);
 
-    Page<MemberEntity> findAllOffsetPaging(Pageable pageable);
+    Slice<Member> findAllSlicePaging(Pageable pageable);
 
-    Slice<MemberEntity> findAllSlicePaging(Pageable pageable);
+    Optional<Member> findById(Long memberId);
 
-    Optional<MemberEntity> findById(Long memberId);
+    Optional<Member> findByEmail(String email);
 
-    Optional<MemberEntity> findByEmail(String email);
-
-    MemberEntity save(MemberEntity memberEntity);
+    Member save(Member member);
 }

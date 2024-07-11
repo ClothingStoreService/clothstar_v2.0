@@ -1,29 +1,33 @@
 package org.store.clothstar.member.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.store.clothstar.member.entity.SellerEntity;
+import jakarta.persistence.*;
+import lombok.*;
+import org.store.clothstar.common.entity.BaseEntity;
+import org.store.clothstar.member.dto.request.CreateSellerRequest;
 
-import java.time.LocalDateTime;
-
+@ToString
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Seller {
+@Entity(name = "seller")
+public class Seller extends BaseEntity {
+    @Id
     private Long memberId;
+    @Column(unique = true)
     private String brandName;
+    @Column(unique = true)
     private String bizNo;
     private int totalSellPrice;
-    private LocalDateTime createdAt;
 
-    public Seller(SellerEntity sellerEntity) {
-        this.memberId = sellerEntity.getMemberId();
-        this.brandName = sellerEntity.getBrandName();
-        this.bizNo = sellerEntity.getBizNo();
-        this.totalSellPrice = sellerEntity.getTotalSellPrice();
-        this.createdAt = sellerEntity.getCreatedAt();
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    public Seller(CreateSellerRequest createSellerRequest, Member member) {
+        this.brandName = createSellerRequest.getBrandName();
+        this.bizNo = createSellerRequest.getBizNo();
+        this.member = member;
     }
 }

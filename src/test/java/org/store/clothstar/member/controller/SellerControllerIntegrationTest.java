@@ -11,9 +11,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
-import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.service.MemberServiceImpl;
 import org.store.clothstar.member.service.SellerServiceImpl;
@@ -42,7 +42,7 @@ class SellerControllerIntegrationTest {
 
     private static final String SELLER_URL = "/v1/sellers";
 
-    MemberEntity memberEntity;
+    Member member;
     private Long memberId;
     private final String brandName = "나이키";
     private final String bizNo = "102-13-13122";
@@ -52,8 +52,8 @@ class SellerControllerIntegrationTest {
     @Test
     void getSellerTest() throws Exception {
         //given
-        memberEntity = memberRepository.save(CreateObject.getMemberEntityByCreateMemberRequestDTO());
-        memberId = memberEntity.getMemberId();
+        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO());
+        memberId = member.getMemberId();
         Long sellerId = sellerServiceImpl.sellerSave(memberId, getCreateSellerRequest());
         String sellerMemberIdURL = SELLER_URL + "/" + memberId;
 

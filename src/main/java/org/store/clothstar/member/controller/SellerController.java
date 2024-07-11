@@ -12,7 +12,7 @@ import org.store.clothstar.common.dto.SaveResponseDTO;
 import org.store.clothstar.member.application.SellerServiceApplication;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
 import org.store.clothstar.member.dto.response.SellerResponse;
-import org.store.clothstar.member.entity.SellerEntity;
+import org.store.clothstar.member.domain.Seller;
 
 @Tag(name = "Seller", description = "판매자 정보 관리에 대한 API 입니다.")
 @RestController
@@ -24,8 +24,8 @@ public class SellerController {
     @Operation(summary = "판매자 상세정보 조회", description = "판매자 한 명에 대한 상세정보를 가져온다.")
     @GetMapping("/v1/sellers/{id}")
     public ResponseEntity<SellerResponse> getSeller(@PathVariable("id") Long memberId) {
-        SellerEntity sellerEntity = sellerServiceApplication.getSellerById(memberId);
-        return ResponseEntity.ok(new SellerResponse(sellerEntity));
+        Seller seller = sellerServiceApplication.getSellerById(memberId);
+        return ResponseEntity.ok(new SellerResponse(seller));
     }
 
     @Operation(summary = "판매자 가입", description = "판매자 정보를 저장된다.")

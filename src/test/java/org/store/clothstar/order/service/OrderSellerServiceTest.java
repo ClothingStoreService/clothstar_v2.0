@@ -10,8 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.common.dto.MessageDTO;
-import org.store.clothstar.member.entity.AddressEntity;
-import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.domain.Address;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
@@ -48,10 +48,10 @@ class OrderSellerServiceTest {
     private OrderDetailService orderDetailService;
 
     @Mock
-    private MemberEntity mockMemberEntity;
+    private Member mockMember;
 
     @Mock
-    private AddressEntity mockAddressEntity;
+    private Address mockAddress;
 
     @Test
     @DisplayName("getWaitingOrders: '승인대기' 주문 조회 - 메서드 호출 & 반환값 테스트")

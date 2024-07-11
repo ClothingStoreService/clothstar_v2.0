@@ -4,8 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.store.clothstar.member.domain.Address;
-import org.store.clothstar.member.entity.AddressEntity;
-import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.domain.Member;
 
 @Getter
 @AllArgsConstructor
@@ -28,23 +27,10 @@ public class CreateAddressRequest {
     private String deliveryRequest;
     private boolean defaultAddress;
 
-    public Address toAddress(Long memberId) {
+    public Address toAddress(Member member) {
         return Address.builder()
-                .memberId(memberId)
                 .receiverName(this.receiverName)
-                .zipNo(this.zipNo)
-                .addressBasic(this.addressBasic)
-                .addressDetail(this.addressDetail)
-                .telNo(this.telNo)
-                .deliveryRequest(this.deliveryRequest)
-                .defaultAddress(this.defaultAddress)
-                .build();
-    }
-
-    public AddressEntity toAddressEntity(MemberEntity memberEntity) {
-        return AddressEntity.builder()
-                .receiverName(this.receiverName)
-                .member(memberEntity)
+                .member(member)
                 .zipNo(this.zipNo)
                 .addressBasic(this.addressBasic)
                 .addressDetail(this.addressDetail)

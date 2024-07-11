@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
-import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.util.CreateObject;
 
@@ -23,12 +23,9 @@ class SellerCreateJpaServiceUnitTest {
     SellerService sellerService;
 
     @Autowired
-    private MemberService memberService;
-
-    @Autowired
     private MemberRepository memberRepository;
 
-    private MemberEntity memberEntity;
+    private Member member;
     private Long memberId;
     private Long memberId2;
     private String brandName = "나이키";
@@ -37,11 +34,11 @@ class SellerCreateJpaServiceUnitTest {
     @DisplayName("회원가입과 판매자 신청을 진행 하고 memberId와 sellerId가 정상적으로 반환되는지 확인한다.")
     @BeforeEach
     public void signUp_getMemberId() {
-        memberEntity = memberRepository.save(CreateObject.getCreateMemberRequest("test1@naver.com").toMemberEntity());
-        memberId = memberEntity.getMemberId();
+        member = memberRepository.save(CreateObject.getCreateMemberRequest("test1@naver.com").toMember());
+        memberId = member.getMemberId();
 
-        memberEntity = memberRepository.save(CreateObject.getCreateMemberRequest("test2@naver.com").toMemberEntity());
-        memberId2 = memberEntity.getMemberId();
+        member = memberRepository.save(CreateObject.getCreateMemberRequest("test2@naver.com").toMember());
+        memberId2 = member.getMemberId();
 
         Long sellerId = sellerService.sellerSave(memberId, getCreateSellerRequest());
 

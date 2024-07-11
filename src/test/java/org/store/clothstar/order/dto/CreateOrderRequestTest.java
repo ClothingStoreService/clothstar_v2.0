@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.store.clothstar.member.entity.AddressEntity;
-import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.domain.Address;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.entity.OrderEntity;
 
@@ -24,8 +24,8 @@ class CreateOrderRequestTest {
     @DisplayName("toOrder: 반환값 테스트")
     void toOrder_test() {
         //given
-        MemberEntity member = mock(MemberEntity.class);
-        AddressEntity address = mock(AddressEntity.class);
+        Member member = mock(Member.class);
+        Address address = mock(Address.class);
 
         given(member.getMemberId()).willReturn(1L);
 

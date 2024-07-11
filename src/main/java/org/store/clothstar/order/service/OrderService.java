@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import org.store.clothstar.member.entity.AddressEntity;
-import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.domain.Address;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.repository.AddressRepository;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
@@ -64,13 +64,13 @@ public class OrderService {
     @Transactional
     public Long saveOrder(CreateOrderRequest createOrderRequest) {
 
-        MemberEntity memberEntity = memberRepository.findById(createOrderRequest.getMemberId())
+        Member member = memberRepository.findById(createOrderRequest.getMemberId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원 정보를 찾을 수 없습니다."));
 
-        AddressEntity addressEntity = addressRepository.findById(createOrderRequest.getAddressId())
+        Address address = addressRepository.findById(createOrderRequest.getAddressId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "배송지 정보를 찾을 수 없습니다."));
 
-        OrderEntity orderEntity = createOrderRequest.toOrderEntity(memberEntity, addressEntity);
+        OrderEntity orderEntity = createOrderRequest.toOrderEntity(member, address);
         orderRepository.save(orderEntity);
 
         return orderEntity.getOrderId();

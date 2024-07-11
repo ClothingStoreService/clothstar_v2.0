@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.category.entity.CategoryEntity;
-import org.store.clothstar.member.entity.SellerEntity;
+import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
@@ -57,7 +57,7 @@ public class CreateProductLineRequest {
                 .build();
     }
 
-    public ProductLineEntity toProductLineEntity(SellerEntity seller, CategoryEntity category) {
+    public ProductLineEntity toProductLineEntity(Seller seller, CategoryEntity category) {
         return ProductLineEntity.builder()
                 .seller(seller)
                 .category(category)

@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 import org.store.clothstar.member.dto.response.AddressResponse;
-import org.store.clothstar.member.entity.AddressEntity;
-import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.domain.Address;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.repository.AddressRepository;
 
 import java.util.List;
@@ -33,10 +33,10 @@ class AddressServiceJpaMockUnitTest {
     @Test
     void getMemberAddrJpaUnitTest() {
         //given
-        AddressEntity address = mock(AddressEntity.class);
-        MemberEntity member = mock(MemberEntity.class);
+        Address address = mock(Address.class);
+        Member member = mock(Member.class);
         given(address.getMember()).willReturn(member);
-        List<AddressEntity> addresses = List.of(address, address);
+        List<Address> addresses = List.of(address, address);
         given(addressRepository.findAddressListByMemberId(any())).willReturn(addresses);
 
         //when

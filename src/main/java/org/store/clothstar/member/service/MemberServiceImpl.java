@@ -14,10 +14,10 @@ import org.store.clothstar.common.mail.MailContentBuilder;
 import org.store.clothstar.common.mail.MailSendDTO;
 import org.store.clothstar.common.mail.MailService;
 import org.store.clothstar.common.redis.RedisUtil;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
-import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.MemberRepository;
 
 /**
@@ -62,33 +62,33 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void modifyMember(Long memberId, ModifyMemberRequest modifyMemberRequest) {
-        MemberEntity memberEntity = memberRepository.findById(memberId)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
 
-        memberEntity.updateMember(modifyMemberRequest, memberEntity);
+        member.updateMember(modifyMemberRequest, member);
     }
 
     @Override
     public void updateDeleteAt(Long memberId) {
-        MemberEntity memberEntity = memberRepository.findById(memberId)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
 
-        memberEntity.updateDeletedAt();
+        member.updateDeletedAt();
     }
 
     @Override
     public void updatePassword(Long memberId, String password) {
-        MemberEntity memberEntity = memberRepository.findById(memberId)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("not found by memberId: " + memberId));
 
         String encodedPassword = passwordEncoder.encode(password);
-        validCheck(memberEntity, encodedPassword);
+        validCheck(member, encodedPassword);
 
-        memberEntity.updatePassword(encodedPassword);
+        member.updatePassword(encodedPassword);
     }
 
-    private void validCheck(MemberEntity memberEntity, String encodedPassword) {
-        String originalPassword = memberEntity.getPassword();
+    private void validCheck(Member member, String encodedPassword) {
+        String originalPassword = member.getPassword();
         if (passwordEncoder.matches(originalPassword, encodedPassword)) {
             throw new IllegalArgumentException("이전 비밀번호와 같은 비밀번호 입니다.");
         }
@@ -101,17 +101,17 @@ public class MemberServiceImpl implements MemberService {
         });
 
         String encodedPassword = passwordEncoder.encode(createMemberDTO.getPassword());
-        MemberEntity memberEntity = createMemberDTO.toMemberEntity(encodedPassword);
+        Member member = createMemberDTO.toMember(encodedPassword);
 
         //인증코드 확인
-        boolean certifyStatus = verifyEmailCertifyNum(memberEntity.getEmail(), createMemberDTO.getCertifyNum());
+        boolean certifyStatus = verifyEmailCertifyNum(member.getEmail(), createMemberDTO.getCertifyNum());
         if (certifyStatus) {
-            memberEntity = memberRepository.save(memberEntity);
+            member = memberRepository.save(member);
         } else {
             throw new SignupCertifyNumAuthFailedException(ErrorCode.INVALID_AUTH_CERTIFY_NUM);
         }
 
-        return memberEntity.getMemberId();
+        return member.getMemberId();
     }
 
     @Override

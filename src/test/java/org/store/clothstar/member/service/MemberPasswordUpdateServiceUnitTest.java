@@ -9,7 +9,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.repository.MemberRepository;
 
 import java.util.Optional;
@@ -36,9 +36,9 @@ class MemberPasswordUpdateServiceUnitTest {
         //given
         Long memberId = 1L;
         String password = "test1234";
-        MemberEntity memberEntity = mock(MemberEntity.class);
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(memberEntity));
-        when(memberEntity.getPassword()).thenReturn(password);
+        Member member = mock(Member.class);
+        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+        when(member.getPassword()).thenReturn(password);
 
         //when
         Throwable exception = assertThrows(IllegalArgumentException.class, () -> {

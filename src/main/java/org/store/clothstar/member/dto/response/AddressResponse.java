@@ -1,7 +1,7 @@
 package org.store.clothstar.member.dto.response;
 
 import lombok.Getter;
-import org.store.clothstar.member.entity.AddressEntity;
+import org.store.clothstar.member.domain.Address;
 
 @Getter
 public class AddressResponse {
@@ -14,14 +14,14 @@ public class AddressResponse {
     private String deliveryRequest;
     private boolean defaultAddress;
 
-    public AddressResponse(AddressEntity addressEntity) {
-        this.memberId = addressEntity.getMember().getMemberId();
-        this.receiverName = addressEntity.getReceiverName();
-        this.zipNo = addressEntity.getZipNo();
-        this.addressBasic = addressEntity.getAddressBasic();
-        this.addressDetail = addressEntity.getAddressDetail();
-        this.telNo = addressEntity.getTelNo();
-        this.deliveryRequest = addressEntity.getDeliveryRequest();
-        this.defaultAddress = addressEntity.isDefaultAddress();
+    public AddressResponse(Address address) {
+        this.memberId = address.getMember().getMemberId();
+        this.receiverName = address.getReceiverName();
+        this.zipNo = address.getZipNo();
+        this.addressBasic = address.getAddressBasic();
+        this.addressDetail = address.getAddressDetail();
+        this.telNo = address.getTelNo();
+        this.deliveryRequest = address.getDeliveryRequest();
+        this.defaultAddress = address.isDefaultAddress();
     }
 }
