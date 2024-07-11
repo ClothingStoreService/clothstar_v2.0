@@ -72,7 +72,7 @@ public class OrderDetailService {
         orderEntity.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
 
         // 주문 수량만큼 상품 재고 차감
-        updateProductStock(productEntity,orderDetailEntity.getQuantity());
+        updateProductStock(productEntity, orderDetailEntity.getQuantity());
     }
 
     // 주문 상세 추가 생성
@@ -92,7 +92,7 @@ public class OrderDetailService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 개수가 재고보다 더 많습니다.");
         }
 
-        if(!orderEntity.getStatus().equals(Status.WAITING)){
+        if (!orderEntity.getStatus().equals(Status.WAITING)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문이 이미 처리된 상태에서는 추가 주문이 불가능합니다.");
         }
 
@@ -105,7 +105,7 @@ public class OrderDetailService {
 
         orderEntity.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
 
-        updateProductStock(productEntity,orderDetailEntity.getQuantity());
+        updateProductStock(productEntity, orderDetailEntity.getQuantity());
 
         return orderDetailEntity.getOrderDetailId();
     }
@@ -115,7 +115,7 @@ public class OrderDetailService {
         OrderDetailEntity orderDetailEntity = orderDetailRepository.findById(orderDetailId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문상세 번호를 찾을 수 없습니다."));
 
-        if(orderDetailEntity.getDeletedAt() != null){
+        if (orderDetailEntity.getDeletedAt() != null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "이미 삭제된 주문입니다.");
         }
 
