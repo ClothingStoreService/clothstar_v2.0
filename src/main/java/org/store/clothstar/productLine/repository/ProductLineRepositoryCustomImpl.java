@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import org.store.clothstar.member.entity.QSellerEntity;
+import org.store.clothstar.member.domain.QMember;
+import org.store.clothstar.member.domain.QSeller;
 import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.entity.QProductEntity;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
@@ -16,7 +17,10 @@ import org.store.clothstar.productLine.dto.response.QProductLineWithProductsJPAR
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.entity.QProductLineEntity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -27,8 +31,8 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
 
     QProductLineEntity qProductLine = QProductLineEntity.productLineEntity;
     QProductEntity qProduct = QProductEntity.productEntity;
-    QSellerEntity qSeller = QSellerEntity.sellerEntity;
-    QMemberEntity qMember = QMemberEntity.memberEntity;
+    QSeller qSeller = QSeller.seller;
+    QMember qMember = QMember.member;
 
     @Override
     public Page<ProductLineWithProductsJPAResponse> getProductLinesWithOptions(Pageable pageable) {
@@ -102,6 +106,12 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
     @Override
     public Page<ProductLineEntity> findEntitiesByCategoryWithOffsetPaging(Long categoryId, Pageable pageable, String keyword) {
         List<ProductLineEntity> content = getProductLineEntitiesByCategory(categoryId, pageable, keyword);
+
+        boolean hasNext = false;
+        if (content.size() > pageable.getPageSize()) {
+            content.remove(content.size() - 1);
+            hasNext = true;
+        }
 
         JPAQuery<Long> totalCount = jpaQueryFactory
                 .select(qProductLine.countDistinct())
@@ -177,7 +187,8 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
                 .selectDistinct(qProductLine)
                 .from(qProductLine)
                 .where(qProductLine.category.categoryId.eq(categoryId)
-                        .and(qProductLine.deletedAt.isNull()))
+                        .and(qProductLine.deletedAt.isNull())
+                        .and(getSearchCondition(keyword)))
                 .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
