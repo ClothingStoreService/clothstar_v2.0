@@ -5,8 +5,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
-import org.store.clothstar.member.entity.QAddressEntity;
-import org.store.clothstar.member.entity.QMemberEntity;
+import org.store.clothstar.member.domain.QAddress;
+import org.store.clothstar.member.domain.QMember;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.reponse.QOrderResponse;
 import org.store.clothstar.order.entity.QOrderEntity;
@@ -18,8 +18,6 @@ import org.store.clothstar.product.entity.QProductEntity;
 import org.store.clothstar.productLine.entity.QProductLineEntity;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -29,23 +27,23 @@ public class OrderEntityRepositoryCustomImpl implements OrderEntityRepositoryCus
 
     QOrderEntity qOrderEntity = QOrderEntity.orderEntity;
     QOrderDetailEntity qOrderDetailEntity = QOrderDetailEntity.orderDetailEntity;
-    QMemberEntity qMemberEntity = QMemberEntity.memberEntity;
-    QAddressEntity qAddressEntity = QAddressEntity.addressEntity;
+    QMember qMember = QMember.member;
+    QAddress qAddress = QAddress.address;
     QProductEntity qProductEntity = QProductEntity.productEntity;
     QProductLineEntity qProductLineEntity = QProductLineEntity.productLineEntity;
 
     @Override
-    public Page<OrderResponse> findAllOffsetPaging(Pageable pageable){
+    public Page<OrderResponse> findAllOffsetPaging(Pageable pageable) {
         JPAQuery<OrderResponse> query = jpaQueryFactory
                 .select(new QOrderResponse(
                         qOrderEntity,
                         qOrderDetailEntity,
-                        qMemberEntity,
-                        qAddressEntity,
+                        qMember,
+                        qAddress,
                         qProductLineEntity))
                 .from(qOrderEntity)
-                .innerJoin(qOrderEntity.member, qMemberEntity)
-                .innerJoin(qOrderEntity.address, qAddressEntity)
+                .innerJoin(qOrderEntity.member, qMember)
+                .innerJoin(qOrderEntity.address, qAddress)
                 .innerJoin(qOrderEntity.orderDetails, qOrderDetailEntity)
                 .innerJoin(qOrderDetailEntity.product, qProductEntity)
                 .innerJoin(qProductEntity.productLine, qProductLineEntity)
@@ -85,12 +83,12 @@ public class OrderEntityRepositoryCustomImpl implements OrderEntityRepositoryCus
                 .select(new QOrderResponse(
                         qOrderEntity,
                         qOrderDetailEntity,
-                        qMemberEntity,
-                        qAddressEntity,
+                        qMember,
+                        qAddress,
                         qProductLineEntity))
                 .from(qOrderEntity)
-                .innerJoin(qOrderEntity.member, qMemberEntity)
-                .innerJoin(qOrderEntity.address, qAddressEntity)
+                .innerJoin(qOrderEntity.member, qMember)
+                .innerJoin(qOrderEntity.address, qAddress)
                 .innerJoin(qOrderEntity.orderDetails, qOrderDetailEntity)
                 .innerJoin(qOrderDetailEntity.product, qProductEntity)
                 .innerJoin(qProductEntity.productLine, qProductLineEntity)
@@ -128,19 +126,18 @@ public class OrderEntityRepositoryCustomImpl implements OrderEntityRepositoryCus
     }
 
 
-
     @Override
     public List<OrderResponse> findWaitingOrders() {
         List<OrderResponse> results = jpaQueryFactory
                 .select(new QOrderResponse(
                         qOrderEntity,
                         qOrderDetailEntity,
-                        qMemberEntity,
-                        qAddressEntity,
+                        qMember,
+                        qAddress,
                         qProductLineEntity))
                 .from(qOrderEntity)
-                .innerJoin(qOrderEntity.member, qMemberEntity)
-                .innerJoin(qOrderEntity.address, qAddressEntity)
+                .innerJoin(qOrderEntity.member, qMember)
+                .innerJoin(qOrderEntity.address, qAddress)
                 .innerJoin(qOrderEntity.orderDetails, qOrderDetailEntity)
                 .innerJoin(qOrderDetailEntity.product, qProductEntity)
                 .innerJoin(qProductEntity.productLine, qProductLineEntity)
@@ -166,18 +163,18 @@ public class OrderEntityRepositoryCustomImpl implements OrderEntityRepositoryCus
     }
 
     @Override
-    public OrderResponse findOrderWithDetails(Long orderId){
+    public OrderResponse findOrderWithDetails(Long orderId) {
 
-                OrderResponse result = jpaQueryFactory
+        OrderResponse result = jpaQueryFactory
                 .select(new QOrderResponse(
                         qOrderEntity,
                         qOrderDetailEntity,
-                        qMemberEntity,
-                        qAddressEntity,
+                        qMember,
+                        qAddress,
                         qProductLineEntity))
                 .from(qOrderEntity)
-                .innerJoin(qOrderEntity.member, qMemberEntity)
-                .innerJoin(qOrderEntity.address, qAddressEntity)
+                .innerJoin(qOrderEntity.member, qMember)
+                .innerJoin(qOrderEntity.address, qAddress)
                 .innerJoin(qOrderEntity.orderDetails, qOrderDetailEntity)
                 .innerJoin(qOrderDetailEntity.product, qProductEntity)
                 .innerJoin(qProductEntity.productLine, qProductLineEntity)

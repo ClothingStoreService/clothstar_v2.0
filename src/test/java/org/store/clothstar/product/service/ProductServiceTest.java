@@ -8,19 +8,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
-import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.category.repository.CategoryJpaRepository;
-import org.store.clothstar.member.entity.SellerEntity;
 import org.store.clothstar.member.repository.SellerRepository;
-import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.repository.ProductJPARepository;
-import org.store.clothstar.productLine.domain.ProductLine;
-import org.store.clothstar.productLine.domain.type.ProductLineStatus;
-import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 import org.store.clothstar.productLine.service.ProductLineService;
@@ -29,7 +23,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 

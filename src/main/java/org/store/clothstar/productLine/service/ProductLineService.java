@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.category.repository.CategoryJpaRepository;
-import org.store.clothstar.member.entity.SellerEntity;
+import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.repository.SellerRepository;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
@@ -61,7 +61,7 @@ public class ProductLineService {
     @Transactional
     public Long createProductLine(CreateProductLineRequest createProductLineRequest) {
         Long memberId = 1L;
-        SellerEntity seller = sellerRepository.findById(memberId)
+        Seller seller = sellerRepository.findById(memberId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "판매자 정보를 찾을 수 없습니다."));
 
         CategoryEntity category = categoryRepository.findById(createProductLineRequest.getCategoryId())

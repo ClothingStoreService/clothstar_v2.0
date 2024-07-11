@@ -13,10 +13,10 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.category.entity.QCategoryEntity;
-import org.store.clothstar.member.entity.MemberEntity;
-import org.store.clothstar.member.entity.QMemberEntity;
-import org.store.clothstar.member.entity.QSellerEntity;
-import org.store.clothstar.member.entity.SellerEntity;
+import org.store.clothstar.member.domain.Member;
+import org.store.clothstar.member.domain.QMember;
+import org.store.clothstar.member.domain.QSeller;
+import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.entity.QProductEntity;
@@ -37,8 +37,8 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
     QProductLineEntity qProductLine = QProductLineEntity.productLineEntity;
     QCategoryEntity qCategory = QCategoryEntity.categoryEntity;
     QProductEntity qProduct = QProductEntity.productEntity;
-    QSellerEntity qSeller = QSellerEntity.sellerEntity;
-    QMemberEntity qMember = QMemberEntity.memberEntity;
+    QSeller qSeller = QSeller.seller;
+    QMember qMember = QMember.member;
 
 
     public Page<ProductLineWithProductsJPAResponse> getProductLinesWithOptions(Pageable pageable) {
@@ -61,8 +61,8 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
         for (Tuple tuple : results) {
             ProductLineEntity productLine = tuple.get(qProductLine);
             CategoryEntity category = tuple.get(qCategory);
-            SellerEntity seller = tuple.get(qSeller);
-            MemberEntity member = tuple.get(qMember);
+            Seller seller = tuple.get(qSeller);
+            Member member = tuple.get(qMember);
             ProductEntity product = tuple.get(qProduct);
 
             ProductLineWithProductsJPAResponse response = productLineMap.computeIfAbsent(productLine.getProductLineId(),

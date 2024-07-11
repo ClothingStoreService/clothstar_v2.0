@@ -9,9 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.category.repository.CategoryJpaRepository;
-import org.store.clothstar.member.entity.SellerEntity;
+import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.repository.SellerRepository;
-import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
@@ -20,12 +19,10 @@ import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPARe
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.*;
 
 @DisplayName("비즈니스 로직 - ProductLine")
@@ -53,9 +50,9 @@ class ProductLineServiceTest {
         ProductLineEntity productLine2 = mock(ProductLineEntity.class);
         ProductLineEntity productLine3 = mock(ProductLineEntity.class);
 
-        SellerEntity seller1 = mock(SellerEntity.class);
-        SellerEntity seller2 = mock(SellerEntity.class);
-        SellerEntity seller3 = mock(SellerEntity.class);
+        Seller seller1 = mock(Seller.class);
+        Seller seller2 = mock(Seller.class);
+        Seller seller3 = mock(Seller.class);
 
         when(productLine1.getProductLineId()).thenReturn(1L);
         when(productLine1.getSeller()).thenReturn(seller1);
@@ -100,7 +97,7 @@ class ProductLineServiceTest {
         // given
         Long productLineId = 1L;
         ProductLineEntity productLine = mock(ProductLineEntity.class);
-        SellerEntity seller = mock(SellerEntity.class);
+        Seller seller = mock(Seller.class);
 
         when(productLine.getProductLineId()).thenReturn(productLineId);
         when(productLine.getSeller()).thenReturn(seller);
@@ -160,7 +157,7 @@ class ProductLineServiceTest {
                 .status(ProductLineStatus.ON_SALE)
                 .build();
 
-        SellerEntity mockSeller = mock(SellerEntity.class);
+        Seller mockSeller = mock(Seller.class);
         CategoryEntity mockCategory = mock(CategoryEntity.class);
         ProductLineEntity mockProductLine = mock(ProductLineEntity.class);
 

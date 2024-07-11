@@ -7,8 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.DuplicatedBizNoException;
+import org.store.clothstar.common.error.exception.DuplicatedBrandNameException;
+import org.store.clothstar.common.error.exception.DuplicatedSellerException;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
-import org.store.clothstar.member.entity.MemberEntity;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.util.CreateObject;
 
@@ -23,12 +27,9 @@ class SellerCreateJpaServiceUnitTest {
     SellerService sellerService;
 
     @Autowired
-    private MemberService memberService;
-
-    @Autowired
     private MemberRepository memberRepository;
 
-    private MemberEntity memberEntity;
+    private Member member;
     private Long memberId;
     private Long memberId2;
     private String brandName = "나이키";
@@ -37,11 +38,11 @@ class SellerCreateJpaServiceUnitTest {
     @DisplayName("회원가입과 판매자 신청을 진행 하고 memberId와 sellerId가 정상적으로 반환되는지 확인한다.")
     @BeforeEach
     public void signUp_getMemberId() {
-        memberEntity = memberRepository.save(CreateObject.getCreateMemberRequest("test1@naver.com").toMemberEntity());
-        memberId = memberEntity.getMemberId();
+        member = memberRepository.save(CreateObject.getCreateMemberRequest("test1@naver.com").toMember());
+        memberId = member.getMemberId();
 
-        memberEntity = memberRepository.save(CreateObject.getCreateMemberRequest("test2@naver.com").toMemberEntity());
-        memberId2 = memberEntity.getMemberId();
+        member = memberRepository.save(CreateObject.getCreateMemberRequest("test2@naver.com").toMember());
+        memberId2 = member.getMemberId();
 
         Long sellerId = sellerService.sellerSave(memberId, getCreateSellerRequest());
 
@@ -56,12 +57,12 @@ class SellerCreateJpaServiceUnitTest {
     @Test
     void sellerSaveDuplicateTest() {
         //given & when
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable exception = assertThrows(DuplicatedSellerException.class, () -> {
             sellerService.sellerSave(memberId, getCreateSellerRequest());
         });
 
         //then
-        assertThat(exception.getMessage()).isEqualTo("이미 판매자 가입이 되어 있습니다.");
+        assertThat(exception.getMessage()).isEqualTo(ErrorCode.DUPLICATED_SELLER.getMessage());
     }
 
     @DisplayName("같은 브랜드명으로 판매자 신청하면 에러 메시지를 응답한다.")
@@ -72,12 +73,12 @@ class SellerCreateJpaServiceUnitTest {
                 brandName, "102-13-13123"
         );
 
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable exception = assertThrows(DuplicatedBrandNameException.class, () -> {
             sellerService.sellerSave(memberId2, createSellerRequest);
         });
 
         //then
-        assertThat(exception.getMessage()).isEqualTo("이미 존재하는 브랜드 이름 입니다.");
+        assertThat(exception.getMessage()).isEqualTo(ErrorCode.DUPLICATED_BRAND_NAME.getMessage());
     }
 
     @DisplayName("같은 사업자번호로 판매자 신청하면 에러 메시지를 응답한다.")
@@ -88,12 +89,12 @@ class SellerCreateJpaServiceUnitTest {
                 "아디다스", bizNo
         );
 
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable exception = assertThrows(DuplicatedBizNoException.class, () -> {
             sellerService.sellerSave(memberId2, createSellerRequest);
         });
 
         //then
-        assertThat(exception.getMessage()).isEqualTo("이미 존재하는 사업자 번호 입니다.");
+        assertThat(exception.getMessage()).isEqualTo(ErrorCode.DUPLICATED_BIZNO.getMessage());
     }
 
 

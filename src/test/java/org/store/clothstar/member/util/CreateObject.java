@@ -1,7 +1,7 @@
 package org.store.clothstar.member.util;
 
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
-import org.store.clothstar.member.entity.MemberEntity;
 
 public class CreateObject {
     public static CreateMemberRequest getCreateMemberRequest() {
@@ -43,7 +43,7 @@ public class CreateObject {
         return createMemberRequest;
     }
 
-    public static MemberEntity getMemberEntityByCreateMemberRequestDTO() {
-        return getCreateMemberRequest().toMemberEntity();
+    public static Member getMemberByCreateMemberRequestDTO() {
+        return getCreateMemberRequest().toMember();
     }
 }

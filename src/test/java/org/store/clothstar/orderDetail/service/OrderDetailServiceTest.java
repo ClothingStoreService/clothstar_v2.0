@@ -97,7 +97,7 @@ class OrderDetailServiceTest {
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
-            orderDetailService.saveOrderDetailWithOrder(mockRequest,orderId));
+                orderDetailService.saveOrderDetailWithOrder(mockRequest, orderId));
 
         //then
         assertEquals("400 BAD_REQUEST \"주문 개수가 재고보다 더 많습니다.\"", thrown.getMessage());
@@ -120,7 +120,7 @@ class OrderDetailServiceTest {
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
-            orderDetailService.addOrderDetail(mockRequest));
+                orderDetailService.addOrderDetail(mockRequest));
 
         //then
         assertEquals("400 BAD_REQUEST \"주문 개수가 재고보다 더 많습니다.\"", thrown.getMessage());
@@ -194,7 +194,7 @@ class OrderDetailServiceTest {
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
-            orderDetailService.addOrderDetail(mockRequest));
+                orderDetailService.addOrderDetail(mockRequest));
 
         //then
         assertEquals("400 BAD_REQUEST \"주문 개수가 재고보다 더 많습니다.\"", thrown.getMessage());
@@ -216,7 +216,7 @@ class OrderDetailServiceTest {
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
-            orderDetailService.addOrderDetail(mockRequest));
+                orderDetailService.addOrderDetail(mockRequest));
 
         //then
         assertEquals("400 BAD_REQUEST \"주문이 이미 처리된 상태에서는 추가 주문이 불가능합니다.\"", thrown.getMessage());
@@ -230,7 +230,7 @@ class OrderDetailServiceTest {
         given(orderDetailRepository.findById(orderDetailId)).willReturn(Optional.of(orderDetailEntity));
 
         //when
-            orderDetailService.updateDeleteAt(orderDetailId);
+        orderDetailService.updateDeleteAt(orderDetailId);
 
         //then
         then(orderDetailRepository).should(times(2)).findById(orderDetailId);
@@ -247,7 +247,7 @@ class OrderDetailServiceTest {
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
-            orderDetailService.updateDeleteAt(orderDetailId));
+                orderDetailService.updateDeleteAt(orderDetailId));
 
         //then
         assertEquals("404 NOT_FOUND \"주문상세 번호를 찾을 수 없습니다.\"", thrown.getMessage());
@@ -263,7 +263,7 @@ class OrderDetailServiceTest {
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
-            orderDetailService.updateDeleteAt(orderDetailId));
+                orderDetailService.updateDeleteAt(orderDetailId));
 
         //then
         assertEquals("404 NOT_FOUND \"이미 삭제된 주문입니다.\"", thrown.getMessage());
@@ -311,7 +311,7 @@ class OrderDetailServiceTest {
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
-            orderDetailService.restoreStockByOrderDetail(orderDetailId));
+                orderDetailService.restoreStockByOrderDetail(orderDetailId));
 
         //then
         assertEquals("404 NOT_FOUND \"주문상세 번호를 찾을 수 없습니다.\"", thrown.getMessage());

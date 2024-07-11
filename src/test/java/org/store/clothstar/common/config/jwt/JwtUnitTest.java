@@ -8,9 +8,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import org.store.clothstar.member.domain.MemberGrade;
-import org.store.clothstar.member.domain.MemberRole;
-import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.domain.Member;
+import org.store.clothstar.member.util.CreateObject;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -24,10 +23,10 @@ class JwtUnitTest {
     @Test
     void createAccessTokenTest() {
         //given
-        MemberEntity memberEntity = getMember();
+        Member member = CreateObject.getMemberByCreateMemberRequestDTO();
 
         //when
-        String accessToken = jwtUtil.createAccessToken(getMember());
+        String accessToken = jwtUtil.createAccessToken(member);
         String tokenType = jwtUtil.getTokenType(accessToken);
         System.out.println("accessToken = " + accessToken);
 
@@ -40,25 +39,14 @@ class JwtUnitTest {
     @Test
     void createRefreshTokenTest() {
         //given
-        MemberEntity memberEntity = getMember();
+        Member member = CreateObject.getMemberByCreateMemberRequestDTO();
 
         //when
-        String refreshToken = jwtUtil.createRefreshToken(getMember());
+        String refreshToken = jwtUtil.createRefreshToken(member);
         String tokenType = jwtUtil.getTokenType(refreshToken);
 
         //then
         Assertions.assertThat(refreshToken).isNotNull();
         Assertions.assertThat(tokenType).isEqualTo("REFRESH_TOKEN");
-    }
-
-    private MemberEntity getMember() {
-        return MemberEntity.builder()
-                .memberId(1L)
-                .email("test@test.com")
-                .password("test")
-                .telNo("010-1234-1234")
-                .role(MemberRole.USER)
-                .grade(MemberGrade.BRONZE)
-                .build();
     }
 }

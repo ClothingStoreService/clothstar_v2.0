@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.common.entity.BaseTimeEntity;
-import org.store.clothstar.member.entity.SellerEntity;
+import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
@@ -33,7 +33,7 @@ public class ProductLineEntity extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private SellerEntity seller;
+    private Seller seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)

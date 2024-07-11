@@ -14,7 +14,7 @@ public interface MemberService {
 
     MemberResponse getMemberById(Long memberId);
 
-    boolean getMemberByEmail(String email);
+    void getMemberByEmail(String email);
 
     void updateDeleteAt(Long memberId);
 

@@ -6,8 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.common.entity.BaseEntity;
-import org.store.clothstar.member.entity.AddressEntity;
-import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.domain.Address;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
@@ -26,7 +26,7 @@ public class OrderEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailEntity> orderDetails;
-    
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -45,11 +45,11 @@ public class OrderEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private MemberEntity member;
+    private Member member;
 
     @OneToOne
     @JoinColumn(name = "address_id")
-    private AddressEntity address;
+    private Address address;
 
     public void updatePrices(int totalProductsPrice, int totalPaymentPrice) {
         this.totalProductsPrice = totalProductsPrice;

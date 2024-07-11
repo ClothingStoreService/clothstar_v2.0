@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.store.clothstar.member.entity.AddressEntity;
-import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.domain.Address;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
@@ -59,10 +59,10 @@ public class OrderResponse {
     @QueryProjection
     public OrderResponse(OrderEntity orderEntity,
                          OrderDetailEntity orderDetailEntity,
-                         MemberEntity memberEntity, AddressEntity addressEntity,
-                         ProductLineEntity productLineEntity){
+                         Member member, Address address,
+                         ProductLineEntity productLineEntity) {
         this.orderId = orderEntity.getOrderId();
-        this.ordererName = memberEntity.getName();
+        this.ordererName = member.getName();
         this.createdAt = orderEntity.getCreatedAt().toLocalDate();
         this.status = orderEntity.getStatus();
         this.totalShippingPrice = orderEntity.getTotalShippingPrice();
@@ -70,11 +70,11 @@ public class OrderResponse {
         this.paymentMethod = orderEntity.getPaymentMethod();
         this.totalPaymentPrice = orderEntity.getTotalPaymentPrice();
         this.address = AddressDTO.builder()
-                .receiverName(addressEntity.getReceiverName())
-                .addressBasic(addressEntity.getAddressBasic())
-                .addressDetail(addressEntity.getAddressDetail())
-                .telNo(addressEntity.getTelNo())
-                .deliveryRequest(addressEntity.getDeliveryRequest())
+                .receiverName(address.getReceiverName())
+                .addressBasic(address.getAddressInfo().getAddressBasic())
+                .addressDetail(address.getAddressInfo().getAddressDetail())
+                .telNo(address.getTelNo())
+                .deliveryRequest(address.getAddressInfo().getDeliveryRequest())
                 .build();
         this.orderDetailList = new ArrayList<>();
     }
@@ -91,15 +91,15 @@ public class OrderResponse {
                 .totalPaymentPrice(orderEntity.getTotalPaymentPrice())
                 .address(AddressDTO.builder()
                         .receiverName(orderEntity.getAddress().getReceiverName())
-                        .addressBasic(orderEntity.getAddress().getAddressBasic())
-                        .addressDetail(orderEntity.getAddress().getAddressDetail())
+                        .addressBasic(orderEntity.getAddress().getAddressInfo().getAddressBasic())
+                        .addressDetail(orderEntity.getAddress().getAddressInfo().getAddressDetail())
                         .telNo(orderEntity.getAddress().getTelNo())
-                        .deliveryRequest(orderEntity.getAddress().getDeliveryRequest())
+                        .deliveryRequest(orderEntity.getAddress().getAddressInfo().getDeliveryRequest())
                         .build())
                 .build();
     }
 
-    public void setterOrderDetailList(List<OrderDetailDTO> orderDetailDTOList){
-        this.orderDetailList=orderDetailDTOList;
+    public void setterOrderDetailList(List<OrderDetailDTO> orderDetailDTOList) {
+        this.orderDetailList = orderDetailDTOList;
     }
 }

@@ -1,41 +1,50 @@
 package org.store.clothstar.member.domain;
 
+import jakarta.persistence.*;
 import lombok.*;
-import org.store.clothstar.member.entity.MemberEntity;
+import lombok.extern.slf4j.Slf4j;
+import org.store.clothstar.common.entity.BaseEntity;
+import org.store.clothstar.member.domain.vo.MemberShoppingActivity;
+import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 
 import java.time.LocalDateTime;
 
+@ToString
 @Getter
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+@Slf4j
+@Entity(name = "member")
+public class Member extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
+    @Column(unique = true)
     private String email;
     private String password;
+
     private String name;
     private String telNo;
-    private int totalPaymentPrice;
-    private int point;
-    private MemberRole role;
-    private MemberGrade grade;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private LocalDateTime deletedAt;
 
-    public Member(MemberEntity memberEntity) {
-        this.memberId = memberEntity.getMemberId();
-        this.email = memberEntity.getEmail();
-        this.password = memberEntity.getPassword();
-        this.name = memberEntity.getName();
-        this.telNo = memberEntity.getTelNo();
-        this.totalPaymentPrice = memberEntity.getTotalPaymentPrice();
-        this.point = memberEntity.getPoint();
-        this.role = memberEntity.getRole();
-        this.grade = memberEntity.getGrade();
-        this.createdAt = memberEntity.getCreatedAt();
-        this.updatedAt = memberEntity.getUpdatedAt();
-        this.deletedAt = memberEntity.getDeletedAt();
+    @Enumerated(EnumType.STRING)
+    private MemberRole role;
+
+    @Embedded
+    MemberShoppingActivity memberShoppingActivity;
+
+    public void updateMember(ModifyMemberRequest modifyMemberRequest, Member member) {
+        this.name = (modifyMemberRequest.getName() == null || modifyMemberRequest.getName() == "")
+                ? member.getName() : modifyMemberRequest.getName();
+        this.role = (modifyMemberRequest.getRole() == null) ? member.getRole() : modifyMemberRequest.getRole();
+        log.info("name : {}, role : {}", name, role);
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateDeletedAt() {
+        this.deletedAt = LocalDateTime.now();
     }
 }
