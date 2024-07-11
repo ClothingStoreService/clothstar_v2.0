@@ -66,7 +66,7 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
             ProductEntity product = tuple.get(qProduct);
 
             ProductLineWithProductsJPAResponse response = productLineMap.computeIfAbsent(productLine.getProductLineId(),
-                    id -> new ProductLineWithProductsJPAResponse(productLine, category, seller, member, productLine.getProducts().stream().mapToLong(ProductEntity::getStock).sum()));
+                    id -> new ProductLineWithProductsJPAResponse(productLine, seller, productLine.getProducts().stream().mapToLong(ProductEntity::getStock).sum()));
 
             if (product != null) {
                 response.getProductList().add(ProductResponse.from(product));
@@ -91,15 +91,11 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
         ProductLineWithProductsJPAResponse result = jpaQueryFactory
                 .select(new QProductLineWithProductsJPAResponse(
                         qProductLine,
-                        qCategory,
                         qSeller,
-                        qMember,
                         totalStockExpression
                 ))
                 .from(qProductLine)
                 .innerJoin(qProductLine.seller, qSeller)
-                .innerJoin(qSeller.member, qMember)
-                .innerJoin(qProductLine.category, qCategory)
                 .leftJoin(qProductLine.products, qProduct)
                 .where(qProductLine.productLineId.eq(productLineId)
                         .and(qProductLine.deletedAt.isNull()))
