@@ -45,10 +45,12 @@ public class SellerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "판매자 신청이 정상적으로 되었습니다.",
                     content = @Content(schema = @Schema(implementation = MemberResponse.class))),
-            @ApiResponse(responseCode = "404", description = "회원 정보를 찾을 수 없습니다.",
+            @ApiResponse(responseCode = "404",
+                    description = """
+                            회원 정보를 찾을 수 없습니다. OR 이미 판매자 가입이 되어 있습니다.
+                            OR 이미 존재하는 사업자 번호 입니다. OR 이미 존재하는 브랜드 이름 입니다.
+                            """,
                     content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
-            @ApiResponse(responseCode = "500", description = "이미 판매자 가입이 되어 있습니다., 이미 존재하는 사업자 번호 입니다., 이미 존재하는 브랜드 이름 입니다.",
-                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @PostMapping("/v1/sellers/{id}")
     public ResponseEntity<MessageDTO> saveSeller(@Validated @RequestBody CreateSellerRequest createSellerRequest,

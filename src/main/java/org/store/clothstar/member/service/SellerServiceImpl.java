@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.DuplicatedSellerException;
 import org.store.clothstar.common.error.exception.NotFoundMemberException;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.Seller;
@@ -47,15 +48,15 @@ public class SellerServiceImpl implements SellerService {
                 .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
 
         sellerRepository.findById(memberId).ifPresent(m -> {
-            throw new IllegalArgumentException("이미 판매자 가입이 되어 있습니다.");
+            throw new DuplicatedSellerException(ErrorCode.DUPLICATED_SELLER);
         });
 
         sellerRepository.findByBizNo(createSellerRequest.getBizNo()).ifPresent(m -> {
-            throw new IllegalArgumentException("이미 존재하는 사업자 번호 입니다.");
+            throw new DuplicatedSellerException(ErrorCode.DUPLICATED_BIZNO);
         });
 
         sellerRepository.findByBrandName(createSellerRequest.getBrandName()).ifPresent(m -> {
-            throw new IllegalArgumentException("이미 존재하는 브랜드 이름 입니다.");
+            throw new DuplicatedSellerException(ErrorCode.DUPLICATED_BRAND_NAME);
         });
     }
 }

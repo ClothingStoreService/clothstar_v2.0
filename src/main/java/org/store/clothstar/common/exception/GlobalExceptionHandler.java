@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.store.clothstar.common.dto.ErrorResponseDTO;
 import org.store.clothstar.common.dto.ValidErrorResponseDTO;
-import org.store.clothstar.common.error.exception.DuplicatedEmailException;
-import org.store.clothstar.common.error.exception.NotFoundMemberException;
+import org.store.clothstar.common.error.exception.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,8 +31,38 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DuplicatedEmailException.class)
-    protected ResponseEntity<ErrorResponseDTO> memberNotFoundException(DuplicatedEmailException ex) {
+    protected ResponseEntity<ErrorResponseDTO> duplicatedEmailException(DuplicatedEmailException ex) {
         log.error("DuplicatedEmailException", ex);
+        ex.fillInStackTrace();
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DuplicatedSellerException.class)
+    protected ResponseEntity<ErrorResponseDTO> duplicatedSellerException(DuplicatedSellerException ex) {
+        log.error("DuplicatedSellerException", ex);
+        ex.fillInStackTrace();
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DuplicatedBizNoException.class)
+    protected ResponseEntity<ErrorResponseDTO> duplicatedBizNoException(DuplicatedBizNoException ex) {
+        log.error("DuplicatedBizNoException", ex);
+        ex.fillInStackTrace();
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DuplicatedBrandNameException.class)
+    protected ResponseEntity<ErrorResponseDTO> duplicatedBrandNameException(DuplicatedBrandNameException ex) {
+        log.error("DuplicatedBrandNameException", ex);
         ex.fillInStackTrace();
         ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
 
