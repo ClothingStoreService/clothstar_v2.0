@@ -92,4 +92,8 @@ public class ProductLineEntity extends BaseTimeEntity {
     public void delete() {
         this.setDeletedAt(LocalDateTime.now());
     }
+
+    public Long getId() {
+        return productLineId;
+    }
 }

@@ -79,10 +79,10 @@ public class OrderResponse {
         this.orderDetailList = new ArrayList<>();
     }
 
-    public static OrderResponse from(OrderEntity orderEntity, MemberEntity memberEntity, AddressEntity addressEntity) {
+    public static OrderResponse from(OrderEntity orderEntity, Member member, Address address) {
         return OrderResponse.builder()
                 .orderId(orderEntity.getOrderId())
-                .ordererName(memberEntity.getName())
+                .ordererName(member.getName())
                 .createdAt(orderEntity.getCreatedAt().toLocalDate())
                 .status(orderEntity.getStatus())
                 .totalShippingPrice(orderEntity.getTotalShippingPrice())
@@ -90,11 +90,11 @@ public class OrderResponse {
                 .paymentMethod(orderEntity.getPaymentMethod())
                 .totalPaymentPrice(orderEntity.getTotalPaymentPrice())
                 .address(AddressDTO.builder()
-                        .receiverName(addressEntity.getReceiverName())
-                        .addressBasic(addressEntity.getAddressBasic())
-                        .addressDetail(addressEntity.getAddressDetail())
-                        .telNo(addressEntity.getTelNo())
-                        .deliveryRequest(addressEntity.getDeliveryRequest())
+                        .receiverName(address.getReceiverName())
+                        .addressBasic(address.getAddressInfo().getAddressBasic())
+                        .addressDetail(address.getAddressInfo().getAddressDetail())
+                        .telNo(address.getTelNo())
+                        .deliveryRequest(address.getAddressInfo().getDeliveryRequest())
                         .build())
                 .build();
     }

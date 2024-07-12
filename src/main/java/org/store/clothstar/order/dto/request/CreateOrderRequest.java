@@ -38,8 +38,8 @@ public class CreateOrderRequest {
     public OrderEntity toOrderEntity(Member member, Address address) {
         return OrderEntity.builder()
                 .orderId(GenerateOrderId.generateOrderId())
-                .memberId(memberEntity.getMemberId())
-                .addressId(addressEntity.getAddressId())
+                .memberId(member.getMemberId())
+                .addressId(address.getAddressId())
                 .status(Status.WAITING)
                 .totalShippingPrice(3000)
                 .totalProductsPrice(0)

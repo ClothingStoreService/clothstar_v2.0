@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
+import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 @Getter
 @AllArgsConstructor
@@ -21,6 +23,19 @@ public class OrderDetailDTO {
     private int extraCharge;
     private int quantity;
     private int totalPrice; // 상품 종류 하나당 총 가격
+
+    public static OrderDetailDTO from(OrderDetailEntity orderDetailEntity, ProductEntity productEntity, ProductLineEntity productLineEntity){
+        return OrderDetailDTO.builder()
+                .orderDetailId(orderDetailEntity.getOrderDetailId())
+                .productName(productLineEntity.getName())
+                .optionName(productEntity.getName())
+                .brandName(productLineEntity.getSeller().getBrandName())
+                .productPrice(productLineEntity.getPrice())
+                .extraCharge(productEntity.getExtraCharge())
+                .quantity(orderDetailEntity.getQuantity())
+                .totalPrice(orderDetailEntity.getOneKindTotalPrice())
+                .build();
+    }
 
 //    @QueryProjection
 //    public OrderDetailDTO(OrderDetailEntity orderDetailEntity) {

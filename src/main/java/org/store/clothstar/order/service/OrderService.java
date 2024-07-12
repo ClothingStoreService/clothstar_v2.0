@@ -30,6 +30,8 @@ import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -44,9 +46,9 @@ public class OrderService {
     private final ProductLineJPARepository productLineJPARepository;
 
     public OrderService(
-            @Qualifier("jpaOrderRepository") OrderRepository orderRepository
-            , @Qualifier("memberJpaRepository") MemberRepository memberRepository
-            , @Qualifier("addressJpaRepository") AddressRepository addressRepository
+            OrderRepository orderRepository
+            , MemberRepository memberRepository
+            , AddressRepository addressRepository
             , OrderDetailService orderDetailService
             , OrderDetailRepository orderDetailRepository,
             ProductJPARepository productJPARepository, ProductLineJPARepository productLineJPARepository) {
@@ -65,36 +67,31 @@ public class OrderService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다"));
 
         // 주문자 정보 조회
-        MemberEntity memberEntity = memberRepository.findById(orderEntity.getMemberId())
+        Member member = memberRepository.findById(orderEntity.getMemberId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다"));
 
-        AddressEntity addressEntity = addressRepository.findById(orderEntity.getAddressId())
+        Address address = addressRepository.findById(orderEntity.getAddressId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "배송지를 찾을 수 없습니다"));
 
         // 주문 Response 객체 생성
-        OrderResponse orderResponse = OrderResponse.from(orderEntity,memberEntity,addressEntity);
+        OrderResponse orderResponse = OrderResponse.from(orderEntity,member,address);
 
-        // 주문 상세 정보 설정
-        List<OrderDetailDTO> orderDetailDTOList = new ArrayList<>();
-        for (OrderDetailEntity orderDetailEntity : orderEntity.getOrderDetails()) {
-            ProductEntity productEntity = productJPARepository.findById(orderDetailEntity.getProductId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품옵션정보를 찾을 수 없습니다"));
-            ProductLineEntity productLineEntity = productLineJPARepository.findById(orderDetailEntity.getProductLineId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다"));
+        List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails();
+        List<Long> productIds = orderDetails.stream().map(OrderDetailEntity::getProductId).collect(Collectors.toList());
+        List<Long> productLineIds = orderDetails.stream().map(OrderDetailEntity::getProductLineId).collect(Collectors.toList());
 
-            OrderDetailDTO orderDetailDTO = OrderDetailDTO.builder()
-                    .orderDetailId(orderDetailEntity.getOrderDetailId())
-                    .productName(productLineEntity.getName())
-                    .optionName(productEntity.getName())
-                    .brandName(productLineEntity.getSeller().getBrandName())
-                    .productPrice(productLineEntity.getPrice())
-                    .extraCharge(productEntity.getExtraCharge())
-                    .quantity(orderDetailEntity.getQuantity())
-                    .totalPrice(orderDetailEntity.getOneKindTotalPrice())
-                    .build();
+        List<ProductEntity> products = productJPARepository.findByIdIn(productIds);
+        List<ProductLineEntity> productLines = productLineJPARepository.findByIdIn(productLineIds);
 
-            orderDetailDTOList.add(orderDetailDTO);
-        }
+        Map<Long, ProductEntity> productMap = products.stream().collect(Collectors.toMap(ProductEntity::getId, product -> product));
+        Map<Long, ProductLineEntity> productLineMap = productLines.stream().collect(Collectors.toMap(ProductLineEntity::getId, productLine -> productLine));
+
+        List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream().map(orderDetailEntity -> {
+            ProductEntity productEntity = productMap.get(orderDetailEntity.getProductId());
+            ProductLineEntity productLineEntity = productLineMap.get(orderDetailEntity.getProductLineId());
+            return OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity);
+        }).collect(Collectors.toList());
+
         orderResponse.setterOrderDetailList(orderDetailDTOList);
 
         return orderResponse;
