@@ -128,6 +128,12 @@ public class MemberServiceImpl implements MemberService {
         log.info("인증번호 전송 완료, email = {}", email);
     }
 
+    @Override
+    public Member getMemberByMemberId(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
+    }
+
     private String sendEmailAuthentication(String toEmail) {
         String certifyNum = redisUtil.createdCertifyNum();
         String message = mailContentBuilder.build(certifyNum);

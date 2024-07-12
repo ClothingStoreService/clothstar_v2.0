@@ -88,4 +88,8 @@ public class ProductService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
         productEntity.restoreStock(orderDetailEntity.getQuantity());
     }
+
+    public List<ProductEntity> findByIdIn(List<Long> productIds) {
+        return productJPARepository.findByIdIn(productIds);
+    }
 }

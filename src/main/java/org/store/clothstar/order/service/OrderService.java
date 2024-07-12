@@ -5,11 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import org.store.clothstar.common.error.ErrorCode;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.repository.AddressRepository;
-import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.service.AddressService;
+import org.store.clothstar.member.service.MemberService;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.entity.OrderEntity;
@@ -20,9 +19,9 @@ import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 import org.store.clothstar.product.entity.ProductEntity;
-import org.store.clothstar.product.repository.ProductJPARepository;
+import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
-import org.store.clothstar.productLine.repository.ProductLineJPARepository;
+import org.store.clothstar.productLine.service.ProductLineService;
 
 import java.util.List;
 import java.util.Map;
@@ -33,27 +32,25 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final MemberRepository memberRepository;
-    private final AddressRepository addressRepository;
+    private final MemberService memberService;
+    private final AddressService addressService;
     private final OrderDetailRepository orderDetailRepository;
     private final OrderDetailService orderDetailService;
-    private final ProductJPARepository productJPARepository;
-    private final ProductLineJPARepository productLineJPARepository;
+    private final ProductService productService;
+    private final ProductLineService productLineService;
 
     public OrderService(
             OrderRepository orderRepository
-            , MemberRepository memberRepository
-            , AddressRepository addressRepository
-            , OrderDetailService orderDetailService
-            , OrderDetailRepository orderDetailRepository,
-            ProductJPARepository productJPARepository, ProductLineJPARepository productLineJPARepository) {
+            , MemberService memberService, AddressService addressService
+            , OrderDetailService orderDetailService, OrderDetailRepository orderDetailRepository,
+            ProductService productService, ProductLineService productLineService) {
         this.orderRepository = orderRepository;
-        this.memberRepository = memberRepository;
-        this.addressRepository = addressRepository;
+        this.memberService = memberService;
+        this.addressService = addressService;
         this.orderDetailRepository = orderDetailRepository;
         this.orderDetailService = orderDetailService;
-        this.productJPARepository = productJPARepository;
-        this.productLineJPARepository = productLineJPARepository;
+        this.productService = productService;
+        this.productLineService = productLineService;
     }
 
     @Transactional(readOnly = true)
@@ -61,12 +58,8 @@ public class OrderService {
         OrderEntity orderEntity = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다"));
 
-        // 주문자 정보 조회
-        Member member = memberRepository.findById(orderEntity.getMemberId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다"));
-
-        Address address = addressRepository.findById(orderEntity.getAddressId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "배송지를 찾을 수 없습니다"));
+        Member member = memberService.getMemberByMemberId(orderEntity.getMemberId());
+        Address address = addressService.getAddressById(orderEntity.getAddressId());
 
         // 주문 Response 객체 생성
         OrderResponse orderResponse = OrderResponse.from(orderEntity,member,address);
@@ -75,8 +68,8 @@ public class OrderService {
         List<Long> productIds = orderDetails.stream().map(OrderDetailEntity::getProductId).collect(Collectors.toList());
         List<Long> productLineIds = orderDetails.stream().map(OrderDetailEntity::getProductLineId).collect(Collectors.toList());
 
-        List<ProductEntity> products = productJPARepository.findByIdIn(productIds);
-        List<ProductLineEntity> productLines = productLineJPARepository.findByIdIn(productLineIds);
+        List<ProductEntity> products = productService.findByIdIn(productIds);
+        List<ProductLineEntity> productLines = productLineService.findByIdIn(productLineIds);
 
         Map<Long, ProductEntity> productMap = products.stream().collect(Collectors.toMap(ProductEntity::getId, product -> product));
         Map<Long, ProductLineEntity> productLineMap = productLines.stream().collect(Collectors.toMap(ProductLineEntity::getId, productLine -> productLine));
@@ -105,11 +98,8 @@ public class OrderService {
     @Transactional
     public Long saveOrder(CreateOrderRequest createOrderRequest) {
 
-        Member member = memberRepository.findById(createOrderRequest.getMemberId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorCode.NOT_FOUND_MEMBER.getMessage()));
-
-        Address address = addressRepository.findById(createOrderRequest.getAddressId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "배송지 정보를 찾을 수 없습니다."));
+        Member member = memberService.getMemberByMemberId(createOrderRequest.getMemberId());
+        Address address = addressService.getAddressById(createOrderRequest.getAddressId());
 
         OrderEntity orderEntity = createOrderRequest.toOrderEntity(member, address);
         orderRepository.save(orderEntity);

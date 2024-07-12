@@ -134,4 +134,8 @@ public class ProductLineService {
 
         return dto;
     }
+
+    public List<ProductLineEntity> findByIdIn(List<Long> productLineIds) {
+        return productLineRepository.findByIdIn(productLineIds);
+    }
 }

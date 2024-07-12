@@ -6,6 +6,7 @@ import org.springframework.data.domain.Slice;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
+import org.store.clothstar.member.domain.Member;
 
 public interface MemberService {
     Page<MemberResponse> getAllMemberOffsetPaging(Pageable pageable);
@@ -25,4 +26,6 @@ public interface MemberService {
     Long signUp(CreateMemberRequest createMemberDTO);
 
     void signupCertifyNumEmailSend(String email);
+
+    Member getMemberByMemberId(Long memberId);
 }
