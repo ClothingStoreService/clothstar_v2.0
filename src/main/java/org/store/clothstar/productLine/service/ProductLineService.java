@@ -48,46 +48,44 @@ public class ProductLineService {
 
     @Transactional(readOnly = true)
     public Page<ProductLineWithProductsJPAResponse> getAllProductLinesWithProductsOffsetPaging(Pageable pageable, String keyword) {
-        return productLineRepository.findAllOffsetPaging(pageable, keyword);
+        Page<ProductLineEntity> allOffsetPaging = productLineRepository.findAllOffsetPaging(pageable, keyword);
+
+        return allOffsetPaging.map(this::convertToDtoWithProducts);
     }
 
     @Transactional(readOnly = true)
     public Slice<ProductLineWithProductsJPAResponse> getAllProductLinesWithProductsSlicePaging(Pageable pageable, String keyword) {
-        return productLineRepository.findAllSlicePaging(pageable, keyword);
+        Slice<ProductLineEntity> allSlicePaging = productLineRepository.findAllSlicePaging(pageable, keyword);
+        return allSlicePaging.map(this::convertToDtoWithProducts);
     }
 
-    @Transactional(readOnly = true)
-    public Optional<ProductLineResponse> getProductLine(Long productLineId) {
-        return productLineRepository.findById(productLineId)
-                .map(ProductLineResponse::from);
-    }
-
+    @Deprecated
     @Transactional(readOnly = true)
     public ProductLineWithProductsJPAResponse getProductLineWithProducts(Long productLineId) {
-        ProductLineWithProductsJPAResponse productLineWithProducts =
-                productLineRepository.findProductLineWithOptionsById(productLineId)
-                        .orElseThrow(() -> new ResponseStatusException(
-                                HttpStatus.BAD_REQUEST, "productLineId :" + productLineId + "인 상품 및 옵션 정보를 찾을 수 없습니다."));
+        ProductLineEntity productLine = productLineRepository.findById(productLineId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품 정보를 찾을 수 없습니다."));
 
-
-        return productLineWithProducts;
+        return convertToDtoWithProducts(productLine);
     }
 
     @Transactional
     public Page<ProductLineWithProductsJPAResponse> getProductLinesByCategoryWithOffsetPaging(Long categoryId, Pageable pageable, String keyword) {
-        Page<ProductLineEntity> productLineEntities = productLineRepository.findEntitiesByCategoryWithOffsetPaging(categoryId, pageable, keyword);
-        return productLineEntities.map(this::convertToDtoWithProducts);
+        Page<ProductLineEntity> allOffsetPagingByCategory = productLineRepository.findEntitiesByCategoryWithOffsetPaging(categoryId, pageable, keyword);
+
+        return allOffsetPagingByCategory.map(this::convertToDtoWithProducts);
     }
 
     @Transactional
     public Slice<ProductLineWithProductsJPAResponse> getProductLinesByCategoryWithSlicePaging(Long categoryId, Pageable pageable, String keyword) {
-        Slice<ProductLineEntity> productLineEntities = productLineRepository.findEntitiesByCategoryWithSlicePaging(categoryId, pageable, keyword);
-        return productLineEntities.map(this::convertToDtoWithProducts);
+        Slice<ProductLineEntity> allSlicePagingByCategory = productLineRepository.findEntitiesByCategoryWithSlicePaging(categoryId, pageable, keyword);
+
+        return allSlicePagingByCategory.map(this::convertToDtoWithProducts);
     }
 
     @Transactional
     public Long createProductLine(CreateProductLineRequest createProductLineRequest) {
         Long memberId = 1L;
+
         Seller seller = sellerRepository.findById(memberId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "판매자 정보를 찾을 수 없습니다."));
 

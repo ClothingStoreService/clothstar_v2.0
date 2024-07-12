@@ -40,6 +40,7 @@ public class ProductLineWithProductsJPAResponse {
     @Schema(description = "상품 상태", example = "FOR_SALE")
     private ProductLineStatus status;
 
+    @Builder.Default
     @Schema(description = "상품 옵션")
     private List<ProductResponse> productList = new ArrayList<>();
 

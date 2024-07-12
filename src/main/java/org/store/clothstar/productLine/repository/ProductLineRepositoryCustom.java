@@ -11,13 +11,10 @@ import java.util.Optional;
 
 @Repository
 public interface ProductLineRepositoryCustom {
-    Page<ProductLineWithProductsJPAResponse> getProductLinesWithOptions(Pageable pageable);
 
-    Optional<ProductLineWithProductsJPAResponse> findProductLineWithOptionsById(Long productLineId);
+    Page<ProductLineEntity> findAllOffsetPaging(Pageable pageable, String keyword);
 
-    Page<ProductLineWithProductsJPAResponse> findAllOffsetPaging(Pageable pageable, String keyword);
-
-    Slice<ProductLineWithProductsJPAResponse> findAllSlicePaging(Pageable pageable, String keyword);
+    Slice<ProductLineEntity> findAllSlicePaging(Pageable pageable, String keyword);
 
     Page<ProductLineEntity> findEntitiesByCategoryWithOffsetPaging(Long categoryId, Pageable pageable, String keyword);
 

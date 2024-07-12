@@ -30,6 +30,7 @@ public class ProductLineController {
 
     private final ProductLineService productLineService;
 
+    @Deprecated
     @Operation(summary = "전체 상품 조회", description = "삭제되지 않은 모든 상품을 조회한다.")
     @GetMapping("/v1/productLines")
     public ResponseEntity<List<ProductLineResponse>> getAllProductLines() {
@@ -82,6 +83,7 @@ public class ProductLineController {
         return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "ProductLine updated successfully"));
     }
 
+    @Operation(summary = "상품 삭제", description = "상품 이름, 가격, 재고, 상태를 입력하여 상품 정보를 수정한다.")
     @DeleteMapping("/v1/productLines/{productLineId}")
     public ResponseEntity<Void> deleteProductLine(@PathVariable("productLineId") Long productLineId) {
         productLineService.setDeletedAt(productLineId);
