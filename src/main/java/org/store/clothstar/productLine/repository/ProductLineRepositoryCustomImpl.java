@@ -9,18 +9,12 @@ import org.springframework.data.domain.*;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.store.clothstar.member.domain.QSeller;
-import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.entity.QProductEntity;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
-import org.store.clothstar.productLine.dto.response.QProductLineWithProductsJPAResponse;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.entity.QProductLineEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor

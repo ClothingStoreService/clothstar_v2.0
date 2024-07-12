@@ -83,7 +83,7 @@ public class ProductLineController {
         return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "ProductLine updated successfully"));
     }
 
-    @Operation(summary = "상품 삭제", description = "상품 이름, 가격, 재고, 상태를 입력하여 상품 정보를 수정한다.")
+    @Operation(summary = "상품 삭제", description = "productLineId를 통해 deletedAt 컬럼을 설정해 soft delete를 수행한다.")
     @DeleteMapping("/v1/productLines/{productLineId}")
     public ResponseEntity<Void> deleteProductLine(@PathVariable("productLineId") Long productLineId) {
         productLineService.setDeletedAt(productLineId);
