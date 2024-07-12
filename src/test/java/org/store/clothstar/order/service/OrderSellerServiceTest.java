@@ -12,13 +12,24 @@ import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
+import org.store.clothstar.member.domain.Seller;
+import org.store.clothstar.member.domain.vo.AddressInfo;
+import org.store.clothstar.member.service.AddressService;
+import org.store.clothstar.member.service.MemberService;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
 import org.store.clothstar.order.type.Status;
+import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
+import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
+import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.product.service.ProductService;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
+import org.store.clothstar.productLine.service.ProductLineService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,31 +58,82 @@ class OrderSellerServiceTest {
     private OrderDetailService orderDetailService;
 
     @Mock
-    private Member mockMember;
+    private MemberService memberService;
 
     @Mock
-    private Address mockAddress;
+    private AddressService addressService;
 
-//    @Test
-//    @DisplayName("getWaitingOrders: '승인대기' 주문 조회 - 메서드 호출 & 반환값 테스트")
-//    void getWaitingOrder_test() {
-//        //given
-//        OrderResponse orderResponse1 = mock(OrderResponse.class);
-//        given(orderResponse1.getTotalShippingPrice()).willReturn(1000);
-//        OrderResponse orderResponse2 = mock(OrderResponse.class);
-//        OrderResponse orderResponse3 = mock(OrderResponse.class);
-//
-//        List<OrderResponse> orderList = List.of(orderResponse1, orderResponse2, orderResponse3);
-//        given(orderSellerRepository.findWaitingOrders()).willReturn(orderList);
-//
-//        //when
-//        List<OrderResponse> response = orderSellerService.getWaitingOrder();
-//
-//        //then
-//        then(orderSellerRepository).should(times(1)).findWaitingOrders();
-//        assertThat(response).isNotNull().hasSize(3);
-//        assertThat(response.get(0).getTotalShippingPrice()).isEqualTo(1000);
-//    }
+    @Mock
+    private ProductLineService productLineService;
+
+    @Mock
+    private ProductService productService;
+
+    @Mock
+    private Member member;
+
+    @Mock
+    private Address address;
+
+    @Mock
+    private OrderEntity orderEntity;
+
+    @Mock
+    private OrderDetailEntity orderDetailEntity;
+
+    @Mock
+    private ProductLineEntity productLineEntity;
+
+    @Mock
+    private ProductEntity productEntity;
+
+    @Mock
+    private AddressInfo addressInfo;
+
+    @Mock
+    private Seller seller;
+
+    @Test
+    @DisplayName("getWaitingOrders: '승인대기' 주문 조회 - 메서드 호출 & 반환값 테스트")
+    void getWaitingOrder_test() {
+        // given
+        Long memberId = 1L;
+        Long addressId = 2L;
+        Long productId = 3L;
+        Long productLineId = 4L;
+
+        given(orderSellerRepository.findWaitingOrders()).willReturn(List.of(orderEntity));
+        given(orderEntity.getMemberId()).willReturn(memberId);
+        given(orderEntity.getAddressId()).willReturn(addressId);
+        given(orderEntity.getCreatedAt()).willReturn(LocalDateTime.now());
+        given(orderEntity.getOrderDetails()).willReturn(List.of(orderDetailEntity));
+
+        given(memberService.getMemberByMemberId(memberId)).willReturn(member);
+        given(addressService.getAddressById(addressId)).willReturn(address);
+        given(address.getAddressInfo()).willReturn(addressInfo);
+        given(orderDetailEntity.getProductId()).willReturn(productId);
+        given(orderDetailEntity.getProductLineId()).willReturn(productLineId);
+        given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
+        given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLineEntity));
+        given(productEntity.getId()).willReturn(productId);
+        given(productLineEntity.getId()).willReturn(productLineId);
+        given(productLineEntity.getSeller()).willReturn(seller);
+
+        OrderResponse expectedOrderResponse = OrderResponse.from(orderEntity, member, address);
+        expectedOrderResponse.setterOrderDetailList(List.of(OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity)));
+
+        // when
+        List<OrderResponse> orderResponses = orderSellerService.getWaitingOrder();
+
+        // then
+        assertThat(orderResponses.get(0)).isEqualToComparingFieldByFieldRecursively(expectedOrderResponse);
+
+        then(orderSellerRepository).should(times(1)).findWaitingOrders();
+        then(memberService).should(times(1)).getMemberByMemberId(memberId);
+        then(addressService).should(times(1)).getAddressById(addressId);
+        then(productService).should(times(1)).findByIdIn(List.of(productId));
+        then(productLineService).should(times(1)).findByIdIn(List.of(productLineId));
+    }
 
     @Test
     @DisplayName("approveOrder: 판매자 주문 승인 - 메서드 호출 & 반환값 테스트")
