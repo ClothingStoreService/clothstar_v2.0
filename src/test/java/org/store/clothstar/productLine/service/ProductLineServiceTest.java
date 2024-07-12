@@ -1,6 +1,5 @@
 package org.store.clothstar.productLine.service;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +15,7 @@ import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineResponse;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
+import org.store.clothstar.productLine.dto.response.ProductLineDetailResponse;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
@@ -97,14 +96,14 @@ class ProductLineServiceTest {
     public void givenProductLineId_whenGetProductLineWithProducts_thenProductLineWithProducts() {
         // given
         Long productLineId = 1L;
-        ProductLineWithProductsJPAResponse mockResponse = mock(ProductLineWithProductsJPAResponse.class);
+        ProductLineDetailResponse mockResponse = mock(ProductLineDetailResponse.class);
         when(mockResponse.getProductLineId()).thenReturn(productLineId);
         when(mockResponse.getTotalStock()).thenReturn(90L);
 
         given(productLineRepository.findProductLineWithOptionsById(productLineId)).willReturn(Optional.of(mockResponse));
 
         // when
-        ProductLineWithProductsJPAResponse response = productLineService.getProductLineWithProducts(productLineId);
+        ProductLineDetailResponse response = productLineService.getProductLineWithProducts(productLineId);
 
         // then
         assertThat(response).isNotNull();

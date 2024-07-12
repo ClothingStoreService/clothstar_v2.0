@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductLineWithProductsJPAResponse {
+public class ProductLinePaginationResponse {
 
     @Schema(description = "상품 id", example = "1")
     private Long productLineId;
@@ -58,7 +58,7 @@ public class ProductLineWithProductsJPAResponse {
     private LocalDateTime modifiedAt;
 
     @QueryProjection
-    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Seller seller, Long totalStock) {
+    public ProductLinePaginationResponse(ProductLineEntity productLine, Seller seller, Long totalStock) {
         this.productLineId = productLine.getProductLineId();
         this.name = productLine.getName();
         this.content = productLine.getContent();
