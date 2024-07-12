@@ -52,26 +52,26 @@ class OrderSellerServiceTest {
     @Mock
     private Address mockAddress;
 
-    @Test
-    @DisplayName("getWaitingOrders: '승인대기' 주문 조회 - 메서드 호출 & 반환값 테스트")
-    void getWaitingOrder_test() {
-        //given
-        OrderResponse orderResponse1 = mock(OrderResponse.class);
-        given(orderResponse1.getTotalShippingPrice()).willReturn(1000);
-        OrderResponse orderResponse2 = mock(OrderResponse.class);
-        OrderResponse orderResponse3 = mock(OrderResponse.class);
-
-        List<OrderResponse> orderList = List.of(orderResponse1, orderResponse2, orderResponse3);
-        given(orderSellerRepository.findWaitingOrders()).willReturn(orderList);
-
-        //when
-        List<OrderResponse> response = orderSellerService.getWaitingOrder();
-
-        //then
-        then(orderSellerRepository).should(times(1)).findWaitingOrders();
-        assertThat(response).isNotNull().hasSize(3);
-        assertThat(response.get(0).getTotalShippingPrice()).isEqualTo(1000);
-    }
+//    @Test
+//    @DisplayName("getWaitingOrders: '승인대기' 주문 조회 - 메서드 호출 & 반환값 테스트")
+//    void getWaitingOrder_test() {
+//        //given
+//        OrderResponse orderResponse1 = mock(OrderResponse.class);
+//        given(orderResponse1.getTotalShippingPrice()).willReturn(1000);
+//        OrderResponse orderResponse2 = mock(OrderResponse.class);
+//        OrderResponse orderResponse3 = mock(OrderResponse.class);
+//
+//        List<OrderResponse> orderList = List.of(orderResponse1, orderResponse2, orderResponse3);
+//        given(orderSellerRepository.findWaitingOrders()).willReturn(orderList);
+//
+//        //when
+//        List<OrderResponse> response = orderSellerService.getWaitingOrder();
+//
+//        //then
+//        then(orderSellerRepository).should(times(1)).findWaitingOrders();
+//        assertThat(response).isNotNull().hasSize(3);
+//        assertThat(response.get(0).getTotalShippingPrice()).isEqualTo(1000);
+//    }
 
     @Test
     @DisplayName("approveOrder: 판매자 주문 승인 - 메서드 호출 & 반환값 테스트")

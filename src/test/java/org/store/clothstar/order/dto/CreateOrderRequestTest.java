@@ -10,6 +10,7 @@ import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.entity.OrderEntity;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -32,6 +33,6 @@ class CreateOrderRequestTest {
         OrderEntity orderEntity = request.toOrderEntity(member, address);
 
         //then
-        assertEquals(member.getMemberId(), orderEntity.getMember().getMemberId());
+        assertEquals(member.getMemberId(), orderEntity.getMemberId());
     }
 }
