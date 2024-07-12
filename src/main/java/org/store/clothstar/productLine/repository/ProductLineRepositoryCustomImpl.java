@@ -32,7 +32,6 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
     QProductLineEntity qProductLine = QProductLineEntity.productLineEntity;
     QProductEntity qProduct = QProductEntity.productEntity;
     QSeller qSeller = QSeller.seller;
-    QMember qMember = QMember.member;
 
     @Override
     public Page<ProductLineWithProductsJPAResponse> getProductLinesWithOptions(Pageable pageable) {
