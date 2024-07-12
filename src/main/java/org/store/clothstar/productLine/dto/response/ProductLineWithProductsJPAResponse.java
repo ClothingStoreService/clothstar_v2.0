@@ -63,7 +63,7 @@ public class ProductLineWithProductsJPAResponse {
     private LocalDateTime modifiedAt;
 
     @QueryProjection
-    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, SellerEntity seller, Long totalStock) {
+    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Seller seller, Long totalStock) {
         this.productLineId = productLine.getProductLineId();
         this.name = productLine.getName();
         this.content = productLine.getContent();
