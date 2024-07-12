@@ -3,9 +3,6 @@ package org.store.clothstar.orderDetail.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
-import org.store.clothstar.product.entity.ProductEntity;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 @Getter
 @Builder

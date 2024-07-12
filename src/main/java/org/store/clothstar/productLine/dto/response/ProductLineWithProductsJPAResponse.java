@@ -5,21 +5,15 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.store.clothstar.category.dto.response.CategoryResponse;
-import org.store.clothstar.category.entity.CategoryEntity;
-import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.Seller;
-import org.store.clothstar.member.dto.response.MemberSimpleResponse;
 import org.store.clothstar.member.dto.response.SellerSimpleResponse;
 import org.store.clothstar.product.dto.response.ProductResponse;
-import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Builder
 @Getter
