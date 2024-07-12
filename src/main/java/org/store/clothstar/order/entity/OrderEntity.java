@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.common.entity.BaseEntity;
-import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;

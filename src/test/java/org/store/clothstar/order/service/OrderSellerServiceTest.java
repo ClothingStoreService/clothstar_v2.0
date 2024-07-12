@@ -32,6 +32,7 @@ import org.store.clothstar.productLine.service.ProductLineService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -102,7 +103,8 @@ class OrderSellerServiceTest {
         Long productId = 3L;
         Long productLineId = 4L;
 
-        given(orderSellerRepository.findWaitingOrders()).willReturn(List.of(orderEntity));
+        List<OrderEntity> waitingOrders = List.of(orderEntity);
+        given(orderSellerRepository.findWaitingOrders()).willReturn(waitingOrders);
         given(orderEntity.getMemberId()).willReturn(memberId);
         given(orderEntity.getAddressId()).willReturn(addressId);
         given(orderEntity.getCreatedAt()).willReturn(LocalDateTime.now());
@@ -120,19 +122,24 @@ class OrderSellerServiceTest {
         given(productLineEntity.getSeller()).willReturn(seller);
 
         OrderResponse expectedOrderResponse = OrderResponse.from(orderEntity, member, address);
-        expectedOrderResponse.setterOrderDetailList(List.of(OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity)));
+        List<OrderDetailEntity> orderDetails = List.of(orderDetailEntity);
+        List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream()
+                .map(orderDetailEntity -> OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity))
+                .collect(Collectors.toList());
+        expectedOrderResponse.setterOrderDetailList(orderDetailDTOList);
 
         // when
         List<OrderResponse> orderResponses = orderSellerService.getWaitingOrder();
 
         // then
-        assertThat(orderResponses.get(0)).isEqualToComparingFieldByFieldRecursively(expectedOrderResponse);
+        assertThat(orderResponses).hasSize(waitingOrders.size());
+        assertThat(orderResponses.get(0)).usingRecursiveComparison().isEqualTo(expectedOrderResponse);
 
-        then(orderSellerRepository).should(times(1)).findWaitingOrders();
-        then(memberService).should(times(1)).getMemberByMemberId(memberId);
-        then(addressService).should(times(1)).getAddressById(addressId);
-        then(productService).should(times(1)).findByIdIn(List.of(productId));
-        then(productLineService).should(times(1)).findByIdIn(List.of(productLineId));
+        verify(orderSellerRepository, times(1)).findWaitingOrders();
+        verify(memberService, times(1)).getMemberByMemberId(memberId);
+        verify(addressService, times(1)).getAddressById(addressId);
+        verify(productService, times(1)).findByIdIn(List.of(productId));
+        verify(productLineService, times(1)).findByIdIn(List.of(productLineId));
     }
 
     @Test
@@ -181,9 +188,9 @@ class OrderSellerServiceTest {
         given(mockOrderEntity.getStatus()).willReturn(Status.DELIVERED);
 
         //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            orderSellerService.approveOrder(orderId);
-        });
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderSellerService.approveOrder(orderId)
+        );
 
         //then
         assertEquals("400 BAD_REQUEST \"주문이 존재하지 않거나 상태가 'WAITING'이 아니어서 처리할 수 없습니다.\"", thrown.getMessage());
@@ -199,9 +206,9 @@ class OrderSellerServiceTest {
         given(mockOrderEntity.getStatus()).willReturn(Status.DELIVERED);
 
         //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            orderSellerService.cancelOrder(orderId);
-        });
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderSellerService.cancelOrder(orderId)
+        );
 
         //then
         assertEquals("400 BAD_REQUEST \"주문이 존재하지 않거나 상태가 'WAITING'이 아니어서 처리할 수 없습니다.\"", thrown.getMessage());

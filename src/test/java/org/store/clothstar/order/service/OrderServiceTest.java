@@ -6,17 +6,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.domain.vo.AddressInfo;
-import org.store.clothstar.member.repository.AddressRepository;
-import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.service.AddressService;
 import org.store.clothstar.member.service.MemberService;
-import org.store.clothstar.order.dto.reponse.AddressDTO;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
@@ -32,7 +28,6 @@ import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.service.ProductLineService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -123,7 +118,7 @@ class OrderServiceTest {
         OrderResponse orderResponse = orderService.getOrder(orderId);
 
         // then
-        assertThat(orderResponse).isEqualToComparingFieldByFieldRecursively(expectedOrderResponse);
+        assertThat(orderResponse).usingRecursiveComparison().isEqualTo(expectedOrderResponse);
 
         then(orderRepository).should(times(1)).findById(orderId);
         then(memberService).should(times(1)).getMemberByMemberId(memberId);
