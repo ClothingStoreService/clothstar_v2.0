@@ -67,7 +67,9 @@ public class OrderService {
         // 주문 Response 객체 생성
         OrderResponse orderResponse = OrderResponse.from(orderEntity,member,address);
 
-        List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails();
+        List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails().stream()
+                .filter(orderDetailEntity -> orderDetailEntity.getDeletedAt() == null)
+                .collect(Collectors.toList());
         List<Long> productIds = orderDetails.stream().map(OrderDetailEntity::getProductId).collect(Collectors.toList());
         List<Long> productLineIds = orderDetails.stream().map(OrderDetailEntity::getProductLineId).collect(Collectors.toList());
 
@@ -96,7 +98,9 @@ public class OrderService {
             Address address = addressService.getAddressById(orderEntity.getAddressId());
             OrderResponse orderResponse = OrderResponse.from(orderEntity, member, address);
 
-            List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails();
+            List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails().stream()
+                    .filter(orderDetailEntity -> orderDetailEntity.getDeletedAt() == null)
+                    .collect(Collectors.toList());
             List<Long> productIds = orderDetails.stream().map(OrderDetailEntity::getProductId).collect(Collectors.toList());
             List<Long> productLineIds = orderDetails.stream().map(OrderDetailEntity::getProductLineId).collect(Collectors.toList());
 
@@ -126,7 +130,9 @@ public class OrderService {
             Address address = addressService.getAddressById(orderEntity.getAddressId());
             OrderResponse orderResponse = OrderResponse.from(orderEntity, member, address);
 
-            List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails();
+            List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails().stream()
+                    .filter(orderDetailEntity -> orderDetailEntity.getDeletedAt() == null)
+                    .collect(Collectors.toList());
             List<Long> productIds = orderDetails.stream().map(OrderDetailEntity::getProductId).collect(Collectors.toList());
             List<Long> productLineIds = orderDetails.stream().map(OrderDetailEntity::getProductLineId).collect(Collectors.toList());
 

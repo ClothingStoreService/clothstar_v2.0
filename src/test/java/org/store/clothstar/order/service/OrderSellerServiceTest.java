@@ -108,6 +108,7 @@ class OrderSellerServiceTest {
         given(orderEntity.getMemberId()).willReturn(memberId);
         given(orderEntity.getAddressId()).willReturn(addressId);
         given(orderEntity.getCreatedAt()).willReturn(LocalDateTime.now());
+        given(orderDetailEntity.getDeletedAt()).willReturn(null);
         given(orderEntity.getOrderDetails()).willReturn(List.of(orderDetailEntity));
 
         given(memberService.getMemberByMemberId(memberId)).willReturn(member);

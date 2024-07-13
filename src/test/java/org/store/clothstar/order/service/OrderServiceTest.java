@@ -105,6 +105,7 @@ class OrderServiceTest {
         given(memberService.getMemberByMemberId(memberId)).willReturn(member);
         given(addressService.getAddressById(addressId)).willReturn(address);
         given(address.getAddressInfo()).willReturn(addressInfo);
+        given(orderDetailEntity.getDeletedAt()).willReturn(null);
         given(orderDetailEntity.getProductId()).willReturn(productId);
         given(orderDetailEntity.getProductLineId()).willReturn(productLineId);
         given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
@@ -152,6 +153,7 @@ class OrderServiceTest {
         given(memberService.getMemberByMemberId(memberId)).willReturn(member);
         given(addressService.getAddressById(addressId)).willReturn(address);
         given(address.getAddressInfo()).willReturn(addressInfo);
+        given(orderDetailEntity.getDeletedAt()).willReturn(null);
         given(orderDetailEntity.getProductId()).willReturn(productId);
         given(orderDetailEntity.getProductLineId()).willReturn(productLineId);
         given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
@@ -203,6 +205,7 @@ class OrderServiceTest {
         given(memberService.getMemberByMemberId(memberId)).willReturn(member);
         given(addressService.getAddressById(addressId)).willReturn(address);
         given(address.getAddressInfo()).willReturn(addressInfo);
+        given(orderDetailEntity.getDeletedAt()).willReturn(null);
         given(orderDetailEntity.getProductId()).willReturn(productId);
         given(orderDetailEntity.getProductLineId()).willReturn(productLineId);
         given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));

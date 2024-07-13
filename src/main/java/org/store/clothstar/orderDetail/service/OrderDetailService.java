@@ -45,26 +45,6 @@ public class OrderDetailService {
         this.productLineJPARepository = productLineJPARepository;
     }
 
-    public List<OrderDetailDTO> getOrderDetails(OrderEntity orderEntity, ProductLineEntity productLineEntity, ProductEntity productEntity) {
-        List<OrderDetailEntity> orderDetailEntities = orderDetailRepository.findByOrder(orderEntity);
-
-        // Convert entities to DTOs
-        List<OrderDetailDTO> orderDetailDTOList = orderDetailEntities.stream()
-                .map(orderDetailEntity -> OrderDetailDTO.builder()
-                        .orderDetailId(orderDetailEntity.getOrderDetailId())
-                        .productName(productLineEntity.getName())
-                        .optionName(productEntity.getName())
-                        .brandName(productLineEntity.getSeller().getBrandName())
-                        .productPrice(productLineEntity.getPrice())
-                        .extraCharge(productEntity.getExtraCharge())
-                        .quantity(orderDetailEntity.getQuantity())
-                        .totalPrice(orderDetailEntity.getOneKindTotalPrice())
-                        .build())
-                .collect(Collectors.toList());
-
-        return orderDetailDTOList;
-    }
-
     // 주문 생성시 같이 호출되는 주문 상세 생성 메서드 - 하나의 트랜잭션으로 묶임
     @Transactional
     public void saveOrderDetailWithOrder(CreateOrderDetailRequest createOrderDetailRequest, long orderId) {
