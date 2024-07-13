@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.order.utils.GenerateOrderId;
@@ -33,8 +33,8 @@ public class CreateOrderRequest {
     private Long addressId;
 
 
-    public OrderEntity toOrderEntity(Member member, Address address) {
-        return OrderEntity.builder()
+    public Order toOrder(Member member, Address address) {
+        return Order.builder()
                 .orderId(GenerateOrderId.generateOrderId())
                 .memberId(member.getMemberId())
                 .addressId(address.getAddressId())

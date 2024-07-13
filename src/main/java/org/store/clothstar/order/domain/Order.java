@@ -1,4 +1,4 @@
-package org.store.clothstar.order.entity;
+package org.store.clothstar.order.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.store.clothstar.common.entity.BaseEntity;
 import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
+import org.store.clothstar.orderDetail.domain.OrderDetail;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,12 +18,12 @@ import java.util.List;
 @Getter
 @Builder
 @Entity(name = "orders")
-public class OrderEntity extends BaseEntity {
+public class Order extends BaseEntity {
     @Id
     private Long orderId;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderDetailEntity> orderDetails;
+    private List<OrderDetail> orderDetails;
 
     @Enumerated(EnumType.STRING)
     private Status status;

@@ -1,14 +1,14 @@
 package org.store.clothstar.orderDetail.repository;
 
-import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
+import org.store.clothstar.orderDetail.domain.OrderDetail;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface OrderDetailRepository {
-    Optional<OrderDetailEntity> findById(Long orderDetailId);
+    Optional<OrderDetail> findById(Long orderDetailId);
 
-    OrderDetailEntity save(OrderDetailEntity orderdetailEntity);
+    OrderDetail save(OrderDetail orderdetailEntity);
 
-    List<OrderDetailEntity> findOrderDetailListByOrderId(Long orderId);
+    List<OrderDetail> findOrderDetailListByOrderId(Long orderId);
 }

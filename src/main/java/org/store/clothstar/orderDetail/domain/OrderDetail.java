@@ -1,4 +1,4 @@
-package org.store.clothstar.orderDetail.entity;
+package org.store.clothstar.orderDetail.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.common.entity.BaseEntity;
-import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.order.domain.Order;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity(name = "order_detail")
-public class OrderDetailEntity extends BaseEntity {
+public class OrderDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderDetailId;
@@ -30,7 +30,7 @@ public class OrderDetailEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    private OrderEntity order;
+    private Order order;
 
     @JoinColumn(name = "product_line_id")
     private Long productLineId;

@@ -10,12 +10,12 @@ import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.service.AddressService;
 import org.store.clothstar.member.service.MemberService;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
-import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
 import org.store.clothstar.order.type.Status;
+import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
-import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.service.ProductService;
@@ -55,9 +55,9 @@ public class OrderSellerService {
 
     @Transactional(readOnly = true)
     public List<OrderResponse> getWaitingOrder() {
-        List<OrderEntity> waitingOrders = orderSellerRepository.findWaitingOrders();
+        List<Order> waitingOrders = orderSellerRepository.findWaitingOrders();
 
-        List<OrderEntity> filteredOrders = waitingOrders.stream()
+        List<Order> filteredOrders = waitingOrders.stream()
                 .filter(orderEntity -> orderEntity.getDeletedAt() == null)
                 .toList();
 
@@ -67,11 +67,11 @@ public class OrderSellerService {
                     Address address = addressService.getAddressById(orderEntity.getAddressId());
                     OrderResponse orderResponse = OrderResponse.from(orderEntity, member, address);
 
-                    List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails().stream()
+                    List<OrderDetail> orderDetails = orderEntity.getOrderDetails().stream()
                             .filter(orderDetailEntity -> orderDetailEntity.getDeletedAt() == null)
                             .toList();
-                    List<Long> productIds = orderDetails.stream().map(OrderDetailEntity::getProductId).collect(Collectors.toList());
-                    List<Long> productLineIds = orderDetails.stream().map(OrderDetailEntity::getProductLineId).collect(Collectors.toList());
+                    List<Long> productIds = orderDetails.stream().map(OrderDetail::getProductId).collect(Collectors.toList());
+                    List<Long> productLineIds = orderDetails.stream().map(OrderDetail::getProductLineId).collect(Collectors.toList());
 
                     List<ProductEntity> products = productService.findByIdIn(productIds);
                     List<ProductLineEntity> productLines = productLineService.findByIdIn(productLineIds);
@@ -98,7 +98,7 @@ public class OrderSellerService {
 
         // 주문 유효성 검사
         orderRepository.findById(orderId)
-                .filter(OrderEntity -> OrderEntity.getStatus() == Status.WAITING)
+                .filter(Order -> Order.getStatus() == Status.WAITING)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문이 존재하지 않거나 상태가 'WAITING'이 아니어서 처리할 수 없습니다."));
 
         orderSellerRepository.approveOrder(orderId);

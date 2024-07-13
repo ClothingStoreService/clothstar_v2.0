@@ -16,13 +16,13 @@ import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.domain.vo.AddressInfo;
 import org.store.clothstar.member.service.AddressService;
 import org.store.clothstar.member.service.MemberService;
+import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
-import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
 import org.store.clothstar.order.type.Status;
+import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
-import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.service.ProductService;
@@ -45,9 +45,6 @@ class OrderSellerServiceTest {
 
     @InjectMocks
     private OrderSellerService orderSellerService;
-
-    @Mock
-    private OrderEntity mockOrderEntity;
 
     @Mock
     private OrderRepository orderRepository;
@@ -77,10 +74,10 @@ class OrderSellerServiceTest {
     private Address address;
 
     @Mock
-    private OrderEntity orderEntity;
+    private Order order;
 
     @Mock
-    private OrderDetailEntity orderDetailEntity;
+    private OrderDetail orderDetail;
 
     @Mock
     private ProductLineEntity productLineEntity;
@@ -103,27 +100,27 @@ class OrderSellerServiceTest {
         Long productId = 3L;
         Long productLineId = 4L;
 
-        List<OrderEntity> waitingOrders = List.of(orderEntity);
+        List<Order> waitingOrders = List.of(order);
         given(orderSellerRepository.findWaitingOrders()).willReturn(waitingOrders);
-        given(orderEntity.getMemberId()).willReturn(memberId);
-        given(orderEntity.getAddressId()).willReturn(addressId);
-        given(orderEntity.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(orderDetailEntity.getDeletedAt()).willReturn(null);
-        given(orderEntity.getOrderDetails()).willReturn(List.of(orderDetailEntity));
+        given(order.getMemberId()).willReturn(memberId);
+        given(order.getAddressId()).willReturn(addressId);
+        given(order.getCreatedAt()).willReturn(LocalDateTime.now());
+        given(orderDetail.getDeletedAt()).willReturn(null);
+        given(order.getOrderDetails()).willReturn(List.of(orderDetail));
 
         given(memberService.getMemberByMemberId(memberId)).willReturn(member);
         given(addressService.getAddressById(addressId)).willReturn(address);
         given(address.getAddressInfo()).willReturn(addressInfo);
-        given(orderDetailEntity.getProductId()).willReturn(productId);
-        given(orderDetailEntity.getProductLineId()).willReturn(productLineId);
+        given(orderDetail.getProductId()).willReturn(productId);
+        given(orderDetail.getProductLineId()).willReturn(productLineId);
         given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
         given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLineEntity));
         given(productEntity.getId()).willReturn(productId);
         given(productLineEntity.getId()).willReturn(productLineId);
         given(productLineEntity.getSeller()).willReturn(seller);
 
-        OrderResponse expectedOrderResponse = OrderResponse.from(orderEntity, member, address);
-        List<OrderDetailEntity> orderDetails = List.of(orderDetailEntity);
+        OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
+        List<OrderDetail> orderDetails = List.of(orderDetail);
         List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream()
                 .map(orderDetailEntity -> OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity))
                 .collect(Collectors.toList());
@@ -148,8 +145,8 @@ class OrderSellerServiceTest {
     void approveOrder_verify_test() {
         //given
         Long orderId = 1L;
-        given(mockOrderEntity.getStatus()).willReturn(Status.WAITING);
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrderEntity));
+        given(order.getStatus()).willReturn(Status.WAITING);
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
         //when
         MessageDTO messageDTO = orderSellerService.approveOrder(orderId);
@@ -166,8 +163,8 @@ class OrderSellerServiceTest {
     void cancelOrder_verify_test() {
         // given
         Long orderId = 1L;
-        given(mockOrderEntity.getStatus()).willReturn(Status.WAITING);
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrderEntity));
+        given(order.getStatus()).willReturn(Status.WAITING);
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
         //when
         MessageDTO messageDTO = orderSellerService.cancelOrder(orderId);
@@ -185,8 +182,8 @@ class OrderSellerServiceTest {
 
         //given
         Long orderId = 1L;
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrderEntity));
-        given(mockOrderEntity.getStatus()).willReturn(Status.DELIVERED);
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(order.getStatus()).willReturn(Status.DELIVERED);
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
@@ -203,8 +200,8 @@ class OrderSellerServiceTest {
 
         //given
         Long orderId = 1L;
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrderEntity));
-        given(mockOrderEntity.getStatus()).willReturn(Status.DELIVERED);
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(order.getStatus()).willReturn(Status.DELIVERED);
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->

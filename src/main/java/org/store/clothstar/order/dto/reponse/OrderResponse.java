@@ -8,11 +8,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
+import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
-import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 import java.time.LocalDate;
@@ -57,18 +57,18 @@ public class OrderResponse {
     private List<OrderDetailDTO> orderDetailList = new ArrayList<>();
 
     @QueryProjection
-    public OrderResponse(OrderEntity orderEntity,
-                         OrderDetailEntity orderDetailEntity,
+    public OrderResponse(Order order,
+                         OrderDetail orderDetail,
                          Member member, Address address,
                          ProductLineEntity productLineEntity) {
-        this.orderId = orderEntity.getOrderId();
+        this.orderId = order.getOrderId();
         this.ordererName = member.getName();
-        this.createdAt = orderEntity.getCreatedAt().toLocalDate();
-        this.status = orderEntity.getStatus();
-        this.totalShippingPrice = orderEntity.getTotalShippingPrice();
-        this.totalProductsPrice = orderEntity.getTotalProductsPrice();
-        this.paymentMethod = orderEntity.getPaymentMethod();
-        this.totalPaymentPrice = orderEntity.getTotalPaymentPrice();
+        this.createdAt = order.getCreatedAt().toLocalDate();
+        this.status = order.getStatus();
+        this.totalShippingPrice = order.getTotalShippingPrice();
+        this.totalProductsPrice = order.getTotalProductsPrice();
+        this.paymentMethod = order.getPaymentMethod();
+        this.totalPaymentPrice = order.getTotalPaymentPrice();
         this.address = AddressDTO.builder()
                 .receiverName(address.getReceiverName())
                 .addressBasic(address.getAddressInfo().getAddressBasic())
@@ -79,16 +79,16 @@ public class OrderResponse {
         this.orderDetailList = new ArrayList<>();
     }
 
-    public static OrderResponse from(OrderEntity orderEntity, Member member, Address address) {
+    public static OrderResponse from(Order order, Member member, Address address) {
         return OrderResponse.builder()
-                .orderId(orderEntity.getOrderId())
+                .orderId(order.getOrderId())
                 .ordererName(member.getName())
-                .createdAt(orderEntity.getCreatedAt().toLocalDate())
-                .status(orderEntity.getStatus())
-                .totalShippingPrice(orderEntity.getTotalShippingPrice())
-                .totalProductsPrice(orderEntity.getTotalProductsPrice())
-                .paymentMethod(orderEntity.getPaymentMethod())
-                .totalPaymentPrice(orderEntity.getTotalPaymentPrice())
+                .createdAt(order.getCreatedAt().toLocalDate())
+                .status(order.getStatus())
+                .totalShippingPrice(order.getTotalShippingPrice())
+                .totalProductsPrice(order.getTotalProductsPrice())
+                .paymentMethod(order.getPaymentMethod())
+                .totalPaymentPrice(order.getTotalPaymentPrice())
                 .address(AddressDTO.builder()
                         .receiverName(address.getReceiverName())
                         .addressBasic(address.getAddressInfo().getAddressBasic())

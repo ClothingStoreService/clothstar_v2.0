@@ -14,11 +14,11 @@ import org.store.clothstar.member.service.AddressService;
 import org.store.clothstar.member.service.MemberService;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
-import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.type.Status;
+import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
-import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
 import org.store.clothstar.product.entity.ProductEntity;
@@ -58,23 +58,23 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponse getOrder(Long orderId) {
-        OrderEntity orderEntity = orderRepository.findById(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다"));
 
-        if (orderEntity.getDeletedAt() != null) {
+        if (order.getDeletedAt() != null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제된 주문입니다.");
         }
 
-        Member member = memberService.getMemberByMemberId(orderEntity.getMemberId());
-        Address address = addressService.getAddressById(orderEntity.getAddressId());
+        Member member = memberService.getMemberByMemberId(order.getMemberId());
+        Address address = addressService.getAddressById(order.getAddressId());
 
-        OrderResponse orderResponse = OrderResponse.from(orderEntity,member,address);
+        OrderResponse orderResponse = OrderResponse.from(order,member,address);
 
-        List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails().stream()
+        List<OrderDetail> orderDetails = order.getOrderDetails().stream()
                 .filter(orderDetailEntity -> orderDetailEntity.getDeletedAt() == null)
                 .toList();
-        List<Long> productIds = orderDetails.stream().map(OrderDetailEntity::getProductId).collect(Collectors.toList());
-        List<Long> productLineIds = orderDetails.stream().map(OrderDetailEntity::getProductLineId).collect(Collectors.toList());
+        List<Long> productIds = orderDetails.stream().map(OrderDetail::getProductId).collect(Collectors.toList());
+        List<Long> productLineIds = orderDetails.stream().map(OrderDetail::getProductLineId).collect(Collectors.toList());
 
         List<ProductEntity> products = productService.findByIdIn(productIds);
         List<ProductLineEntity> productLines = productLineService.findByIdIn(productLineIds);
@@ -94,18 +94,18 @@ public class OrderService {
     }
 
     public Page<OrderResponse> getAllOrderOffsetPaging(Pageable pageable) {
-        Page<OrderEntity> orderEntities = orderRepository.findAll(pageable);
+        Page<Order> orderEntities = orderRepository.findAll(pageable);
 
         return orderEntities.map(orderEntity -> {
             Member member = memberService.getMemberByMemberId(orderEntity.getMemberId());
             Address address = addressService.getAddressById(orderEntity.getAddressId());
             OrderResponse orderResponse = OrderResponse.from(orderEntity, member, address);
 
-            List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails().stream()
+            List<OrderDetail> orderDetails = orderEntity.getOrderDetails().stream()
                     .filter(orderDetailEntity -> orderDetailEntity.getDeletedAt() == null)
                     .toList();
-            List<Long> productIds = orderDetails.stream().map(OrderDetailEntity::getProductId).collect(Collectors.toList());
-            List<Long> productLineIds = orderDetails.stream().map(OrderDetailEntity::getProductLineId).collect(Collectors.toList());
+            List<Long> productIds = orderDetails.stream().map(OrderDetail::getProductId).collect(Collectors.toList());
+            List<Long> productLineIds = orderDetails.stream().map(OrderDetail::getProductLineId).collect(Collectors.toList());
 
             List<ProductEntity> products = productService.findByIdIn(productIds);
             List<ProductLineEntity> productLines = productLineService.findByIdIn(productLineIds);
@@ -126,18 +126,18 @@ public class OrderService {
     }
 
     public Slice<OrderResponse> getAllOrderSlicePaging(Pageable pageable) {
-        Slice<OrderEntity> orderEntities = orderRepository.findAll(pageable);
+        Slice<Order> orderEntities = orderRepository.findAll(pageable);
 
         return orderEntities.map(orderEntity -> {
             Member member = memberService.getMemberByMemberId(orderEntity.getMemberId());
             Address address = addressService.getAddressById(orderEntity.getAddressId());
             OrderResponse orderResponse = OrderResponse.from(orderEntity, member, address);
 
-            List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails().stream()
+            List<OrderDetail> orderDetails = orderEntity.getOrderDetails().stream()
                     .filter(orderDetailEntity -> orderDetailEntity.getDeletedAt() == null)
                     .toList();
-            List<Long> productIds = orderDetails.stream().map(OrderDetailEntity::getProductId).collect(Collectors.toList());
-            List<Long> productLineIds = orderDetails.stream().map(OrderDetailEntity::getProductLineId).collect(Collectors.toList());
+            List<Long> productIds = orderDetails.stream().map(OrderDetail::getProductId).collect(Collectors.toList());
+            List<Long> productLineIds = orderDetails.stream().map(OrderDetail::getProductLineId).collect(Collectors.toList());
 
             List<ProductEntity> products = productService.findByIdIn(productIds);
             List<ProductLineEntity> productLines = productLineService.findByIdIn(productLineIds);
@@ -163,19 +163,19 @@ public class OrderService {
         Member member = memberService.getMemberByMemberId(createOrderRequest.getMemberId());
         Address address = addressService.getAddressById(createOrderRequest.getAddressId());
 
-        OrderEntity orderEntity = createOrderRequest.toOrderEntity(member, address);
-        orderRepository.save(orderEntity);
+        Order order = createOrderRequest.toOrder(member, address);
+        orderRepository.save(order);
 
-        return orderEntity.getOrderId();
+        return order.getOrderId();
     }
 
     @Transactional
     public void deliveredToConfirmOrder(Long orderId) {
 
-        OrderEntity orderEntity = orderRepository.findById(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 정보를 찾을 수 없습니다."));
 
-        if (orderEntity.getStatus() != Status.DELIVERED) {
+        if (order.getStatus() != Status.DELIVERED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 상태가 '배송완료'가 아니기 때문에 주문확정이 불가능합니다.");
         }
 
@@ -184,16 +184,16 @@ public class OrderService {
 
     @Transactional
     public void updateDeleteAt(Long orderId) {
-        OrderEntity orderEntity = orderRepository.findById(orderId)
+        Order order = orderRepository.findById(orderId)
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 번호를 찾을 수 없습니다."));
 
-        if(orderEntity.getDeletedAt() != null){
+        if(order.getDeletedAt() != null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 삭제된 주문입니다.");
         }
 
-        List<OrderDetailEntity> orderDetailList = orderDetailRepository.findOrderDetailListByOrderId(orderId);
-        orderDetailList.forEach(OrderDetailEntity::updateDeletedAt);
+        List<OrderDetail> orderDetailList = orderDetailRepository.findOrderDetailListByOrderId(orderId);
+        orderDetailList.forEach(OrderDetail::updateDeletedAt);
 
-        orderEntity.updateDeletedAt();
+        order.updateDeletedAt();
     }
 }
