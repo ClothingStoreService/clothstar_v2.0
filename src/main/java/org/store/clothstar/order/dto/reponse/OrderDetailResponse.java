@@ -1,4 +1,4 @@
-package org.store.clothstar.orderDetail.dto.response;
+package org.store.clothstar.order.dto.reponse;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -44,22 +44,4 @@ public class OrderDetailResponse {
 
     @Schema(description = "브랜드 이름", example = "나이키")
     private String brandName;
-
-
-//    public static OrderDetailResponse fromOrderDetailEntity(OrderDetailEntity orderDetailEntity, ProductLineEntity productLineEntity, ProductEntity productEntity) {
-//        return OrderDetailResponse.builder()
-//                .orderDetailId(orderDetailEntity.getOrderDetailId())
-//                .orderId(orderDetailEntity.getOrder().getOrderId())
-//                .productLineId(orderDetailEntity.getProductLineId())
-//                .productId(orderDetailEntity.getProductId())
-//                .quantity(orderDetailEntity.getQuantity())
-//                .fixedPrice(orderDetailEntity.getFixedPrice())
-//                .oneKindTotalPrice(orderDetailEntity.getOneKindTotalPrice())
-//                .name(orderDetailEntity.getName())
-//                .stock(orderDetailEntity.getStock())
-//                .optionName(orderDetailEntity.getName())
-//                .extraCharge(orderDetailEntity.getExtraCharge())
-//                .brandName(orderDetailEntity.getSeller().getBrandName())
-//                .build();
-//    }
 }

@@ -16,14 +16,15 @@ import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.domain.vo.AddressInfo;
 import org.store.clothstar.member.service.AddressService;
 import org.store.clothstar.member.service.MemberService;
+import org.store.clothstar.order.domain.Order;
+import org.store.clothstar.order.domain.vo.Price;
+import org.store.clothstar.order.domain.vo.TotalPrice;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
-import org.store.clothstar.order.entity.OrderEntity;
-import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
-import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
-import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
-import org.store.clothstar.orderDetail.service.OrderDetailService;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.vo.OrderDetailDTO;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
@@ -47,10 +48,7 @@ class OrderSellerServiceTest {
     private OrderSellerService orderSellerService;
 
     @Mock
-    private OrderEntity mockOrderEntity;
-
-    @Mock
-    private OrderRepository orderRepository;
+    private OrderUserRepository orderUserRepository;
 
     @Mock
     private OrderSellerRepository orderSellerRepository;
@@ -77,10 +75,10 @@ class OrderSellerServiceTest {
     private Address address;
 
     @Mock
-    private OrderEntity orderEntity;
+    private Order order;
 
     @Mock
-    private OrderDetailEntity orderDetailEntity;
+    private OrderDetail orderDetail;
 
     @Mock
     private ProductLineEntity productLineEntity;
@@ -90,6 +88,12 @@ class OrderSellerServiceTest {
 
     @Mock
     private AddressInfo addressInfo;
+
+    @Mock
+    private TotalPrice totalPrice;
+
+    @Mock
+    private Price price;
 
     @Mock
     private Seller seller;
@@ -103,29 +107,31 @@ class OrderSellerServiceTest {
         Long productId = 3L;
         Long productLineId = 4L;
 
-        List<OrderEntity> waitingOrders = List.of(orderEntity);
+        List<Order> waitingOrders = List.of(order);
         given(orderSellerRepository.findWaitingOrders()).willReturn(waitingOrders);
-        given(orderEntity.getMemberId()).willReturn(memberId);
-        given(orderEntity.getAddressId()).willReturn(addressId);
-        given(orderEntity.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(orderDetailEntity.getDeletedAt()).willReturn(null);
-        given(orderEntity.getOrderDetails()).willReturn(List.of(orderDetailEntity));
+        given(order.getMemberId()).willReturn(memberId);
+        given(order.getAddressId()).willReturn(addressId);
+        given(order.getCreatedAt()).willReturn(LocalDateTime.now());
+        given(orderDetail.getDeletedAt()).willReturn(null);
+        given(order.getOrderDetails()).willReturn(List.of(orderDetail));
 
         given(memberService.getMemberByMemberId(memberId)).willReturn(member);
         given(addressService.getAddressById(addressId)).willReturn(address);
         given(address.getAddressInfo()).willReturn(addressInfo);
-        given(orderDetailEntity.getProductId()).willReturn(productId);
-        given(orderDetailEntity.getProductLineId()).willReturn(productLineId);
+        given(order.getTotalPrice()).willReturn(totalPrice);
+        given(orderDetail.getPrice()).willReturn(price);
+        given(orderDetail.getProductId()).willReturn(productId);
+        given(orderDetail.getProductLineId()).willReturn(productLineId);
         given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
         given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLineEntity));
         given(productEntity.getId()).willReturn(productId);
         given(productLineEntity.getId()).willReturn(productLineId);
         given(productLineEntity.getSeller()).willReturn(seller);
 
-        OrderResponse expectedOrderResponse = OrderResponse.from(orderEntity, member, address);
-        List<OrderDetailEntity> orderDetails = List.of(orderDetailEntity);
+        OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
+        List<OrderDetail> orderDetails = List.of(orderDetail);
         List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream()
-                .map(orderDetailEntity -> OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity))
+                .map(orderDetail -> OrderDetailDTO.from(orderDetail, productEntity, productLineEntity))
                 .collect(Collectors.toList());
         expectedOrderResponse.setterOrderDetailList(orderDetailDTOList);
 
@@ -148,15 +154,15 @@ class OrderSellerServiceTest {
     void approveOrder_verify_test() {
         //given
         Long orderId = 1L;
-        given(mockOrderEntity.getStatus()).willReturn(Status.WAITING);
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrderEntity));
+        given(order.getStatus()).willReturn(Status.WAITING);
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
 
         //when
         MessageDTO messageDTO = orderSellerService.approveOrder(orderId);
 
         //then
         then(orderSellerRepository).should(times(1)).approveOrder(orderId);
-        then(orderRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should(times(1)).findById(orderId);
         assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 승인 되었습니다.");
     }
@@ -166,15 +172,15 @@ class OrderSellerServiceTest {
     void cancelOrder_verify_test() {
         // given
         Long orderId = 1L;
-        given(mockOrderEntity.getStatus()).willReturn(Status.WAITING);
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrderEntity));
+        given(order.getStatus()).willReturn(Status.WAITING);
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
 
         //when
         MessageDTO messageDTO = orderSellerService.cancelOrder(orderId);
 
         //then
         then(orderSellerRepository).should(times(1)).cancelOrder(orderId);
-        then(orderRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should(times(1)).findById(orderId);
         assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 취소 되었습니다.");
     }
@@ -185,8 +191,8 @@ class OrderSellerServiceTest {
 
         //given
         Long orderId = 1L;
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrderEntity));
-        given(mockOrderEntity.getStatus()).willReturn(Status.DELIVERED);
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(order.getStatus()).willReturn(Status.DELIVERED);
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
@@ -203,8 +209,8 @@ class OrderSellerServiceTest {
 
         //given
         Long orderId = 1L;
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrderEntity));
-        given(mockOrderEntity.getStatus()).willReturn(Status.DELIVERED);
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(order.getStatus()).willReturn(Status.DELIVERED);
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->

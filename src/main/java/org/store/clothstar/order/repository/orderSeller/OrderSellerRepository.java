@@ -1,12 +1,12 @@
 package org.store.clothstar.order.repository.orderSeller;
 
-import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.order.domain.Order;
 
 import java.util.List;
 
 public interface OrderSellerRepository {
 
-    List<OrderEntity> findWaitingOrders();
+    List<Order> findWaitingOrders();
 
     void approveOrder(Long orderId);
 

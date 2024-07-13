@@ -1,4 +1,4 @@
-package org.store.clothstar.order.dto.reponse;
+package org.store.clothstar.order.domain.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

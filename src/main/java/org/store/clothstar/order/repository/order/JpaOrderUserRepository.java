@@ -5,12 +5,17 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.order.domain.Order;
 
-public interface JpaOrderRepository extends JpaRepository<OrderEntity, Long>, OrderRepository{
+public interface JpaOrderUserRepository extends JpaRepository<Order, Long>, OrderUserRepository {
 
     @Transactional
     @Modifying
     @Query("UPDATE orders o SET o.status ='CONFIRM' WHERE o.orderId = :orderId")
-    void deliveredToConfirmOrder(@Param("orderId") Long orderId);
+    void confirmOrder(@Param("orderId") Long orderId);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE orders o SET o.status ='CANCEL' WHERE o.orderId = :orderId")
+    void cancelOrder(@Param("orderId") Long orderId);
 }

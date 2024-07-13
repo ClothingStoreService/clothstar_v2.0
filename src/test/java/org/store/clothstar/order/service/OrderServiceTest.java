@@ -17,15 +17,17 @@ import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.domain.vo.AddressInfo;
 import org.store.clothstar.member.service.AddressService;
 import org.store.clothstar.member.service.MemberService;
+import org.store.clothstar.order.domain.Order;
+import org.store.clothstar.order.domain.vo.Price;
+import org.store.clothstar.order.domain.vo.TotalPrice;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
-import org.store.clothstar.order.entity.OrderEntity;
-import org.store.clothstar.order.repository.order.OrderRepository;
-import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
-import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
-import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
+import org.store.clothstar.order.repository.order.OrderUserRepository;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.vo.OrderDetailDTO;
+import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
@@ -66,10 +68,10 @@ class OrderServiceTest {
     private Address address;
 
     @Mock
-    private OrderEntity orderEntity;
+    private Order order;
 
     @Mock
-    private OrderDetailEntity orderDetailEntity;
+    private OrderDetail orderDetail;
 
     @Mock
     private ProductLineEntity productLineEntity;
@@ -81,10 +83,16 @@ class OrderServiceTest {
     private AddressInfo addressInfo;
 
     @Mock
+    private TotalPrice totalPrice;
+
+    @Mock
+    private Price price;
+
+    @Mock
     private Seller seller;
 
     @Mock
-    private OrderRepository orderRepository;
+    private OrderUserRepository orderUserRepository;
 
     @Mock
     private OrderDetailRepository orderDetailRepository;
@@ -99,26 +107,28 @@ class OrderServiceTest {
         Long productId = 4L;
         Long productLineId = 5L;
 
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(orderEntity));
-        given(orderEntity.getMemberId()).willReturn(memberId);
-        given(orderEntity.getAddressId()).willReturn(addressId);
-        given(orderEntity.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(orderEntity.getOrderDetails()).willReturn(List.of(orderDetailEntity));
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(order.getMemberId()).willReturn(memberId);
+        given(order.getAddressId()).willReturn(addressId);
+        given(order.getCreatedAt()).willReturn(LocalDateTime.now());
+        given(order.getOrderDetails()).willReturn(List.of(orderDetail));
 
         given(memberService.getMemberByMemberId(memberId)).willReturn(member);
         given(addressService.getAddressById(addressId)).willReturn(address);
         given(address.getAddressInfo()).willReturn(addressInfo);
-        given(orderDetailEntity.getDeletedAt()).willReturn(null);
-        given(orderDetailEntity.getProductId()).willReturn(productId);
-        given(orderDetailEntity.getProductLineId()).willReturn(productLineId);
+        given(order.getTotalPrice()).willReturn(totalPrice);
+        given(orderDetail.getPrice()).willReturn(price);
+        given(orderDetail.getDeletedAt()).willReturn(null);
+        given(orderDetail.getProductId()).willReturn(productId);
+        given(orderDetail.getProductLineId()).willReturn(productLineId);
         given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
         given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLineEntity));
         given(productEntity.getId()).willReturn(productId);
         given(productLineEntity.getId()).willReturn(productLineId);
         given(productLineEntity.getSeller()).willReturn(seller);
 
-        OrderResponse expectedOrderResponse = OrderResponse.from(orderEntity, member, address);
-        expectedOrderResponse.setterOrderDetailList(List.of(OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity)));
+        OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
+        expectedOrderResponse.setterOrderDetailList(List.of(OrderDetailDTO.from(orderDetail, productEntity, productLineEntity)));
 
         // when
         OrderResponse orderResponse = orderService.getOrder(orderId);
@@ -126,7 +136,7 @@ class OrderServiceTest {
         // then
         assertThat(orderResponse).usingRecursiveComparison().isEqualTo(expectedOrderResponse);
 
-        then(orderRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should(times(1)).findById(orderId);
         then(memberService).should(times(1)).getMemberByMemberId(memberId);
         then(addressService).should(times(1)).getAddressById(addressId);
         then(productService).should(times(1)).findByIdIn(List.of(productId));
@@ -145,30 +155,32 @@ class OrderServiceTest {
         Long productId = 3L;
         Long productLineId = 4L;
 
-        List<OrderEntity> waitingOrders = List.of(orderEntity);
-        Page<OrderEntity> orderEntities = new PageImpl<>(waitingOrders, pageable, waitingOrders.size());
-        given(orderRepository.findAll(pageable)).willReturn(orderEntities);
-        given(orderEntity.getMemberId()).willReturn(memberId);
-        given(orderEntity.getAddressId()).willReturn(addressId);
-        given(orderEntity.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(orderEntity.getOrderDetails()).willReturn(List.of(orderDetailEntity));
+        List<Order> waitingOrders = List.of(order);
+        Page<Order> orderEntities = new PageImpl<>(waitingOrders, pageable, waitingOrders.size());
+        given(orderUserRepository.findAll(pageable)).willReturn(orderEntities);
+        given(order.getMemberId()).willReturn(memberId);
+        given(order.getAddressId()).willReturn(addressId);
+        given(order.getCreatedAt()).willReturn(LocalDateTime.now());
+        given(order.getOrderDetails()).willReturn(List.of(orderDetail));
 
         given(memberService.getMemberByMemberId(memberId)).willReturn(member);
         given(addressService.getAddressById(addressId)).willReturn(address);
         given(address.getAddressInfo()).willReturn(addressInfo);
-        given(orderDetailEntity.getDeletedAt()).willReturn(null);
-        given(orderDetailEntity.getProductId()).willReturn(productId);
-        given(orderDetailEntity.getProductLineId()).willReturn(productLineId);
+        given(order.getTotalPrice()).willReturn(totalPrice);
+        given(orderDetail.getPrice()).willReturn(price);
+        given(orderDetail.getDeletedAt()).willReturn(null);
+        given(orderDetail.getProductId()).willReturn(productId);
+        given(orderDetail.getProductLineId()).willReturn(productLineId);
         given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
         given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLineEntity));
         given(productEntity.getId()).willReturn(productId);
         given(productLineEntity.getId()).willReturn(productLineId);
         given(productLineEntity.getSeller()).willReturn(seller);
 
-        OrderResponse expectedOrderResponse = OrderResponse.from(orderEntity, member, address);
-        List<OrderDetailEntity> orderDetails = List.of(orderDetailEntity);
+        OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
+        List<OrderDetail> orderDetails = List.of(orderDetail);
         List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream()
-                .map(orderDetailEntity -> OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity))
+                .map(orderDetail -> OrderDetailDTO.from(orderDetail, productEntity, productLineEntity))
                 .collect(Collectors.toList());
         expectedOrderResponse.setterOrderDetailList(orderDetailDTOList);
 
@@ -179,7 +191,7 @@ class OrderServiceTest {
         assertThat(orderResponses).hasSize(waitingOrders.size());
         assertThat(orderResponses.getContent().get(0)).usingRecursiveComparison().isEqualTo(expectedOrderResponse);
 
-        verify(orderRepository, times(1)).findAll(pageable);
+        verify(orderUserRepository, times(1)).findAll(pageable);
         verify(memberService, times(1)).getMemberByMemberId(memberId);
         verify(addressService, times(1)).getAddressById(addressId);
         verify(productService, times(1)).findByIdIn(List.of(productId));
@@ -197,30 +209,32 @@ class OrderServiceTest {
         Long productId = 3L;
         Long productLineId = 4L;
 
-        List<OrderEntity> waitingOrders = List.of(orderEntity);
-        Page<OrderEntity> pageOrderEntities = new PageImpl<>(waitingOrders, pageable, waitingOrders.size());
-        given(orderRepository.findAll(pageable)).willReturn(pageOrderEntities);
-        given(orderEntity.getMemberId()).willReturn(memberId);
-        given(orderEntity.getAddressId()).willReturn(addressId);
-        given(orderEntity.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(orderEntity.getOrderDetails()).willReturn(List.of(orderDetailEntity));
+        List<Order> waitingOrders = List.of(order);
+        Page<Order> pageOrderEntities = new PageImpl<>(waitingOrders, pageable, waitingOrders.size());
+        given(orderUserRepository.findAll(pageable)).willReturn(pageOrderEntities);
+        given(order.getMemberId()).willReturn(memberId);
+        given(order.getAddressId()).willReturn(addressId);
+        given(order.getCreatedAt()).willReturn(LocalDateTime.now());
+        given(order.getOrderDetails()).willReturn(List.of(orderDetail));
 
         given(memberService.getMemberByMemberId(memberId)).willReturn(member);
         given(addressService.getAddressById(addressId)).willReturn(address);
         given(address.getAddressInfo()).willReturn(addressInfo);
-        given(orderDetailEntity.getDeletedAt()).willReturn(null);
-        given(orderDetailEntity.getProductId()).willReturn(productId);
-        given(orderDetailEntity.getProductLineId()).willReturn(productLineId);
+        given(order.getTotalPrice()).willReturn(totalPrice);
+        given(orderDetail.getPrice()).willReturn(price);
+        given(orderDetail.getDeletedAt()).willReturn(null);
+        given(orderDetail.getProductId()).willReturn(productId);
+        given(orderDetail.getProductLineId()).willReturn(productLineId);
         given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
         given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLineEntity));
         given(productEntity.getId()).willReturn(productId);
         given(productLineEntity.getId()).willReturn(productLineId);
         given(productLineEntity.getSeller()).willReturn(seller);
 
-        OrderResponse expectedOrderResponse = OrderResponse.from(orderEntity, member, address);
-        List<OrderDetailEntity> orderDetails = List.of(orderDetailEntity);
+        OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
+        List<OrderDetail> orderDetails = List.of(orderDetail);
         List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream()
-                .map(orderDetailEntity -> OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity))
+                .map(orderDetail -> OrderDetailDTO.from(orderDetail, productEntity, productLineEntity))
                 .collect(Collectors.toList());
         expectedOrderResponse.setterOrderDetailList(orderDetailDTOList);
 
@@ -231,7 +245,7 @@ class OrderServiceTest {
         assertThat(orderResponses).hasSize(waitingOrders.size());
         assertThat(orderResponses.getContent().get(0)).usingRecursiveComparison().isEqualTo(expectedOrderResponse);
 
-        verify(orderRepository, times(1)).findAll(pageable);
+        verify(orderUserRepository, times(1)).findAll(pageable);
         verify(memberService, times(1)).getMemberByMemberId(memberId);
         verify(addressService, times(1)).getAddressById(addressId);
         verify(productService, times(1)).findByIdIn(List.of(productId));
@@ -242,19 +256,16 @@ class OrderServiceTest {
     @DisplayName("saveOrder: 주문 생성 - 메서드 호출 테스트")
     void saveOrder_verify_test() {
         //given
-        OrderEntity orderEntity = mock(OrderEntity.class);
         OrderRequestWrapper orderRequestWrapper = mock(OrderRequestWrapper.class);
         CreateOrderRequest createOrderRequest = mock(CreateOrderRequest.class);
-        Member mockmember = mock(Member.class);
-        Address mockAddress = mock(Address.class);
 
         given(orderRequestWrapper.getCreateOrderRequest()).willReturn(createOrderRequest);
         given(createOrderRequest.getMemberId()).willReturn(1L);
         given(createOrderRequest.getAddressId()).willReturn(2L);
 
-        given(memberService.getMemberByMemberId(createOrderRequest.getMemberId())).willReturn(mockmember);
-        given(addressService.getAddressById(createOrderRequest.getAddressId())).willReturn(mockAddress);
-        given(createOrderRequest.toOrderEntity(mockmember, mockAddress)).willReturn(orderEntity);
+        given(memberService.getMemberByMemberId(createOrderRequest.getMemberId())).willReturn(member);
+        given(addressService.getAddressById(createOrderRequest.getAddressId())).willReturn(address);
+        given(createOrderRequest.toOrder(member, address)).willReturn(order);
 
         //when
         orderService.saveOrder(orderRequestWrapper.getCreateOrderRequest());
@@ -262,30 +273,27 @@ class OrderServiceTest {
         //then
         then(memberService).should(times(1)).getMemberByMemberId(createOrderRequest.getMemberId());
         then(addressService).should(times(1)).getAddressById(createOrderRequest.getAddressId());
-        then(orderRepository).should(times(1)).save(orderEntity);
-        verify(orderEntity).getOrderId();
+        then(orderUserRepository).should(times(1)).save(order);
+        verify(order).getOrderId();
     }
 
     @Test
     @DisplayName("saveOrder: 주문 생성 - 반환값 테스트")
     void saveOrder_test() {
         //given
-        OrderEntity orderEntity = mock(OrderEntity.class);
         OrderRequestWrapper orderRequestWrapper = mock(OrderRequestWrapper.class);
         CreateOrderRequest createOrderRequest = mock(CreateOrderRequest.class);
-        Member mockmember = mock(Member.class);
-        Address mockAddress = mock(Address.class);
 
-        given(orderEntity.getOrderId()).willReturn(1L);
+        given(order.getOrderId()).willReturn(1L);
 
         given(orderRequestWrapper.getCreateOrderRequest()).willReturn(createOrderRequest);
 
         given(createOrderRequest.getMemberId()).willReturn(1L);
         given(createOrderRequest.getAddressId()).willReturn(2L);
 
-        given(memberService.getMemberByMemberId(1L)).willReturn(mockmember);
-        given(addressService.getAddressById(2L)).willReturn(mockAddress);
-        given(createOrderRequest.toOrderEntity(mockmember, mockAddress)).willReturn(orderEntity);
+        given(memberService.getMemberByMemberId(1L)).willReturn(member);
+        given(addressService.getAddressById(2L)).willReturn(address);
+        given(createOrderRequest.toOrder(member, address)).willReturn(order);
 
         //when
         Long orderId = orderService.saveOrder(orderRequestWrapper.getCreateOrderRequest());
@@ -295,40 +303,73 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("deliveredToConfirmOrder: 구매 확정 - 성공 메서드 호출 테스트")
-    void deliveredToConfirmOrder_verify_test() {
+    @DisplayName("confirmOrder: 구매 확정 - 성공 메서드 호출 테스트")
+    void confirmOrder_verify_test() {
         //given
         Long orderId = 1L;
-        OrderEntity orderEntity = mock(OrderEntity.class);
         mock(OrderResponse.class);
 
-        given(orderRepository.findById(1L)).willReturn(Optional.of(orderEntity));
-        given(orderEntity.getStatus()).willReturn(Status.DELIVERED);
+        given(orderUserRepository.findById(1L)).willReturn(Optional.of(order));
+        given(order.getStatus()).willReturn(Status.DELIVERED);
 
         //when
-        orderService.deliveredToConfirmOrder(orderId);
+        orderService.confirmOrder(orderId);
 
         //then
-        then(orderRepository).should(times(1)).findById(orderId);
-        then(orderRepository).should().deliveredToConfirmOrder(orderId);
+        then(orderUserRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should().confirmOrder(orderId);
     }
 
     @Test
-    @DisplayName("deliveredToConfirmOrder: 구매 확정 - 실패 예외처리 테스트")
-    void deliveredToConfirmOrder_fail_exception_test() {
+    @DisplayName("confirmOrder: 구매 확정 - 실패 예외처리 테스트")
+    void confirmOrder_fail_exception_test() {
         //given
         Long orderId = 1L;
-        OrderEntity mockOrder = mock(OrderEntity.class);
 
-        given(mockOrder.getStatus()).willReturn(Status.APPROVE);
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrder));
+        given(order.getStatus()).willReturn(Status.APPROVE);
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
-                orderService.deliveredToConfirmOrder(orderId));
+                orderService.confirmOrder(orderId));
 
         //then
         assertEquals("400 BAD_REQUEST \"주문 상태가 '배송완료'가 아니기 때문에 주문확정이 불가능합니다.\"", thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("cancelOrder: 구매 취소 - 성공 메서드 호출 테스트")
+    void cancelOrder_verify_test() {
+        //given
+        Long orderId = 1L;
+        mock(OrderResponse.class);
+
+        given(orderUserRepository.findById(1L)).willReturn(Optional.of(order));
+        given(order.getStatus()).willReturn(Status.APPROVE);
+
+        //when
+        orderService.cancelOrder(orderId);
+
+        //then
+        then(orderUserRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should().cancelOrder(orderId);
+    }
+
+    @Test
+    @DisplayName("cancelOrder: 구매 취소 - 실패 예외처리 테스트")
+    void cancelOrder_fail_exception_test() {
+        //given
+        Long orderId = 1L;
+
+        given(order.getStatus()).willReturn(Status.DELIVERED);
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
+
+        //when
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+                orderService.cancelOrder(orderId));
+
+        //then
+        assertEquals("400 BAD_REQUEST \"'승인대기' 또는 '주문승인' 상태가 아니기 때문에 주문을 취소할 수 없습니다.\"", thrown.getMessage());
     }
 
     @Test
@@ -336,12 +377,11 @@ class OrderServiceTest {
     void updateDeleteAt_verify_test() {
         //given
         Long orderId = 1L;
-        OrderEntity orderEntity = mock(OrderEntity.class);
-        OrderDetailEntity mockOrderDetail1 = mock(OrderDetailEntity.class);
-        OrderDetailEntity mockOrderDetail2 = mock(OrderDetailEntity.class);
-        OrderDetailEntity mockOrderDetail3 = mock(OrderDetailEntity.class);
-        List<OrderDetailEntity> orderDetailList = List.of(mockOrderDetail1, mockOrderDetail2, mockOrderDetail3);
-        given(orderRepository.findById(1L)).willReturn(Optional.of(orderEntity));
+        OrderDetail mockOrderDetail1 = mock(OrderDetail.class);
+        OrderDetail mockOrderDetail2 = mock(OrderDetail.class);
+        OrderDetail mockOrderDetail3 = mock(OrderDetail.class);
+        List<OrderDetail> orderDetailList = List.of(mockOrderDetail1, mockOrderDetail2, mockOrderDetail3);
+        given(orderUserRepository.findById(1L)).willReturn(Optional.of(order));
         given(orderDetailRepository.findOrderDetailListByOrderId(orderId)).willReturn(orderDetailList);
 
         //when
@@ -351,17 +391,17 @@ class OrderServiceTest {
         verify(mockOrderDetail1, times(1)).updateDeletedAt();
         verify(mockOrderDetail2, times(1)).updateDeletedAt();
         verify(mockOrderDetail3, times(1)).updateDeletedAt();
-        then(orderRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should(times(1)).findById(orderId);
         then(orderDetailRepository).should().findOrderDetailListByOrderId(orderId);
-        then(orderEntity).should(times(1)).updateDeletedAt();
+        then(order).should(times(1)).updateDeletedAt();
     }
 
     @Test
-    @DisplayName("updateDeleteAt: 주문 삭제 - orderEntity null 예외처리 테스트")
-    void updateDeleteAt_orderEntityNull_exception_test() {
+    @DisplayName("updateDeleteAt: 주문 삭제 - order null 예외처리 테스트")
+    void updateDeleteAt_orderNull_exception_test() {
         //given
         Long orderId = 1L;
-        given(orderRepository.findById(1L)).willReturn(Optional.empty());
+        given(orderUserRepository.findById(1L)).willReturn(Optional.empty());
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
@@ -376,9 +416,8 @@ class OrderServiceTest {
     void updateDeleteAt_alreadyDelete_exception_test() {
         //given
         Long orderId = 1L;
-        OrderEntity orderEntity = mock(OrderEntity.class);
-        given(orderRepository.findById(1L)).willReturn(Optional.of(orderEntity));
-        given(orderEntity.getDeletedAt()).willReturn(LocalDateTime.now());
+        given(orderUserRepository.findById(1L)).willReturn(Optional.of(order));
+        given(order.getDeletedAt()).willReturn(LocalDateTime.now());
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->

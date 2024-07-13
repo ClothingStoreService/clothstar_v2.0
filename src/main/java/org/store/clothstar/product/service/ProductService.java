@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
-import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
+import org.store.clothstar.order.domain.OrderDetail;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
@@ -75,18 +75,18 @@ public class ProductService {
     }
 
     @Transactional
-    public void restoreProductStockByOrder(List<OrderDetailEntity> orderDetailList) {
-        orderDetailList.forEach(orderDetailEntity -> {
-            ProductEntity productEntity = productRepository.findById(orderDetailEntity.getProductId())
+    public void restoreProductStockByOrder(List<OrderDetail> orderDetailList) {
+        orderDetailList.forEach(orderDetail -> {
+            ProductEntity productEntity = productRepository.findById(orderDetail.getProductId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
-            productEntity.restoreStock(orderDetailEntity.getQuantity());
+            productEntity.restoreStock(orderDetail.getQuantity());
         });
     }
 
-    public void restoreProductStockByOrderDetail(OrderDetailEntity orderDetailEntity) {
-        ProductEntity productEntity = productRepository.findById(orderDetailEntity.getProductId())
+    public void restoreProductStockByOrderDetail(OrderDetail orderDetail) {
+        ProductEntity productEntity = productRepository.findById(orderDetail.getProductId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
-        productEntity.restoreStock(orderDetailEntity.getQuantity());
+        productEntity.restoreStock(orderDetail.getQuantity());
     }
 
     public List<ProductEntity> findByIdIn(List<Long> productIds) {
