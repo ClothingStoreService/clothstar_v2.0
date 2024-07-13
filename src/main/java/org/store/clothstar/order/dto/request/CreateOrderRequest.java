@@ -11,6 +11,7 @@ import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.type.PaymentMethod;
 import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.vo.TotalPrice;
 import org.store.clothstar.order.utils.GenerateOrderId;
 
 @Getter
@@ -34,15 +35,19 @@ public class CreateOrderRequest {
 
 
     public Order toOrder(Member member, Address address) {
+        TotalPrice totalPrice = TotalPrice.builder()
+                .shipping(3000)
+                .products(0)
+                .payment(0)
+                .build();
+
         return Order.builder()
                 .orderId(GenerateOrderId.generateOrderId())
                 .memberId(member.getMemberId())
                 .addressId(address.getAddressId())
                 .status(Status.WAITING)
-                .totalShippingPrice(3000)
-                .totalProductsPrice(0)
                 .paymentMethod(paymentMethod)
-                .totalPaymentPrice(0)
+                .totalPrice(totalPrice)
                 .build();
     }
 }

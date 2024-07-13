@@ -64,11 +64,11 @@ public class OrderDetailService {
         orderDetailRepository.save(orderDetail);
 
         // 주문 정보 업데이트: 주문 상세 생성에 따른, 총 상품 금액과 총 결제 금액 업데이트
-        int newTotalProductsPrice = order.getTotalProductsPrice() + orderDetail.getOneKindTotalPrice();
+        int newTotalProductsPrice = order.getTotalPrice().getProducts() + orderDetail.getPrice().getOneKindTotalPrice();
         int newTotalPaymentPrice =
-                order.getTotalProductsPrice() + order.getTotalShippingPrice() + orderDetail.getOneKindTotalPrice();
+                order.getTotalPrice().getProducts() + order.getTotalPrice().getShipping() + orderDetail.getPrice().getOneKindTotalPrice();
 
-        order.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
+        order.getTotalPrice().updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
 
         // 주문 수량만큼 상품 재고 차감
         updateProductStock(productEntity, orderDetail.getQuantity());
@@ -98,11 +98,11 @@ public class OrderDetailService {
         OrderDetail orderDetail = addOrderDetailRequest.toOrderDetail(order, productLineEntity, productEntity);
         orderDetailRepository.save(orderDetail);
 
-        int newTotalProductsPrice = order.getTotalProductsPrice() + orderDetail.getOneKindTotalPrice();
+        int newTotalProductsPrice = order.getTotalPrice().getProducts() + orderDetail.getPrice().getOneKindTotalPrice();
         int newTotalPaymentPrice =
-                order.getTotalProductsPrice() + order.getTotalShippingPrice() + orderDetail.getOneKindTotalPrice();
+                order.getTotalPrice().getProducts() + order.getTotalPrice().getShipping() + orderDetail.getPrice().getOneKindTotalPrice();
 
-        order.updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
+        order.getTotalPrice().updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
 
         updateProductStock(productEntity, orderDetail.getQuantity());
 

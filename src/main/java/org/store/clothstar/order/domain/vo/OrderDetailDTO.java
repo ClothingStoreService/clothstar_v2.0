@@ -24,6 +24,7 @@ public class OrderDetailDTO {
     private int totalPrice; // 상품 종류 하나당 총 가격
 
     public static OrderDetailDTO from(OrderDetail orderDetail, ProductEntity productEntity, ProductLineEntity productLineEntity){
+
         return OrderDetailDTO.builder()
                 .orderDetailId(orderDetail.getOrderDetailId())
                 .productName(productLineEntity.getName())
@@ -32,7 +33,7 @@ public class OrderDetailDTO {
                 .productPrice(productLineEntity.getPrice())
                 .extraCharge(productEntity.getExtraCharge())
                 .quantity(orderDetail.getQuantity())
-                .totalPrice(orderDetail.getOneKindTotalPrice())
+                .totalPrice(orderDetail.getPrice().getOneKindTotalPrice())
                 .build();
     }
 }

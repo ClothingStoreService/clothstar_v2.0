@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.vo.Price;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 
@@ -34,13 +35,17 @@ public class CreateOrderDetailRequest {
 
 
     public OrderDetail toOrderDetail(Order order, ProductLineEntity productLineEntity, ProductEntity productEntity) {
+        Price price = Price.builder()
+                .fixedPrice(productLineEntity.getPrice())
+                .oneKindTotalPrice(quantity * productLineEntity.getPrice())
+                .build();
+
         return OrderDetail.builder()
                 .order(order)
                 .productLineId(productLineEntity.getProductLineId())
                 .productId(productEntity.getProductId())
                 .quantity(quantity)
-                .fixedPrice(productLineEntity.getPrice())
-                .oneKindTotalPrice(quantity * productLineEntity.getPrice())
+                .price(price)
                 .build();
     }
 }

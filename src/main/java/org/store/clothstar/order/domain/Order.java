@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.store.clothstar.common.entity.BaseEntity;
 import org.store.clothstar.order.domain.type.PaymentMethod;
 import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.vo.TotalPrice;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,35 +22,28 @@ public class Order extends BaseEntity {
     @Id
     private Long orderId;
 
+    @Column(name = "member_id")
+    private Long memberId;
+
+        @Column(name = "address_id")
+    private Long addressId;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name = "total_shipping_price")
-    private int totalShippingPrice;
-
-    @Column(name = "total_products_price")
-    private int totalProductsPrice;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method")
     private PaymentMethod paymentMethod;
 
-    @Column(name = "total_payment_price")
-    private int totalPaymentPrice;
+    @Embedded
+    TotalPrice totalPrice;
 
-    @Column(name = "member_id")
-    private Long memberId;
 
-    @Column(name = "address_id")
-    private Long addressId;
 
-    public void updatePrices(int totalProductsPrice, int totalPaymentPrice) {
-        this.totalProductsPrice = totalProductsPrice;
-        this.totalPaymentPrice = totalPaymentPrice;
-    }
+
 
     public void updateDeletedAt() {
         this.deletedAt = LocalDateTime.now();

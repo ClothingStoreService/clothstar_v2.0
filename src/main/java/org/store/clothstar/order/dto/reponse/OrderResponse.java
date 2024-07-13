@@ -12,6 +12,8 @@ import org.store.clothstar.order.domain.type.PaymentMethod;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.domain.vo.AddressDTO;
 import org.store.clothstar.order.domain.vo.OrderDetailDTO;
+import org.store.clothstar.order.domain.vo.Price;
+import org.store.clothstar.order.domain.vo.TotalPrice;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -42,28 +44,25 @@ public class OrderResponse {
     @Schema(description = "결제 수단", example = "CARD")
     private PaymentMethod paymentMethod;
 
-    @Schema(description = "총 배송비", example = "3000")
-    private int totalShippingPrice;
-
-    @Schema(description = "총 상품 금액", example = "15000")
-    private int totalProductsPrice;
-
-    @Schema(description = "총 결제 금액", example = "18000")
-    private int totalPaymentPrice;
+    private TotalPrice totalPrice;
 
     @Builder.Default
     private List<OrderDetailDTO> orderDetailList = new ArrayList<>();
 
     public static OrderResponse from(Order order, Member member, Address address) {
+        TotalPrice totalPrice = TotalPrice.builder()
+                .shipping(order.getTotalPrice().getShipping())
+                .products(order.getTotalPrice().getProducts())
+                .payment(order.getTotalPrice().getPayment())
+                .build();
+
         return OrderResponse.builder()
                 .orderId(order.getOrderId())
                 .ordererName(member.getName())
                 .createdAt(order.getCreatedAt().toLocalDate())
                 .status(order.getStatus())
-                .totalShippingPrice(order.getTotalShippingPrice())
-                .totalProductsPrice(order.getTotalProductsPrice())
                 .paymentMethod(order.getPaymentMethod())
-                .totalPaymentPrice(order.getTotalPaymentPrice())
+                .totalPrice(totalPrice)
                 .address(AddressDTO.builder()
                         .receiverName(address.getReceiverName())
                         .addressBasic(address.getAddressInfo().getAddressBasic())

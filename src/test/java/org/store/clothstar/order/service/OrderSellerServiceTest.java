@@ -17,6 +17,8 @@ import org.store.clothstar.member.domain.vo.AddressInfo;
 import org.store.clothstar.member.service.AddressService;
 import org.store.clothstar.member.service.MemberService;
 import org.store.clothstar.order.domain.Order;
+import org.store.clothstar.order.domain.vo.Price;
+import org.store.clothstar.order.domain.vo.TotalPrice;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
@@ -88,6 +90,12 @@ class OrderSellerServiceTest {
     private AddressInfo addressInfo;
 
     @Mock
+    private TotalPrice totalPrice;
+
+    @Mock
+    private Price price;
+
+    @Mock
     private Seller seller;
 
     @Test
@@ -110,6 +118,8 @@ class OrderSellerServiceTest {
         given(memberService.getMemberByMemberId(memberId)).willReturn(member);
         given(addressService.getAddressById(addressId)).willReturn(address);
         given(address.getAddressInfo()).willReturn(addressInfo);
+        given(order.getTotalPrice()).willReturn(totalPrice);
+        given(orderDetail.getPrice()).willReturn(price);
         given(orderDetail.getProductId()).willReturn(productId);
         given(orderDetail.getProductLineId()).willReturn(productLineId);
         given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
