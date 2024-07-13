@@ -15,12 +15,11 @@ import org.store.clothstar.member.service.MemberService;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
-import org.store.clothstar.order.repository.order.OrderRepository;
-import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
-import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
-import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
-import org.store.clothstar.orderDetail.service.OrderDetailService;
+import org.store.clothstar.order.repository.order.OrderUserRepository;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.vo.OrderDetailDTO;
+import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
@@ -34,7 +33,7 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private final OrderRepository orderRepository;
+    private final OrderUserRepository orderUserRepository;
     private final MemberService memberService;
     private final AddressService addressService;
     private final OrderDetailRepository orderDetailRepository;
@@ -43,11 +42,11 @@ public class OrderService {
     private final ProductLineService productLineService;
 
     public OrderService(
-            OrderRepository orderRepository
+            OrderUserRepository orderUserRepository
             , MemberService memberService, AddressService addressService
             , OrderDetailService orderDetailService, OrderDetailRepository orderDetailRepository,
             ProductService productService, ProductLineService productLineService) {
-        this.orderRepository = orderRepository;
+        this.orderUserRepository = orderUserRepository;
         this.memberService = memberService;
         this.addressService = addressService;
         this.orderDetailRepository = orderDetailRepository;
@@ -58,7 +57,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponse getOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderUserRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다"));
 
         if (order.getDeletedAt() != null) {
@@ -71,7 +70,7 @@ public class OrderService {
         OrderResponse orderResponse = OrderResponse.from(order,member,address);
 
         List<OrderDetail> orderDetails = order.getOrderDetails().stream()
-                .filter(orderDetailEntity -> orderDetailEntity.getDeletedAt() == null)
+                .filter(orderDetail -> orderDetail.getDeletedAt() == null)
                 .toList();
         List<Long> productIds = orderDetails.stream().map(OrderDetail::getProductId).collect(Collectors.toList());
         List<Long> productLineIds = orderDetails.stream().map(OrderDetail::getProductLineId).collect(Collectors.toList());
@@ -82,10 +81,10 @@ public class OrderService {
         Map<Long, ProductEntity> productMap = products.stream().collect(Collectors.toMap(ProductEntity::getId, product -> product));
         Map<Long, ProductLineEntity> productLineMap = productLines.stream().collect(Collectors.toMap(ProductLineEntity::getId, productLine -> productLine));
 
-        List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream().map(orderDetailEntity -> {
-            ProductEntity productEntity = productMap.get(orderDetailEntity.getProductId());
-            ProductLineEntity productLineEntity = productLineMap.get(orderDetailEntity.getProductLineId());
-            return OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity);
+        List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream().map(orderDetail -> {
+            ProductEntity productEntity = productMap.get(orderDetail.getProductId());
+            ProductLineEntity productLineEntity = productLineMap.get(orderDetail.getProductLineId());
+            return OrderDetailDTO.from(orderDetail, productEntity, productLineEntity);
         }).collect(Collectors.toList());
 
         orderResponse.setterOrderDetailList(orderDetailDTOList);
@@ -94,15 +93,15 @@ public class OrderService {
     }
 
     public Page<OrderResponse> getAllOrderOffsetPaging(Pageable pageable) {
-        Page<Order> orderEntities = orderRepository.findAll(pageable);
+        Page<Order> orderEntities = orderUserRepository.findAll(pageable);
 
-        return orderEntities.map(orderEntity -> {
-            Member member = memberService.getMemberByMemberId(orderEntity.getMemberId());
-            Address address = addressService.getAddressById(orderEntity.getAddressId());
-            OrderResponse orderResponse = OrderResponse.from(orderEntity, member, address);
+        return orderEntities.map(order -> {
+            Member member = memberService.getMemberByMemberId(order.getMemberId());
+            Address address = addressService.getAddressById(order.getAddressId());
+            OrderResponse orderResponse = OrderResponse.from(order, member, address);
 
-            List<OrderDetail> orderDetails = orderEntity.getOrderDetails().stream()
-                    .filter(orderDetailEntity -> orderDetailEntity.getDeletedAt() == null)
+            List<OrderDetail> orderDetails = order.getOrderDetails().stream()
+                    .filter(orderDetail -> orderDetail.getDeletedAt() == null)
                     .toList();
             List<Long> productIds = orderDetails.stream().map(OrderDetail::getProductId).collect(Collectors.toList());
             List<Long> productLineIds = orderDetails.stream().map(OrderDetail::getProductLineId).collect(Collectors.toList());
@@ -113,10 +112,10 @@ public class OrderService {
             Map<Long, ProductEntity> productMap = products.stream().collect(Collectors.toMap(ProductEntity::getId, product -> product));
             Map<Long, ProductLineEntity> productLineMap = productLines.stream().collect(Collectors.toMap(ProductLineEntity::getId, productLine -> productLine));
 
-            List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream().map(orderDetailEntity -> {
-                ProductEntity productEntity = productMap.get(orderDetailEntity.getProductId());
-                ProductLineEntity productLineEntity = productLineMap.get(orderDetailEntity.getProductLineId());
-                return OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity);
+            List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream().map(orderDetail -> {
+                ProductEntity productEntity = productMap.get(orderDetail.getProductId());
+                ProductLineEntity productLineEntity = productLineMap.get(orderDetail.getProductLineId());
+                return OrderDetailDTO.from(orderDetail, productEntity, productLineEntity);
             }).collect(Collectors.toList());
 
             orderResponse.setterOrderDetailList(orderDetailDTOList);
@@ -126,15 +125,15 @@ public class OrderService {
     }
 
     public Slice<OrderResponse> getAllOrderSlicePaging(Pageable pageable) {
-        Slice<Order> orderEntities = orderRepository.findAll(pageable);
+        Slice<Order> orderEntities = orderUserRepository.findAll(pageable);
 
-        return orderEntities.map(orderEntity -> {
-            Member member = memberService.getMemberByMemberId(orderEntity.getMemberId());
-            Address address = addressService.getAddressById(orderEntity.getAddressId());
-            OrderResponse orderResponse = OrderResponse.from(orderEntity, member, address);
+        return orderEntities.map(order -> {
+            Member member = memberService.getMemberByMemberId(order.getMemberId());
+            Address address = addressService.getAddressById(order.getAddressId());
+            OrderResponse orderResponse = OrderResponse.from(order, member, address);
 
-            List<OrderDetail> orderDetails = orderEntity.getOrderDetails().stream()
-                    .filter(orderDetailEntity -> orderDetailEntity.getDeletedAt() == null)
+            List<OrderDetail> orderDetails = order.getOrderDetails().stream()
+                    .filter(orderDetail -> orderDetail.getDeletedAt() == null)
                     .toList();
             List<Long> productIds = orderDetails.stream().map(OrderDetail::getProductId).collect(Collectors.toList());
             List<Long> productLineIds = orderDetails.stream().map(OrderDetail::getProductLineId).collect(Collectors.toList());
@@ -145,10 +144,10 @@ public class OrderService {
             Map<Long, ProductEntity> productMap = products.stream().collect(Collectors.toMap(ProductEntity::getId, product -> product));
             Map<Long, ProductLineEntity> productLineMap = productLines.stream().collect(Collectors.toMap(ProductLineEntity::getId, productLine -> productLine));
 
-            List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream().map(orderDetailEntity -> {
-                ProductEntity productEntity = productMap.get(orderDetailEntity.getProductId());
-                ProductLineEntity productLineEntity = productLineMap.get(orderDetailEntity.getProductLineId());
-                return OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity);
+            List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream().map(orderDetail -> {
+                ProductEntity productEntity = productMap.get(orderDetail.getProductId());
+                ProductLineEntity productLineEntity = productLineMap.get(orderDetail.getProductLineId());
+                return OrderDetailDTO.from(orderDetail, productEntity, productLineEntity);
             }).collect(Collectors.toList());
 
             orderResponse.setterOrderDetailList(orderDetailDTOList);
@@ -164,7 +163,7 @@ public class OrderService {
         Address address = addressService.getAddressById(createOrderRequest.getAddressId());
 
         Order order = createOrderRequest.toOrder(member, address);
-        orderRepository.save(order);
+        orderUserRepository.save(order);
 
         return order.getOrderId();
     }
@@ -172,19 +171,19 @@ public class OrderService {
     @Transactional
     public void deliveredToConfirmOrder(Long orderId) {
 
-        Order order = orderRepository.findById(orderId)
+        Order order = orderUserRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 정보를 찾을 수 없습니다."));
 
         if (order.getStatus() != Status.DELIVERED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 상태가 '배송완료'가 아니기 때문에 주문확정이 불가능합니다.");
         }
 
-        orderRepository.deliveredToConfirmOrder(orderId);
+        orderUserRepository.deliveredToConfirmOrder(orderId);
     }
 
     @Transactional
     public void updateDeleteAt(Long orderId) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderUserRepository.findById(orderId)
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 번호를 찾을 수 없습니다."));
 
         if(order.getDeletedAt() != null){

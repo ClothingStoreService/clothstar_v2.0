@@ -1,6 +1,6 @@
-package org.store.clothstar.orderDetail.repository;
+package org.store.clothstar.order.repository.order;
 
-import org.store.clothstar.orderDetail.domain.OrderDetail;
+import org.store.clothstar.order.domain.OrderDetail;
 
 import java.util.List;
 import java.util.Optional;

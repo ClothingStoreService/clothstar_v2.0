@@ -1,11 +1,11 @@
-package org.store.clothstar.orderDetail.repository;
+package org.store.clothstar.order.repository.order;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
+import org.store.clothstar.order.domain.OrderDetail;
 
 import java.util.List;
 

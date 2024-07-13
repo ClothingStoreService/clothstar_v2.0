@@ -18,12 +18,11 @@ import org.store.clothstar.member.service.AddressService;
 import org.store.clothstar.member.service.MemberService;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
-import org.store.clothstar.order.repository.order.OrderRepository;
+import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
-import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
-import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
-import org.store.clothstar.orderDetail.service.OrderDetailService;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.vo.OrderDetailDTO;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
@@ -47,7 +46,7 @@ class OrderSellerServiceTest {
     private OrderSellerService orderSellerService;
 
     @Mock
-    private OrderRepository orderRepository;
+    private OrderUserRepository orderUserRepository;
 
     @Mock
     private OrderSellerRepository orderSellerRepository;
@@ -122,7 +121,7 @@ class OrderSellerServiceTest {
         OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
         List<OrderDetail> orderDetails = List.of(orderDetail);
         List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream()
-                .map(orderDetailEntity -> OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity))
+                .map(orderDetail -> OrderDetailDTO.from(orderDetail, productEntity, productLineEntity))
                 .collect(Collectors.toList());
         expectedOrderResponse.setterOrderDetailList(orderDetailDTOList);
 
@@ -146,14 +145,14 @@ class OrderSellerServiceTest {
         //given
         Long orderId = 1L;
         given(order.getStatus()).willReturn(Status.WAITING);
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
 
         //when
         MessageDTO messageDTO = orderSellerService.approveOrder(orderId);
 
         //then
         then(orderSellerRepository).should(times(1)).approveOrder(orderId);
-        then(orderRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should(times(1)).findById(orderId);
         assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 승인 되었습니다.");
     }
@@ -164,14 +163,14 @@ class OrderSellerServiceTest {
         // given
         Long orderId = 1L;
         given(order.getStatus()).willReturn(Status.WAITING);
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
 
         //when
         MessageDTO messageDTO = orderSellerService.cancelOrder(orderId);
 
         //then
         then(orderSellerRepository).should(times(1)).cancelOrder(orderId);
-        then(orderRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should(times(1)).findById(orderId);
         assertThat(messageDTO.getStatusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(messageDTO.getMessage()).isEqualTo("주문이 정상적으로 취소 되었습니다.");
     }
@@ -182,7 +181,7 @@ class OrderSellerServiceTest {
 
         //given
         Long orderId = 1L;
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
         given(order.getStatus()).willReturn(Status.DELIVERED);
 
         //when
@@ -200,7 +199,7 @@ class OrderSellerServiceTest {
 
         //given
         Long orderId = 1L;
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
         given(order.getStatus()).willReturn(Status.DELIVERED);
 
         //when

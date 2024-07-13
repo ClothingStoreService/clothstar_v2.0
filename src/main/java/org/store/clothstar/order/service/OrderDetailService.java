@@ -1,4 +1,4 @@
-package org.store.clothstar.orderDetail.service;
+package org.store.clothstar.order.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.repository.order.OrderRepository;
-import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
-import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
-import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
-import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
+import org.store.clothstar.order.repository.order.OrderUserRepository;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.dto.request.AddOrderDetailRequest;
+import org.store.clothstar.order.dto.request.CreateOrderDetailRequest;
+import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.repository.ProductJPARepository;
 import org.store.clothstar.product.service.ProductService;
@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class OrderDetailService {
-    private final OrderRepository orderRepository;
+    private final OrderUserRepository orderUserRepository;
     private final ProductService productService;
     private final OrderDetailRepository orderDetailRepository;
     private final ProductJPARepository productJPARepository;
@@ -31,11 +31,11 @@ public class OrderDetailService {
 
     public OrderDetailService(
             OrderDetailRepository orderDetailRepository,
-            OrderRepository orderRepository, ProductService productService
+            OrderUserRepository orderUserRepository, ProductService productService
             , ProductJPARepository productJPARepository
             , ProductLineJPARepository productLineJPARepository
     ) {
-        this.orderRepository = orderRepository;
+        this.orderUserRepository = orderUserRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.productService = productService;
         this.productJPARepository = productJPARepository;
@@ -46,7 +46,7 @@ public class OrderDetailService {
     @Transactional
     public void saveOrderDetailWithOrder(CreateOrderDetailRequest createOrderDetailRequest, long orderId) {
 
-        Order order = orderRepository.findById(orderId)
+        Order order = orderUserRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 정보를 찾을 수 없습니다."));
 
         ProductLineEntity productLineEntity = productLineJPARepository.findById(createOrderDetailRequest.getProductLineId())
@@ -78,7 +78,7 @@ public class OrderDetailService {
     @Transactional
     public Long addOrderDetail(AddOrderDetailRequest addOrderDetailRequest) {
 
-        Order order = orderRepository.findById(addOrderDetailRequest.getOrderId())
+        Order order = orderUserRepository.findById(addOrderDetailRequest.getOrderId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 정보를 찾을 수 없습니다."));
 
         ProductLineEntity productLineEntity = productLineJPARepository.findById(addOrderDetailRequest.getProductLineId())

@@ -22,7 +22,7 @@ import org.store.clothstar.order.service.OrderService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/orders")
-public class OrderController {
+public class OrderUserController {
 
     private final OrderService orderService;
     private final OrderApplicationService orderApplicationService;

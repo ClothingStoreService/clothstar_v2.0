@@ -21,11 +21,11 @@ import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
-import org.store.clothstar.order.repository.order.OrderRepository;
-import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
-import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
-import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
+import org.store.clothstar.order.repository.order.OrderUserRepository;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.vo.OrderDetailDTO;
+import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
@@ -84,7 +84,7 @@ class OrderServiceTest {
     private Seller seller;
 
     @Mock
-    private OrderRepository orderRepository;
+    private OrderUserRepository orderUserRepository;
 
     @Mock
     private OrderDetailRepository orderDetailRepository;
@@ -99,7 +99,7 @@ class OrderServiceTest {
         Long productId = 4L;
         Long productLineId = 5L;
 
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
         given(order.getMemberId()).willReturn(memberId);
         given(order.getAddressId()).willReturn(addressId);
         given(order.getCreatedAt()).willReturn(LocalDateTime.now());
@@ -126,7 +126,7 @@ class OrderServiceTest {
         // then
         assertThat(orderResponse).usingRecursiveComparison().isEqualTo(expectedOrderResponse);
 
-        then(orderRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should(times(1)).findById(orderId);
         then(memberService).should(times(1)).getMemberByMemberId(memberId);
         then(addressService).should(times(1)).getAddressById(addressId);
         then(productService).should(times(1)).findByIdIn(List.of(productId));
@@ -147,7 +147,7 @@ class OrderServiceTest {
 
         List<Order> waitingOrders = List.of(order);
         Page<Order> orderEntities = new PageImpl<>(waitingOrders, pageable, waitingOrders.size());
-        given(orderRepository.findAll(pageable)).willReturn(orderEntities);
+        given(orderUserRepository.findAll(pageable)).willReturn(orderEntities);
         given(order.getMemberId()).willReturn(memberId);
         given(order.getAddressId()).willReturn(addressId);
         given(order.getCreatedAt()).willReturn(LocalDateTime.now());
@@ -168,7 +168,7 @@ class OrderServiceTest {
         OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
         List<OrderDetail> orderDetails = List.of(orderDetail);
         List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream()
-                .map(orderDetailEntity -> OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity))
+                .map(orderDetail -> OrderDetailDTO.from(orderDetail, productEntity, productLineEntity))
                 .collect(Collectors.toList());
         expectedOrderResponse.setterOrderDetailList(orderDetailDTOList);
 
@@ -179,7 +179,7 @@ class OrderServiceTest {
         assertThat(orderResponses).hasSize(waitingOrders.size());
         assertThat(orderResponses.getContent().get(0)).usingRecursiveComparison().isEqualTo(expectedOrderResponse);
 
-        verify(orderRepository, times(1)).findAll(pageable);
+        verify(orderUserRepository, times(1)).findAll(pageable);
         verify(memberService, times(1)).getMemberByMemberId(memberId);
         verify(addressService, times(1)).getAddressById(addressId);
         verify(productService, times(1)).findByIdIn(List.of(productId));
@@ -199,7 +199,7 @@ class OrderServiceTest {
 
         List<Order> waitingOrders = List.of(order);
         Page<Order> pageOrderEntities = new PageImpl<>(waitingOrders, pageable, waitingOrders.size());
-        given(orderRepository.findAll(pageable)).willReturn(pageOrderEntities);
+        given(orderUserRepository.findAll(pageable)).willReturn(pageOrderEntities);
         given(order.getMemberId()).willReturn(memberId);
         given(order.getAddressId()).willReturn(addressId);
         given(order.getCreatedAt()).willReturn(LocalDateTime.now());
@@ -220,7 +220,7 @@ class OrderServiceTest {
         OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
         List<OrderDetail> orderDetails = List.of(orderDetail);
         List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream()
-                .map(orderDetailEntity -> OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity))
+                .map(orderDetail -> OrderDetailDTO.from(orderDetail, productEntity, productLineEntity))
                 .collect(Collectors.toList());
         expectedOrderResponse.setterOrderDetailList(orderDetailDTOList);
 
@@ -231,7 +231,7 @@ class OrderServiceTest {
         assertThat(orderResponses).hasSize(waitingOrders.size());
         assertThat(orderResponses.getContent().get(0)).usingRecursiveComparison().isEqualTo(expectedOrderResponse);
 
-        verify(orderRepository, times(1)).findAll(pageable);
+        verify(orderUserRepository, times(1)).findAll(pageable);
         verify(memberService, times(1)).getMemberByMemberId(memberId);
         verify(addressService, times(1)).getAddressById(addressId);
         verify(productService, times(1)).findByIdIn(List.of(productId));
@@ -259,7 +259,7 @@ class OrderServiceTest {
         //then
         then(memberService).should(times(1)).getMemberByMemberId(createOrderRequest.getMemberId());
         then(addressService).should(times(1)).getAddressById(createOrderRequest.getAddressId());
-        then(orderRepository).should(times(1)).save(order);
+        then(orderUserRepository).should(times(1)).save(order);
         verify(order).getOrderId();
     }
 
@@ -296,15 +296,15 @@ class OrderServiceTest {
         Order order = mock(Order.class);
         mock(OrderResponse.class);
 
-        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(1L)).willReturn(Optional.of(order));
         given(order.getStatus()).willReturn(Status.DELIVERED);
 
         //when
         orderService.deliveredToConfirmOrder(orderId);
 
         //then
-        then(orderRepository).should(times(1)).findById(orderId);
-        then(orderRepository).should().deliveredToConfirmOrder(orderId);
+        then(orderUserRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should().deliveredToConfirmOrder(orderId);
     }
 
     @Test
@@ -314,7 +314,7 @@ class OrderServiceTest {
         Long orderId = 1L;
 
         given(order.getStatus()).willReturn(Status.APPROVE);
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
@@ -333,7 +333,7 @@ class OrderServiceTest {
         OrderDetail mockOrderDetail2 = mock(OrderDetail.class);
         OrderDetail mockOrderDetail3 = mock(OrderDetail.class);
         List<OrderDetail> orderDetailList = List.of(mockOrderDetail1, mockOrderDetail2, mockOrderDetail3);
-        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(1L)).willReturn(Optional.of(order));
         given(orderDetailRepository.findOrderDetailListByOrderId(orderId)).willReturn(orderDetailList);
 
         //when
@@ -343,17 +343,17 @@ class OrderServiceTest {
         verify(mockOrderDetail1, times(1)).updateDeletedAt();
         verify(mockOrderDetail2, times(1)).updateDeletedAt();
         verify(mockOrderDetail3, times(1)).updateDeletedAt();
-        then(orderRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should(times(1)).findById(orderId);
         then(orderDetailRepository).should().findOrderDetailListByOrderId(orderId);
         then(order).should(times(1)).updateDeletedAt();
     }
 
     @Test
-    @DisplayName("updateDeleteAt: 주문 삭제 - orderEntity null 예외처리 테스트")
-    void updateDeleteAt_orderEntityNull_exception_test() {
+    @DisplayName("updateDeleteAt: 주문 삭제 - order null 예외처리 테스트")
+    void updateDeleteAt_orderNull_exception_test() {
         //given
         Long orderId = 1L;
-        given(orderRepository.findById(1L)).willReturn(Optional.empty());
+        given(orderUserRepository.findById(1L)).willReturn(Optional.empty());
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
@@ -368,7 +368,7 @@ class OrderServiceTest {
     void updateDeleteAt_alreadyDelete_exception_test() {
         //given
         Long orderId = 1L;
-        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(1L)).willReturn(Optional.of(order));
         given(order.getDeletedAt()).willReturn(LocalDateTime.now());
 
         //when

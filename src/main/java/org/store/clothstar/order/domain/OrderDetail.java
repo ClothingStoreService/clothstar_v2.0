@@ -1,4 +1,4 @@
-package org.store.clothstar.orderDetail.domain;
+package org.store.clothstar.order.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.common.entity.BaseEntity;
-import org.store.clothstar.order.domain.Order;
 
 import java.time.LocalDateTime;
 

@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.type.PaymentMethod;
-import org.store.clothstar.order.type.Status;
+import org.store.clothstar.order.domain.type.PaymentMethod;
+import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.utils.GenerateOrderId;
 
 @Getter

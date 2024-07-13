@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.order.domain.Order;
 
-public interface JpaOrderRepository extends JpaRepository<Order, Long>, OrderRepository{
+public interface JpaOrderUserRepository extends JpaRepository<Order, Long>, OrderUserRepository {
 
     @Transactional
     @Modifying

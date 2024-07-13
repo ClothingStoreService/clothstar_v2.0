@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.type.PaymentMethod;
-import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
+import org.store.clothstar.order.domain.type.PaymentMethod;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.vo.AddressDTO;
+import org.store.clothstar.order.domain.vo.OrderDetailDTO;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

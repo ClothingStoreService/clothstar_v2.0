@@ -8,12 +8,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.repository.order.OrderRepository;
-import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
-import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
-import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
-import org.store.clothstar.orderDetail.repository.OrderDetailRepository;
+import org.store.clothstar.order.repository.order.OrderUserRepository;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.service.OrderDetailService;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.dto.request.AddOrderDetailRequest;
+import org.store.clothstar.order.dto.request.CreateOrderDetailRequest;
+import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.repository.ProductJPARepository;
 import org.store.clothstar.product.service.ProductService;
@@ -38,7 +39,7 @@ class OrderDetailServiceTest {
     private ProductService productService;
 
     @Mock
-    private OrderRepository orderRepository;
+    private OrderUserRepository orderUserRepository;
 
     @Mock
     private OrderDetailRepository orderDetailRepository;
@@ -64,7 +65,7 @@ class OrderDetailServiceTest {
         ProductLineEntity mockProductLine = mock(ProductLineEntity.class);
         ProductEntity mockProduct = mock(ProductEntity.class);
 
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
         given(productLineJPARepository.findById(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productJPARepository.findById(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.toOrderDetail(order, mockProductLine, mockProduct)).willReturn(orderDetail);
@@ -73,7 +74,7 @@ class OrderDetailServiceTest {
         orderDetailService.saveOrderDetailWithOrder(mockRequest, orderId);
 
         //then
-        then(orderRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should(times(1)).findById(orderId);
         then(productLineJPARepository).should(times(1)).findById(mockRequest.getProductLineId());
         then(productJPARepository).should(times(1)).findById(mockRequest.getProductId());
         then(orderDetailRepository).should(times(1)).save(orderDetail);
@@ -88,7 +89,7 @@ class OrderDetailServiceTest {
         ProductLineEntity mockProductLine = mock(ProductLineEntity.class);
         ProductEntity mockProduct = mock(ProductEntity.class);
 
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
         given(productLineJPARepository.findById(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productJPARepository.findById(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.getQuantity()).willReturn(10);
@@ -110,7 +111,7 @@ class OrderDetailServiceTest {
         ProductLineEntity mockProductLine = mock(ProductLineEntity.class);
         ProductEntity mockProduct = mock(ProductEntity.class);
 
-        given(orderRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(order));
         given(productLineJPARepository.findById(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productJPARepository.findById(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.getQuantity()).willReturn(10);
@@ -135,7 +136,7 @@ class OrderDetailServiceTest {
 
         given(orderDetail.getOrderDetailId()).willReturn(1L);
         given(order.getStatus()).willReturn(Status.WAITING);
-        given(orderRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(order));
         given(productLineJPARepository.findById(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productJPARepository.findById(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.toOrderDetail(order, mockProductLine, mockProduct)).willReturn(orderDetail);
@@ -156,7 +157,7 @@ class OrderDetailServiceTest {
         ProductEntity mockProduct = mock(ProductEntity.class);
 
         given(order.getStatus()).willReturn(Status.WAITING);
-        given(orderRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(order));
         given(productLineJPARepository.findById(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productJPARepository.findById(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.toOrderDetail(order, mockProductLine, mockProduct)).willReturn(orderDetail);
@@ -165,7 +166,7 @@ class OrderDetailServiceTest {
         orderDetailService.addOrderDetail(mockRequest);
 
         //then
-        then(orderRepository).should(times(1)).findById(mockRequest.getOrderId());
+        then(orderUserRepository).should(times(1)).findById(mockRequest.getOrderId());
         then(productLineJPARepository).should(times(1)).findById(mockRequest.getProductLineId());
         then(productJPARepository).should(times(1)).findById(mockRequest.getProductId());
         then(orderDetailRepository).should(times(1)).save(orderDetail);
@@ -179,7 +180,7 @@ class OrderDetailServiceTest {
         ProductLineEntity mockProductLine = mock(ProductLineEntity.class);
         ProductEntity mockProduct = mock(ProductEntity.class);
 
-        given(orderRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(order));
         given(productLineJPARepository.findById(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productJPARepository.findById(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
         given(mockRequest.getQuantity()).willReturn(10);
@@ -202,7 +203,7 @@ class OrderDetailServiceTest {
         ProductEntity mockProduct = mock(ProductEntity.class);
 
         given(order.getStatus()).willReturn(Status.CANCEL);
-        given(orderRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(order));
+        given(orderUserRepository.findById(mockRequest.getOrderId())).willReturn(Optional.of(order));
         given(productLineJPARepository.findById(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
         given(productJPARepository.findById(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
 

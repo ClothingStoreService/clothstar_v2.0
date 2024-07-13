@@ -6,11 +6,11 @@ import org.store.clothstar.order.domain.Order;
 
 import java.util.Optional;
 
-public interface OrderRepository {
+public interface OrderUserRepository {
 
     Optional<Order> findById(Long orderId);
 
-    Order save(Order orderEntity);
+    Order save(Order order);
 
     void deliveredToConfirmOrder(Long orderId);
 

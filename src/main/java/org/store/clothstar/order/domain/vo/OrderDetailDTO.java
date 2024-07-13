@@ -1,10 +1,10 @@
-package org.store.clothstar.orderDetail.dto;
+package org.store.clothstar.order.domain.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
+import org.store.clothstar.order.domain.OrderDetail;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 

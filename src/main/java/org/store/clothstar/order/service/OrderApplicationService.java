@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
-import org.store.clothstar.orderDetail.service.OrderDetailService;
 
 @Service
 @RequiredArgsConstructor

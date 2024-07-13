@@ -6,9 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.common.entity.BaseEntity;
-import org.store.clothstar.order.type.PaymentMethod;
-import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
+import org.store.clothstar.order.domain.type.PaymentMethod;
+import org.store.clothstar.order.domain.type.Status;
 
 import java.time.LocalDateTime;
 import java.util.List;
