@@ -2,7 +2,9 @@ package org.store.clothstar.member.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.common.error.ErrorCode;
 import org.store.clothstar.common.error.exception.NotFoundMemberException;
 import org.store.clothstar.member.domain.Address;
@@ -40,5 +42,11 @@ public class AddressServiceImpl implements AddressService {
         address = addressRepository.save(address);
 
         return address.getAddressId();
+    }
+
+    @Override
+    public Address getAddressById(Long addressId) {
+        return addressRepository.findById(addressId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "배송지 정보를 찾을 수 없습니다."));
     }
 }

@@ -17,7 +17,6 @@ import org.store.clothstar.category.dto.response.CategoryResponse;
 import org.store.clothstar.category.service.CategoryService;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.common.util.URIBuilder;
-import org.store.clothstar.productLine.dto.response.ProductLineResponse;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
 import org.store.clothstar.productLine.service.ProductLineService;
 

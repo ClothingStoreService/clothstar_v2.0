@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.common.entity.BaseEntity;
-import org.store.clothstar.member.domain.Address;
-import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
@@ -43,13 +41,11 @@ public class OrderEntity extends BaseEntity {
     @Column(name = "total_payment_price")
     private int totalPaymentPrice;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @Column(name = "member_id")
+    private Long memberId;
 
-    @OneToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
+    @Column(name = "address_id")
+    private Long addressId;
 
     public void updatePrices(int totalProductsPrice, int totalPaymentPrice) {
         this.totalProductsPrice = totalProductsPrice;

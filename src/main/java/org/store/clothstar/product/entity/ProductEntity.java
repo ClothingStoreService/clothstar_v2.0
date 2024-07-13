@@ -70,4 +70,8 @@ public class ProductEntity {
     public void restoreStock(int quantity) {
         this.stock += quantity;
     }
+
+    public Long getId() {
+        return productId;
+    }
 }

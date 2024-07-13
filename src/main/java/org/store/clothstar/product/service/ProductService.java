@@ -13,7 +13,6 @@ import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.repository.ProductJPARepository;
-import org.store.clothstar.product.repository.ProductRepository;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
@@ -78,15 +77,19 @@ public class ProductService {
     @Transactional
     public void restoreProductStockByOrder(List<OrderDetailEntity> orderDetailList) {
         orderDetailList.forEach(orderDetailEntity -> {
-            ProductEntity productEntity = productRepository.findById(orderDetailEntity.getProduct().getProductId())
+            ProductEntity productEntity = productRepository.findById(orderDetailEntity.getProductId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
             productEntity.restoreStock(orderDetailEntity.getQuantity());
         });
     }
 
     public void restoreProductStockByOrderDetail(OrderDetailEntity orderDetailEntity) {
-        ProductEntity productEntity = productRepository.findById(orderDetailEntity.getProduct().getProductId())
+        ProductEntity productEntity = productRepository.findById(orderDetailEntity.getProductId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
         productEntity.restoreStock(orderDetailEntity.getQuantity());
+    }
+
+    public List<ProductEntity> findByIdIn(List<Long> productIds) {
+        return productJPARepository.findByIdIn(productIds);
     }
 }

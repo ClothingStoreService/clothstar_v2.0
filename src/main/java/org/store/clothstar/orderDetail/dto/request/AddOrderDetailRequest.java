@@ -40,8 +40,8 @@ public class AddOrderDetailRequest {
     public OrderDetailEntity toOrderDetailEntity(OrderEntity orderEntity, ProductLineEntity productLineEntity, ProductEntity productEntity) {
         return OrderDetailEntity.builder()
                 .order(orderEntity)
-                .productLine(productLineEntity)
-                .product(productEntity)
+                .productLineId(productLineEntity.getProductLineId())
+                .productId(productEntity.getProductId())
                 .quantity(quantity)
                 .fixedPrice(productLineEntity.getPrice())
                 .oneKindTotalPrice(quantity * productLineEntity.getPrice())

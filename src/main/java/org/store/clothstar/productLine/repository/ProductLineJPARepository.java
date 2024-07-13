@@ -11,4 +11,6 @@ import java.util.List;
 public interface ProductLineJPARepository extends JpaRepository<ProductLineEntity, Long>, ProductLineRepositoryCustom {
 
     List<ProductLineEntity> findByDeletedAtIsNullAndStatusNotIn(List<ProductLineStatus> statuses);
+
+    List<ProductLineEntity> findByIdIn(List<Long> productLineIds);
 }

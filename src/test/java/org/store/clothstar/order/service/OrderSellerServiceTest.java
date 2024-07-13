@@ -12,16 +12,27 @@ import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
+import org.store.clothstar.member.domain.Seller;
+import org.store.clothstar.member.domain.vo.AddressInfo;
+import org.store.clothstar.member.service.AddressService;
+import org.store.clothstar.member.service.MemberService;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
 import org.store.clothstar.order.type.Status;
+import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
+import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
 import org.store.clothstar.orderDetail.service.OrderDetailService;
+import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.product.service.ProductService;
+import org.store.clothstar.productLine.entity.ProductLineEntity;
+import org.store.clothstar.productLine.service.ProductLineService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,30 +59,88 @@ class OrderSellerServiceTest {
     private OrderDetailService orderDetailService;
 
     @Mock
-    private Member mockMember;
+    private MemberService memberService;
 
     @Mock
-    private Address mockAddress;
+    private AddressService addressService;
+
+    @Mock
+    private ProductLineService productLineService;
+
+    @Mock
+    private ProductService productService;
+
+    @Mock
+    private Member member;
+
+    @Mock
+    private Address address;
+
+    @Mock
+    private OrderEntity orderEntity;
+
+    @Mock
+    private OrderDetailEntity orderDetailEntity;
+
+    @Mock
+    private ProductLineEntity productLineEntity;
+
+    @Mock
+    private ProductEntity productEntity;
+
+    @Mock
+    private AddressInfo addressInfo;
+
+    @Mock
+    private Seller seller;
 
     @Test
     @DisplayName("getWaitingOrders: '승인대기' 주문 조회 - 메서드 호출 & 반환값 테스트")
     void getWaitingOrder_test() {
-        //given
-        OrderResponse orderResponse1 = mock(OrderResponse.class);
-        given(orderResponse1.getTotalShippingPrice()).willReturn(1000);
-        OrderResponse orderResponse2 = mock(OrderResponse.class);
-        OrderResponse orderResponse3 = mock(OrderResponse.class);
+        // given
+        Long memberId = 1L;
+        Long addressId = 2L;
+        Long productId = 3L;
+        Long productLineId = 4L;
 
-        List<OrderResponse> orderList = List.of(orderResponse1, orderResponse2, orderResponse3);
-        given(orderSellerRepository.findWaitingOrders()).willReturn(orderList);
+        List<OrderEntity> waitingOrders = List.of(orderEntity);
+        given(orderSellerRepository.findWaitingOrders()).willReturn(waitingOrders);
+        given(orderEntity.getMemberId()).willReturn(memberId);
+        given(orderEntity.getAddressId()).willReturn(addressId);
+        given(orderEntity.getCreatedAt()).willReturn(LocalDateTime.now());
+        given(orderDetailEntity.getDeletedAt()).willReturn(null);
+        given(orderEntity.getOrderDetails()).willReturn(List.of(orderDetailEntity));
 
-        //when
-        List<OrderResponse> response = orderSellerService.getWaitingOrder();
+        given(memberService.getMemberByMemberId(memberId)).willReturn(member);
+        given(addressService.getAddressById(addressId)).willReturn(address);
+        given(address.getAddressInfo()).willReturn(addressInfo);
+        given(orderDetailEntity.getProductId()).willReturn(productId);
+        given(orderDetailEntity.getProductLineId()).willReturn(productLineId);
+        given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
+        given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLineEntity));
+        given(productEntity.getId()).willReturn(productId);
+        given(productLineEntity.getId()).willReturn(productLineId);
+        given(productLineEntity.getSeller()).willReturn(seller);
 
-        //then
-        then(orderSellerRepository).should(times(1)).findWaitingOrders();
-        assertThat(response).isNotNull().hasSize(3);
-        assertThat(response.get(0).getTotalShippingPrice()).isEqualTo(1000);
+        OrderResponse expectedOrderResponse = OrderResponse.from(orderEntity, member, address);
+        List<OrderDetailEntity> orderDetails = List.of(orderDetailEntity);
+        List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream()
+                .map(orderDetailEntity -> OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity))
+                .collect(Collectors.toList());
+        expectedOrderResponse.setterOrderDetailList(orderDetailDTOList);
+
+        // when
+        List<OrderResponse> orderResponses = orderSellerService.getWaitingOrder();
+
+        // then
+        assertThat(orderResponses).hasSize(waitingOrders.size());
+        assertThat(orderResponses.get(0)).usingRecursiveComparison().isEqualTo(expectedOrderResponse);
+
+        verify(orderSellerRepository, times(1)).findWaitingOrders();
+        verify(memberService, times(1)).getMemberByMemberId(memberId);
+        verify(addressService, times(1)).getAddressById(addressId);
+        verify(productService, times(1)).findByIdIn(List.of(productId));
+        verify(productLineService, times(1)).findByIdIn(List.of(productLineId));
     }
 
     @Test
@@ -120,9 +189,9 @@ class OrderSellerServiceTest {
         given(mockOrderEntity.getStatus()).willReturn(Status.DELIVERED);
 
         //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            orderSellerService.approveOrder(orderId);
-        });
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderSellerService.approveOrder(orderId)
+        );
 
         //then
         assertEquals("400 BAD_REQUEST \"주문이 존재하지 않거나 상태가 'WAITING'이 아니어서 처리할 수 없습니다.\"", thrown.getMessage());
@@ -138,9 +207,9 @@ class OrderSellerServiceTest {
         given(mockOrderEntity.getStatus()).willReturn(Status.DELIVERED);
 
         //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () -> {
-            orderSellerService.cancelOrder(orderId);
-        });
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+            orderSellerService.cancelOrder(orderId)
+        );
 
         //then
         assertEquals("400 BAD_REQUEST \"주문이 존재하지 않거나 상태가 'WAITING'이 아니어서 처리할 수 없습니다.\"", thrown.getMessage());

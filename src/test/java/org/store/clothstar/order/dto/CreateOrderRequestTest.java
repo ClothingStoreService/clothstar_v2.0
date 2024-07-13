@@ -33,6 +33,6 @@ class CreateOrderRequestTest {
         OrderEntity orderEntity = request.toOrderEntity(member, address);
 
         //then
-        assertEquals(member.getMemberId(), orderEntity.getMember().getMemberId());
+        assertEquals(member.getMemberId(), orderEntity.getMemberId());
     }
 }

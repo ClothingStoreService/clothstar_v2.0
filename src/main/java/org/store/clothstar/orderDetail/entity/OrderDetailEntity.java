@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.common.entity.BaseEntity;
 import org.store.clothstar.order.entity.OrderEntity;
-import org.store.clothstar.product.entity.ProductEntity;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 import java.time.LocalDateTime;
 
@@ -34,13 +32,11 @@ public class OrderDetailEntity extends BaseEntity {
     @JoinColumn(name = "order_id")
     private OrderEntity order;
 
-    @ManyToOne
     @JoinColumn(name = "product_line_id")
-    private ProductLineEntity productLine;
+    private Long productLineId;
 
-    @ManyToOne
     @JoinColumn(name = "product_id")
-    private ProductEntity product;
+    private Long productId;
 
     public void updateDeletedAt() {
         this.deletedAt = LocalDateTime.now();
