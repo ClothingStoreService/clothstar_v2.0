@@ -3,10 +3,10 @@ package org.store.clothstar.member.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.ModifyMemberRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
-import org.store.clothstar.member.domain.Member;
 
 public interface MemberService {
     Page<MemberResponse> getAllMemberOffsetPaging(Pageable pageable);

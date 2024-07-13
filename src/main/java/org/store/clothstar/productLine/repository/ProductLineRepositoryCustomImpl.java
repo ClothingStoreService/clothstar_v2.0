@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import org.store.clothstar.member.domain.QMember;
 import org.store.clothstar.member.domain.QSeller;
 import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.entity.QProductEntity;

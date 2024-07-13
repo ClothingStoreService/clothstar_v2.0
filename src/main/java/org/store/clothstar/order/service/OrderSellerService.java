@@ -57,7 +57,11 @@ public class OrderSellerService {
     public List<OrderResponse> getWaitingOrder() {
         List<OrderEntity> waitingOrders = orderSellerRepository.findWaitingOrders();
 
-        return waitingOrders.stream()
+        List<OrderEntity> filteredOrders = waitingOrders.stream()
+                .filter(orderEntity -> orderEntity.getDeletedAt() == null)
+                .toList();
+
+        return filteredOrders.stream()
                 .map(orderEntity -> {
                     Member member = memberService.getMemberByMemberId(orderEntity.getMemberId());
                     Address address = addressService.getAddressById(orderEntity.getAddressId());
@@ -65,7 +69,7 @@ public class OrderSellerService {
 
                     List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails().stream()
                             .filter(orderDetailEntity -> orderDetailEntity.getDeletedAt() == null)
-                            .collect(Collectors.toList());
+                            .toList();
                     List<Long> productIds = orderDetails.stream().map(OrderDetailEntity::getProductId).collect(Collectors.toList());
                     List<Long> productLineIds = orderDetails.stream().map(OrderDetailEntity::getProductLineId).collect(Collectors.toList());
 

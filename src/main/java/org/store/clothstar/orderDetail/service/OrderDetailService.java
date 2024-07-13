@@ -9,7 +9,6 @@ import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.order.OrderRepository;
 import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
 import org.store.clothstar.orderDetail.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.orderDetail.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.orderDetail.entity.OrderDetailEntity;
@@ -21,7 +20,6 @@ import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
