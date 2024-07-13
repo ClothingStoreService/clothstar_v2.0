@@ -1,6 +1,5 @@
 package org.store.clothstar.order.dto.reponse;
 
-import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +10,7 @@ import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.type.PaymentMethod;
 import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.domain.OrderDetail;
 import org.store.clothstar.orderDetail.dto.OrderDetailDTO;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -55,29 +52,6 @@ public class OrderResponse {
 
     @Builder.Default
     private List<OrderDetailDTO> orderDetailList = new ArrayList<>();
-
-    @QueryProjection
-    public OrderResponse(Order order,
-                         OrderDetail orderDetail,
-                         Member member, Address address,
-                         ProductLineEntity productLineEntity) {
-        this.orderId = order.getOrderId();
-        this.ordererName = member.getName();
-        this.createdAt = order.getCreatedAt().toLocalDate();
-        this.status = order.getStatus();
-        this.totalShippingPrice = order.getTotalShippingPrice();
-        this.totalProductsPrice = order.getTotalProductsPrice();
-        this.paymentMethod = order.getPaymentMethod();
-        this.totalPaymentPrice = order.getTotalPaymentPrice();
-        this.address = AddressDTO.builder()
-                .receiverName(address.getReceiverName())
-                .addressBasic(address.getAddressInfo().getAddressBasic())
-                .addressDetail(address.getAddressInfo().getAddressDetail())
-                .telNo(address.getTelNo())
-                .deliveryRequest(address.getAddressInfo().getDeliveryRequest())
-                .build();
-        this.orderDetailList = new ArrayList<>();
-    }
 
     public static OrderResponse from(Order order, Member member, Address address) {
         return OrderResponse.builder()

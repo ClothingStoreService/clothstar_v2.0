@@ -19,15 +19,15 @@ import org.store.clothstar.productLine.entity.ProductLineEntity;
 @Schema(description = "주문 상세 저장용 Request")
 public class CreateOrderDetailRequest {
 
-    @Schema(description = "상품 번호", nullable = false)
+    @Schema(description = "상품 번호")
     @NotNull(message = "상품 번호는 비어있을 수 없습니다.")
     private Long productLineId;
 
-    @Schema(description = "상품 옵션 번호", nullable = false)
+    @Schema(description = "상품 옵션 번호")
     @NotNull(message = "상품 옵션 번호는 비어있을 수 없습니다.")
     private Long productId;
 
-    @Schema(description = "상품 수량", nullable = false)
+    @Schema(description = "상품 수량")
     @NotNull(message = "상품 수량은 비어있을 수 없습니다.")
     @Positive(message = "상품 수량은 0보다 커야 합니다.")
     private int quantity;

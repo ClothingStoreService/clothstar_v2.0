@@ -20,15 +20,15 @@ import org.store.clothstar.order.utils.GenerateOrderId;
 @Schema(description = "주문 저장용 Request")
 public class CreateOrderRequest {
 
-    @Schema(description = "결제 수단", nullable = false)
+    @Schema(description = "결제 수단")
     @NotNull(message = "결제 수단은 비어있을 수 없습니다.")
     private PaymentMethod paymentMethod;
 
-    @Schema(description = "회원 번호", nullable = false)
+    @Schema(description = "회원 번호")
     @NotNull(message = "회원 번호는 비어있을 수 없습니다.")
     private Long memberId;
 
-    @Schema(description = "배송지 번호", nullable = false)
+    @Schema(description = "배송지 번호")
     @NotNull(message = "배송지 번호는 비어있을 수 없습니다.")
     private Long addressId;
 
