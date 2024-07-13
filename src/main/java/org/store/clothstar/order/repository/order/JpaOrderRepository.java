@@ -1,5 +1,7 @@
 package org.store.clothstar.order.repository.order;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +11,8 @@ import org.store.clothstar.order.entity.OrderEntity;
 import org.store.clothstar.order.repository.orderSeller.OrderEntityRepositoryCustom;
 
 public interface JpaOrderRepository extends JpaRepository<OrderEntity, Long>, OrderRepository, OrderEntityRepositoryCustom {
+
+//    Slice<OrderEntity> findAllBy(Pageable pageable);
 
     @Transactional
     @Modifying

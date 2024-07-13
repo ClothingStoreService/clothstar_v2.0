@@ -3,6 +3,10 @@ package org.store.clothstar.order.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -30,21 +34,21 @@ public class OrderController {
         return ResponseEntity.ok(orderResponse);
     }
 
-//    @Operation(summary = "전체 주문 조회 offset 페이징", description = "전체 주문 리스트를 offset 페이징 형식으로 가져온다.")
-//    @GetMapping("/offset")
-//    public ResponseEntity<Page<OrderResponse>> getAllOrderOffsetPaging(
-//            @PageableDefault(size = 15) Pageable pageable) {
-//        Page<OrderResponse> orderPages = orderService.getAllOrderOffsetPaging(pageable);
-//        return ResponseEntity.ok(orderPages);
-//    }
-//
-//    @Operation(summary = "전체 주문 조회 slice 페이징", description = "전체 주문 리스트를 slice 페이징 형식으로 가져온다.")
-//    @GetMapping("/slice")
-//    public ResponseEntity<Slice<OrderResponse>> getAllOrderSlicePaging(
-//            @PageableDefault(size = 15) Pageable pageable) {
-//        Slice<OrderResponse> orderPages = orderService.getAllOrderSlicePaging(pageable);
-//        return ResponseEntity.ok(orderPages);
-//    }
+    @Operation(summary = "전체 주문 조회 offset 페이징", description = "전체 주문 리스트를 offset 페이징 형식으로 가져온다.")
+    @GetMapping("/offset")
+    public ResponseEntity<Page<OrderResponse>> getAllOrderOffsetPaging(
+            @PageableDefault(size = 15) Pageable pageable) {
+        Page<OrderResponse> orderPages = orderService.getAllOrderOffsetPaging(pageable);
+        return ResponseEntity.ok(orderPages);
+    }
+
+    @Operation(summary = "전체 주문 조회 slice 페이징", description = "전체 주문 리스트를 slice 페이징 형식으로 가져온다.")
+    @GetMapping("/slice")
+    public ResponseEntity<Slice<OrderResponse>> getAllOrderSlicePaging(
+            @PageableDefault(size = 15) Pageable pageable) {
+        Slice<OrderResponse> orderPages = orderService.getAllOrderSlicePaging(pageable);
+        return ResponseEntity.ok(orderPages);
+    }
 
     @Operation(summary = "주문 생성", description = "단일 주문을 생성한다.")
     @PostMapping

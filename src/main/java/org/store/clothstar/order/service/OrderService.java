@@ -1,6 +1,9 @@
 package org.store.clothstar.order.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,13 +88,65 @@ public class OrderService {
         return orderResponse;
     }
 
-//    public Page<OrderResponse> getAllOrderOffsetPaging(Pageable pageable) {
-//        return orderRepository.findAllOffsetPaging(pageable);
-//    }
-//
-//    public Slice<OrderResponse> getAllOrderSlicePaging(Pageable pageable) {
-//        return orderRepository.findAllSlicePaging(pageable);
-//    }
+    public Page<OrderResponse> getAllOrderOffsetPaging(Pageable pageable) {
+        Page<OrderEntity> orderEntities = orderRepository.findAll(pageable);
+
+        return orderEntities.map(orderEntity -> {
+            Member member = memberService.getMemberByMemberId(orderEntity.getMemberId());
+            Address address = addressService.getAddressById(orderEntity.getAddressId());
+            OrderResponse orderResponse = OrderResponse.from(orderEntity, member, address);
+
+            List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails();
+            List<Long> productIds = orderDetails.stream().map(OrderDetailEntity::getProductId).collect(Collectors.toList());
+            List<Long> productLineIds = orderDetails.stream().map(OrderDetailEntity::getProductLineId).collect(Collectors.toList());
+
+            List<ProductEntity> products = productService.findByIdIn(productIds);
+            List<ProductLineEntity> productLines = productLineService.findByIdIn(productLineIds);
+
+            Map<Long, ProductEntity> productMap = products.stream().collect(Collectors.toMap(ProductEntity::getId, product -> product));
+            Map<Long, ProductLineEntity> productLineMap = productLines.stream().collect(Collectors.toMap(ProductLineEntity::getId, productLine -> productLine));
+
+            List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream().map(orderDetailEntity -> {
+                ProductEntity productEntity = productMap.get(orderDetailEntity.getProductId());
+                ProductLineEntity productLineEntity = productLineMap.get(orderDetailEntity.getProductLineId());
+                return OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity);
+            }).collect(Collectors.toList());
+
+            orderResponse.setterOrderDetailList(orderDetailDTOList);
+
+            return orderResponse;
+        });
+    }
+
+    public Slice<OrderResponse> getAllOrderSlicePaging(Pageable pageable) {
+        Slice<OrderEntity> orderEntities = orderRepository.findAll(pageable);
+
+        return orderEntities.map(orderEntity -> {
+            Member member = memberService.getMemberByMemberId(orderEntity.getMemberId());
+            Address address = addressService.getAddressById(orderEntity.getAddressId());
+            OrderResponse orderResponse = OrderResponse.from(orderEntity, member, address);
+
+            List<OrderDetailEntity> orderDetails = orderEntity.getOrderDetails();
+            List<Long> productIds = orderDetails.stream().map(OrderDetailEntity::getProductId).collect(Collectors.toList());
+            List<Long> productLineIds = orderDetails.stream().map(OrderDetailEntity::getProductLineId).collect(Collectors.toList());
+
+            List<ProductEntity> products = productService.findByIdIn(productIds);
+            List<ProductLineEntity> productLines = productLineService.findByIdIn(productLineIds);
+
+            Map<Long, ProductEntity> productMap = products.stream().collect(Collectors.toMap(ProductEntity::getId, product -> product));
+            Map<Long, ProductLineEntity> productLineMap = productLines.stream().collect(Collectors.toMap(ProductLineEntity::getId, productLine -> productLine));
+
+            List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream().map(orderDetailEntity -> {
+                ProductEntity productEntity = productMap.get(orderDetailEntity.getProductId());
+                ProductLineEntity productLineEntity = productLineMap.get(orderDetailEntity.getProductLineId());
+                return OrderDetailDTO.from(orderDetailEntity, productEntity, productLineEntity);
+            }).collect(Collectors.toList());
+
+            orderResponse.setterOrderDetailList(orderDetailDTOList);
+
+            return orderResponse;
+        });
+    }
 
     @Transactional
     public Long saveOrder(CreateOrderRequest createOrderRequest) {
