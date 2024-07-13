@@ -10,9 +10,11 @@ public interface OrderUserRepository {
 
     Optional<Order> findById(Long orderId);
 
+    Page<Order> findAll(Pageable pageable);
+
     Order save(Order order);
 
-    void deliveredToConfirmOrder(Long orderId);
+    void confirmOrder(Long orderId);
 
-    Page<Order> findAll(Pageable pageable);
+    void cancelOrder(Long orderId);
 }

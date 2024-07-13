@@ -169,7 +169,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void deliveredToConfirmOrder(Long orderId) {
+    public void confirmOrder(Long orderId) {
 
         Order order = orderUserRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 정보를 찾을 수 없습니다."));
@@ -178,7 +178,19 @@ public class OrderService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 상태가 '배송완료'가 아니기 때문에 주문확정이 불가능합니다.");
         }
 
-        orderUserRepository.deliveredToConfirmOrder(orderId);
+        orderUserRepository.confirmOrder(orderId);
+    }
+
+    public void cancelOrder(Long orderId) {
+
+        Order order = orderUserRepository.findById(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 정보를 찾을 수 없습니다."));
+
+        if (order.getStatus() != Status.WAITING && order.getStatus() != Status.APPROVE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'승인대기' 또는 '주문승인' 상태가 아니기 때문에 주문을 취소할 수 없습니다.");
+        }
+
+        orderUserRepository.cancelOrder(orderId);
     }
 
     @Transactional
@@ -195,4 +207,5 @@ public class OrderService {
 
         order.updateDeletedAt();
     }
+
 }

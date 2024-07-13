@@ -303,27 +303,26 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("deliveredToConfirmOrder: 구매 확정 - 성공 메서드 호출 테스트")
-    void deliveredToConfirmOrder_verify_test() {
+    @DisplayName("confirmOrder: 구매 확정 - 성공 메서드 호출 테스트")
+    void confirmOrder_verify_test() {
         //given
         Long orderId = 1L;
-        Order order = mock(Order.class);
         mock(OrderResponse.class);
 
         given(orderUserRepository.findById(1L)).willReturn(Optional.of(order));
         given(order.getStatus()).willReturn(Status.DELIVERED);
 
         //when
-        orderService.deliveredToConfirmOrder(orderId);
+        orderService.confirmOrder(orderId);
 
         //then
         then(orderUserRepository).should(times(1)).findById(orderId);
-        then(orderUserRepository).should().deliveredToConfirmOrder(orderId);
+        then(orderUserRepository).should().confirmOrder(orderId);
     }
 
     @Test
-    @DisplayName("deliveredToConfirmOrder: 구매 확정 - 실패 예외처리 테스트")
-    void deliveredToConfirmOrder_fail_exception_test() {
+    @DisplayName("confirmOrder: 구매 확정 - 실패 예외처리 테스트")
+    void confirmOrder_fail_exception_test() {
         //given
         Long orderId = 1L;
 
@@ -332,10 +331,45 @@ class OrderServiceTest {
 
         //when
         ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
-                orderService.deliveredToConfirmOrder(orderId));
+                orderService.confirmOrder(orderId));
 
         //then
         assertEquals("400 BAD_REQUEST \"주문 상태가 '배송완료'가 아니기 때문에 주문확정이 불가능합니다.\"", thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("cancelOrder: 구매 취소 - 성공 메서드 호출 테스트")
+    void cancelOrder_verify_test() {
+        //given
+        Long orderId = 1L;
+        mock(OrderResponse.class);
+
+        given(orderUserRepository.findById(1L)).willReturn(Optional.of(order));
+        given(order.getStatus()).willReturn(Status.APPROVE);
+
+        //when
+        orderService.cancelOrder(orderId);
+
+        //then
+        then(orderUserRepository).should(times(1)).findById(orderId);
+        then(orderUserRepository).should().cancelOrder(orderId);
+    }
+
+    @Test
+    @DisplayName("cancelOrder: 구매 취소 - 실패 예외처리 테스트")
+    void cancelOrder_fail_exception_test() {
+        //given
+        Long orderId = 1L;
+
+        given(order.getStatus()).willReturn(Status.DELIVERED);
+        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
+
+        //when
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+                orderService.cancelOrder(orderId));
+
+        //then
+        assertEquals("400 BAD_REQUEST \"'승인대기' 또는 '주문승인' 상태가 아니기 때문에 주문을 취소할 수 없습니다.\"", thrown.getMessage());
     }
 
     @Test

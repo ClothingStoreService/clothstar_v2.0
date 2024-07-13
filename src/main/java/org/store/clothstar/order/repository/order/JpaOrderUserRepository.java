@@ -12,5 +12,10 @@ public interface JpaOrderUserRepository extends JpaRepository<Order, Long>, Orde
     @Transactional
     @Modifying
     @Query("UPDATE orders o SET o.status ='CONFIRM' WHERE o.orderId = :orderId")
-    void deliveredToConfirmOrder(@Param("orderId") Long orderId);
+    void confirmOrder(@Param("orderId") Long orderId);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE orders o SET o.status ='CANCEL' WHERE o.orderId = :orderId")
+    void cancelOrder(@Param("orderId") Long orderId);
 }

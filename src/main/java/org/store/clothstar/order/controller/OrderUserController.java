@@ -58,11 +58,18 @@ public class OrderUserController {
                 orderId, HttpStatus.OK.value(), "주문이 정상적으로 생성되었습니다."));
     }
 
-    @Operation(summary = "구매 확정", description = "구매자가 구매 확정 시, 주문상태가 '구매확정'으로 변경된다.")
-    @PatchMapping("{orderId}")
-    public ResponseEntity<MessageDTO> deliveredToConfirmOrder(@PathVariable Long orderId) {
-        orderService.deliveredToConfirmOrder(orderId);
+    @Operation(summary = "(구매자)구매 확정", description = "구매자가 구매 확정 시, 주문상태가 '구매확정'으로 변경된다(단, 주문상태가 '배송완료'일 때만 가능).")
+    @PatchMapping("{orderId}/confirm")
+    public ResponseEntity<MessageDTO> confirmOrder(@PathVariable Long orderId) {
+        orderService.confirmOrder(orderId);
         return ResponseEntity.ok(new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 구매 확정 되었습니다."));
+    }
+
+    @Operation(summary = "(구매자)주문 취소", description = "구매자가 주문 취소 시, 주문상태가 '주문취소'로 변경된다(단, 주문상태가 '승인대기' 또는 '주문승인'일 때만 가능).")
+    @PatchMapping("{orderId}/cancel")
+    public ResponseEntity<MessageDTO> cancelOrder(@PathVariable Long orderId) {
+        orderService.cancelOrder(orderId);
+        return ResponseEntity.ok(new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소되었습니다."));
     }
 
     @Operation(summary = "주문 삭제", description = "주문 삭제시간을 현재시간으로 업데이트 한다.")

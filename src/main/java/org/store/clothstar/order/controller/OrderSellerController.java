@@ -14,7 +14,7 @@ import java.util.List;
 @Tag(name = "OrderSeller", description = "판매자(OrderSeller)의 주문 정보 관리에 대한 API 입니다.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/orders")
+@RequestMapping("/v1/orders/seller")
 public class OrderSellerController {
 
     private final OrderSellerService orderSellerService;
