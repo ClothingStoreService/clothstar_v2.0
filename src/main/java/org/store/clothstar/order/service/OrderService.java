@@ -59,12 +59,8 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponse getOrder(Long orderId) {
-        Order order = orderUserRepository.findById(orderId)
+        Order order = orderUserRepository.findByOrderIdAndDeletedAtIsNull(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다"));
-
-        if (order.getDeletedAt() != null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제된 주문입니다.");
-        }
 
         Member member = memberService.getMemberByMemberId(order.getMemberId());
         Address address = addressService.getAddressById(order.getAddressId());

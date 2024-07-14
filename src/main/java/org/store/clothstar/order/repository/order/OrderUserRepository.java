@@ -10,6 +10,8 @@ public interface OrderUserRepository {
 
     Optional<Order> findById(Long orderId);
 
+    Optional<Order> findByOrderIdAndDeletedAtIsNull(Long orderId);
+
     Page<Order> findAll(Pageable pageable);
 
     Order save(Order order);
