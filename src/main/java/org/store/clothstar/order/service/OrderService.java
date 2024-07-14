@@ -14,7 +14,9 @@ import org.store.clothstar.member.service.AddressService;
 import org.store.clothstar.member.service.MemberService;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
+import org.store.clothstar.order.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
+import org.store.clothstar.order.dto.request.OrderRequestWrapper;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.domain.OrderDetail;
@@ -157,13 +159,41 @@ public class OrderService {
     }
 
     @Transactional
-    public Long saveOrder(CreateOrderRequest createOrderRequest) {
+    public Long saveOrder(OrderRequestWrapper orderRequestWrapper) {
+        CreateOrderRequest createOrderRequest = orderRequestWrapper.getCreateOrderRequest();
+        CreateOrderDetailRequest createOrderDetailRequest = orderRequestWrapper.getCreateOrderDetailRequest();
 
+        // 주문 생성
         Member member = memberService.getMemberByMemberId(createOrderRequest.getMemberId());
         Address address = addressService.getAddressById(createOrderRequest.getAddressId());
 
         Order order = createOrderRequest.toOrder(member, address);
+
+        ProductLineEntity productLineEntity = productLineService.findById(createOrderDetailRequest.getProductLineId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다"));
+        ProductEntity productEntity = productService.findById(createOrderDetailRequest.getProductId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션을 찾을 수 없습니다"));
+
+        // 주문상세 생성 유효성 검사
+        if (createOrderDetailRequest.getQuantity() > productEntity.getStock()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 개수가 재고보다 더 많습니다.");
+        }
+
+        OrderDetail orderDetail = createOrderDetailRequest.toOrderDetail(order, productLineEntity, productEntity);
+        order.addOrderDetail(orderDetail); // 주문에 주문상세 추가
+
+        // 주문 저장 (orderDetail은 cascade 설정에 의해 자동 저장됨)
         orderUserRepository.save(order);
+
+        // 주문 정보 업데이트
+        int newTotalProductsPrice = order.getTotalPrice().getProducts() + orderDetail.getPrice().getOneKindTotalPrice();
+        int newTotalPaymentPrice =
+                order.getTotalPrice().getProducts() + order.getTotalPrice().getShipping() + orderDetail.getPrice().getOneKindTotalPrice();
+
+        order.getTotalPrice().updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
+
+        // 주문 수량만큼 상품 재고 차감
+        orderDetailService.updateProductStock(productEntity, orderDetail.getQuantity());
 
         return order.getOrderId();
     }

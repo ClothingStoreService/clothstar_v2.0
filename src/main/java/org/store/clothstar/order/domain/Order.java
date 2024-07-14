@@ -11,6 +11,7 @@ import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.domain.vo.TotalPrice;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -42,7 +43,13 @@ public class Order extends BaseEntity {
     TotalPrice totalPrice;
 
 
-
+    public void addOrderDetail(OrderDetail orderDetail) {
+        if (orderDetails == null) {
+            orderDetails = new ArrayList<>();
+        }
+        orderDetails.add(orderDetail);
+        orderDetail.setterOrder(this);
+    }
 
 
     public void updateDeletedAt() {

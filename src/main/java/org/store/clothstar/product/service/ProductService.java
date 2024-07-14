@@ -17,6 +17,7 @@ import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -91,5 +92,9 @@ public class ProductService {
 
     public List<ProductEntity> findByIdIn(List<Long> productIds) {
         return productJPARepository.findByIdIn(productIds);
+    }
+
+    public Optional<ProductEntity> findById(Long productId) {
+        return productRepository.findById(productId);
     }
 }
