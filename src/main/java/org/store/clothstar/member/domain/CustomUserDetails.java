@@ -8,27 +8,28 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 
 @Getter
 @ToString
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
-    private final Member member;
+    private final Account account;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + String.valueOf(member.getRole())));
+        return account.getAuthorizations().stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .toList();
     }
 
     @Override
     public String getPassword() {
-        return member.getPassword();
+        return account.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return member.getEmail();
+        return account.getEmail();
     }
 
     @Override

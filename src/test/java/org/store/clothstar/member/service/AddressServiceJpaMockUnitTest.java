@@ -47,7 +47,7 @@ class AddressServiceJpaMockUnitTest {
         given(address.getAddressInfo()).willReturn(addressInfo);
         List<Address> addresses = List.of(address, address);
         given(addressRepository.findAddressListByMemberId(any())).willReturn(addresses);
-        given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(CreateObject.getMemberByCreateMemberRequestDTO()));
+        given(memberRepository.findById(anyLong())).willReturn(Optional.ofNullable(CreateObject.getMemberByCreateMemberRequestDTO(anyLong())));
 
         //when
         List<AddressResponse> memberAddressResponseList = AddressServiceImpl.findMemberAllAddress(memberId);

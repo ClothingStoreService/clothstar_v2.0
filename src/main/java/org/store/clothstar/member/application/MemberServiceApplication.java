@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
-import org.store.clothstar.member.dto.request.ModifyMemberRequest;
+import org.store.clothstar.member.dto.request.ModifyNameRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
 import org.store.clothstar.member.service.MemberService;
 
@@ -35,8 +35,8 @@ public class MemberServiceApplication {
         memberService.getMemberByEmail(email);
     }
 
-    public void modifyMember(Long memberId, ModifyMemberRequest modifyMemberRequest) {
-        memberService.modifyMember(memberId, modifyMemberRequest);
+    public void modifyName(Long memberId, ModifyNameRequest modifyNameRequest) {
+        memberService.modifyName(memberId, modifyNameRequest);
     }
 
     public void modifyPassword(Long memberId, String password) {

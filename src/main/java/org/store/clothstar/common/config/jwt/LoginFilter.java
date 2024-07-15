@@ -16,8 +16,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.common.util.MessageDTOBuilder;
+import org.store.clothstar.member.domain.Account;
 import org.store.clothstar.member.domain.CustomUserDetails;
-import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.MemberLoginRequest;
 
 import java.io.IOException;
@@ -71,12 +71,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                                             Authentication authentication) throws IOException, ServletException {
         log.info("로그인 성공");
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        Member member = customUserDetails.getMember();
-        log.info("member: {}", member.toString());
 
-        String accessToken = jwtUtil.createAccessToken(member);
+//        Member member = customUserDetails.getMember();
+        Account account = customUserDetails.getAccount();
+        log.info("account: {}", account.toString());
+
+        String accessToken = jwtUtil.createAccessToken(account);
         log.info("생성 accessToken: Bearer {}", accessToken);
-        String refreshToken = jwtUtil.createRefreshToken(member);
+        String refreshToken = jwtUtil.createRefreshToken(account);
         log.info("생성 refreshToken: Bearer {}", refreshToken);
 
         response.addHeader("Authorization", "Bearer " + accessToken);

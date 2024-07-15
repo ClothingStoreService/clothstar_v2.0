@@ -20,7 +20,7 @@ import org.store.clothstar.common.dto.ErrorResponseDTO;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.common.util.MessageDTOBuilder;
 import org.store.clothstar.member.application.MemberServiceApplication;
-import org.store.clothstar.member.dto.request.ModifyMemberRequest;
+import org.store.clothstar.member.dto.request.ModifyNameRequest;
 import org.store.clothstar.member.dto.request.ModifyPasswordRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
 
@@ -89,23 +89,23 @@ public class MemberController {
         return ResponseEntity.ok(messageDTO);
     }
 
-    @Operation(summary = "회원 상세정보 수정", description = "회원 정보를 수정한다.")
+    @Operation(summary = "회원 이름 수정", description = "회원 이름을 수정한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원 정보가 수정 되었습니다.",
                     content = @Content(schema = @Schema(implementation = MemberResponse.class))),
             @ApiResponse(responseCode = "404", description = "회원 정보를 찾을 수 없습니다.",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
     })
-    @PutMapping("/v1/members/{id}")
+    @PatchMapping("/v1/members/name/{id}")
     public ResponseEntity<MessageDTO> modifyMember(@PathVariable("id") Long memberId,
-                                                   @RequestBody ModifyMemberRequest modifyMemberRequest) {
-        log.info("회원수정 요청 데이터 : memberId={}, {}", memberId, modifyMemberRequest.toString());
+                                                   @RequestBody ModifyNameRequest modifyNameRequest) {
+        log.info("회원 이름수정 요청 데이터 : memberId={}, {}", memberId, modifyNameRequest.toString());
 
-        memberServiceApplication.modifyMember(memberId, modifyMemberRequest);
+        memberServiceApplication.modifyName(memberId, modifyNameRequest);
 
         MessageDTO messageDTO = MessageDTOBuilder.buildMessage(
                 HttpStatus.OK.value(),
-                "회원 정보가 수정 되었습니다."
+                "회원 이름이 수정 되었습니다."
         );
 
         return ResponseEntity.ok(messageDTO);

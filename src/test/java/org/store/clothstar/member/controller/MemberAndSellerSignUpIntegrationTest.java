@@ -13,9 +13,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.common.redis.RedisUtil;
+import org.store.clothstar.member.domain.Account;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.domain.MemberRole;
 import org.store.clothstar.member.dto.request.*;
+import org.store.clothstar.member.repository.AccountRepository;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.util.CreateObject;
 
@@ -38,6 +39,9 @@ class MemberAndSellerSignUpIntegrationTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -91,7 +95,8 @@ class MemberAndSellerSignUpIntegrationTest {
     @Test
     void sellerSignUpIntegrationTest() throws Exception {
         //given
-        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO());
+        Account account = accountRepository.save(CreateObject.getAccount());
+        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO(account.getAccountId()));
         Long memberId = member.getMemberId();
         final String sellerUrl = SELLER_URL + "/" + memberId;
         CreateSellerRequest createSellerRequest = getCreateSellerRequest(memberId);
@@ -113,7 +118,8 @@ class MemberAndSellerSignUpIntegrationTest {
         //given 5명의 회원을 만든다.
         for (int i = 0; i < 5; i++) {
             String email = "test" + i + "@naver.com";
-            memberRepository.save(CreateObject.getCreateMemberRequest(email).toMember());
+            Account account = accountRepository.save(CreateObject.getAccount(email));
+            memberRepository.save(CreateObject.getCreateMemberRequest(email).toMember(account.getAccountId()));
         }
         final String url = "/v1/members?page=0";
 
@@ -134,7 +140,8 @@ class MemberAndSellerSignUpIntegrationTest {
         //given 5명의 회원을 만든다.
         for (int i = 0; i < 5; i++) {
             String email = "test" + i + "@naver.com";
-            memberRepository.save(CreateObject.getCreateMemberRequest(email).toMember());
+            Account account = accountRepository.save(CreateObject.getAccount(email));
+            memberRepository.save(CreateObject.getCreateMemberRequest(email).toMember(account.getAccountId()));
         }
         final String url = "/v1/members?page=0";
 
@@ -153,7 +160,8 @@ class MemberAndSellerSignUpIntegrationTest {
     @Test
     void getMemberTest() throws Exception {
         //given
-        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO());
+        Account account = accountRepository.save(CreateObject.getAccount());
+        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO(account.getAccountId()));
         Long memberId = member.getMemberId();
         String getMemberURL = MEMBER_URL + "/" + memberId;
 
@@ -170,8 +178,8 @@ class MemberAndSellerSignUpIntegrationTest {
     @Test
     void emailDuplicationCheckTest() throws Exception {
         //given
-        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO());
-        String emailDuplicationCheckURL = MEMBER_URL + "/email/" + member.getEmail();
+        Account account = accountRepository.save(CreateObject.getAccount());
+        String emailDuplicationCheckURL = MEMBER_URL + "/email/" + account.getEmail();
 
         //when
         ResultActions actions = mockMvc.perform(get(emailDuplicationCheckURL)
@@ -182,32 +190,30 @@ class MemberAndSellerSignUpIntegrationTest {
         actions.andExpect(jsonPath("$.message").value("이미 사용중인 이메일 입니다."));
     }
 
-    @DisplayName("회원 이름과 권한을 수정하는 테스트")
+    @DisplayName("회원 이름을 수정하는 테스트")
     @WithMockUser
     @Test
     void modifyName_modifyAuth_MemberTest() throws Exception {
         //given
-        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO());
+        Account account = accountRepository.save(CreateObject.getAccount());
+        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO(account.getAccountId()));
         Long memberId = member.getMemberId();
-        String modifyMemberURL = MEMBER_URL + "/" + memberId;
-        ModifyMemberRequest modifyMemberRequest = ModifyMemberRequest.builder()
-                .name("관리자")
-                .role(MemberRole.ADMIN)
+        String modifyMemberURL = MEMBER_URL + "/name/" + account.getAccountId();
+        ModifyNameRequest modifyNameRequest = ModifyNameRequest.builder()
+                .name("비왕")
                 .build();
 
-        final String modifyMemberRequestBody = objectMapper.writeValueAsString(modifyMemberRequest);
+        final String modifyMemberRequestBody = objectMapper.writeValueAsString(modifyNameRequest);
 
         //when
-        ResultActions actions = mockMvc.perform(put(modifyMemberURL)
+        ResultActions actions = mockMvc.perform(patch(modifyMemberURL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(modifyMemberRequestBody));
 
         //then
-        //이름과 권한이 바꼈는지 확인
         actions.andExpect(status().isOk());
         Member member = memberRepository.findById(memberId).get();
-        assertThat(member.getName()).isEqualTo("관리자");
-        assertThat(member.getRole()).isEqualTo(MemberRole.ADMIN);
+        assertThat(member.getName()).isEqualTo("비왕");
     }
 
     @DisplayName("회원 비밀번호 수정 통합 테스트")
@@ -215,9 +221,10 @@ class MemberAndSellerSignUpIntegrationTest {
     @Test
     void modifyPasswordMemberTest() throws Exception {
         //given
-        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO());
-        final String originalPassword = member.getPassword();
-        final String modifyPasswordMemberURL = MEMBER_URL + "/" + member.getMemberId();
+        Account account = accountRepository.save(CreateObject.getAccount());
+        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO(account.getAccountId()));
+        final String originalPassword = account.getPassword();
+        final String modifyPasswordMemberURL = MEMBER_URL + "/" + account.getAccountId();
         ModifyPasswordRequest modifyPasswordRequest = ModifyPasswordRequest.builder()
                 .password("modified123")
                 .build();
@@ -231,7 +238,7 @@ class MemberAndSellerSignUpIntegrationTest {
 
         //then
         actions.andExpect(status().isOk());
-        Member updatedMember = memberRepository.findById(member.getMemberId()).get();
+        Account updatedMember = accountRepository.findById(member.getMemberId()).get();
         assertThat(originalPassword).isNotEqualTo(updatedMember.getPassword());
     }
 
@@ -241,7 +248,8 @@ class MemberAndSellerSignUpIntegrationTest {
     void deleteMemberTest() throws Exception {
         //given
         //회원가입을 한 후 삭제 필드는 null이다.
-        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO());
+        Account account = accountRepository.save(CreateObject.getAccount());
+        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO(account.getAccountId()));
         Long memberId = member.getMemberId();
         assertThat(member.getDeletedAt()).isNull();
         String deleteURL = MEMBER_URL + "/" + memberId;

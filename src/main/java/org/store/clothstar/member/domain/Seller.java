@@ -14,7 +14,7 @@ import org.store.clothstar.member.dto.request.CreateSellerRequest;
 public class Seller extends BaseEntity {
     @Id
     private Long memberId;
-    
+
     @Column(unique = true)
     private String brandName;
     @Column(unique = true)

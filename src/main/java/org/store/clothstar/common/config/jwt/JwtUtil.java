@@ -5,7 +5,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.store.clothstar.member.domain.Member;
+import org.store.clothstar.member.domain.Account;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -46,17 +46,16 @@ public class JwtUtil {
         return cookie;
     }
 
-    public String createAccessToken(Member member) {
-        return createToken(member, jwtProperties.getAccessTokenValidTimeMillis(), ACCESS_TOKEN);
+    public String createAccessToken(Account account) {
+        return createToken(account, jwtProperties.getAccessTokenValidTimeMillis(), ACCESS_TOKEN);
     }
 
-    public String createRefreshToken(Member member) {
-        return createToken(member, jwtProperties.getRefreshTokenValidTimeMillis(), REFRESH_TOKEN);
+    public String createRefreshToken(Account account) {
+        return createToken(account, jwtProperties.getRefreshTokenValidTimeMillis(), REFRESH_TOKEN);
     }
 
-    private String createToken(Member member, Long tokenValidTimeMillis, String tokenType) {
-        Long memberId = member.getMemberId();
-        String memberEmail = member.getEmail();
+    private String createToken(Account account, Long tokenValidTimeMillis, String tokenType) {
+        Long memberId = account.getAccountId();
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + tokenValidTimeMillis);
 
@@ -69,9 +68,8 @@ public class JwtUtil {
                 .issuedAt(currentDate)
                 .expiration(expireDate)
                 .claim("tokenType", tokenType)
-                .claim("email", memberEmail)
                 .claim("id", memberId)
-                .claim("role", member.getRole())
+                .claim("role", account.getAuthorizations())
                 .signWith(secretKey)
                 .compact();
     }

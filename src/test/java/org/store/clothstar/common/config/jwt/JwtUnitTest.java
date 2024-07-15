@@ -8,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import org.store.clothstar.member.domain.Member;
+import org.store.clothstar.member.domain.Account;
 import org.store.clothstar.member.util.CreateObject;
 
 @SpringBootTest
@@ -23,10 +23,10 @@ class JwtUnitTest {
     @Test
     void createAccessTokenTest() {
         //given
-        Member member = CreateObject.getMemberByCreateMemberRequestDTO();
+        Account account = CreateObject.getAccount();
 
         //when
-        String accessToken = jwtUtil.createAccessToken(member);
+        String accessToken = jwtUtil.createAccessToken(account);
         String tokenType = jwtUtil.getTokenType(accessToken);
         System.out.println("accessToken = " + accessToken);
 
@@ -39,10 +39,10 @@ class JwtUnitTest {
     @Test
     void createRefreshTokenTest() {
         //given
-        Member member = CreateObject.getMemberByCreateMemberRequestDTO();
+        Account account = CreateObject.getAccount();
 
         //when
-        String refreshToken = jwtUtil.createRefreshToken(member);
+        String refreshToken = jwtUtil.createRefreshToken(account);
         String tokenType = jwtUtil.getTokenType(refreshToken);
 
         //then

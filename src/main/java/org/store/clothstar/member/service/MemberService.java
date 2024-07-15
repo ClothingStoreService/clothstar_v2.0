@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
-import org.store.clothstar.member.dto.request.ModifyMemberRequest;
+import org.store.clothstar.member.dto.request.ModifyNameRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
 
 public interface MemberService {
@@ -21,7 +21,7 @@ public interface MemberService {
 
     void updatePassword(Long memberId, String password);
 
-    void modifyMember(Long memberId, ModifyMemberRequest modifyMemberRequest);
+    void modifyName(Long memberId, ModifyNameRequest modifyNameRequest);
 
     Long signUp(CreateMemberRequest createMemberDTO);
 

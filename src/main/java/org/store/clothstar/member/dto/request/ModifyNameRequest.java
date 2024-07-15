@@ -1,14 +1,14 @@
 package org.store.clothstar.member.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.store.clothstar.member.domain.MemberRole;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
-public class ModifyMemberRequest {
+public class ModifyNameRequest {
+    @NotNull
     private String name;
-    private MemberRole role;
 }

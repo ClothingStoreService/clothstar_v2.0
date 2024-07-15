@@ -16,10 +16,15 @@ import org.store.clothstar.common.mail.MailContentBuilder;
 import org.store.clothstar.common.mail.MailSendDTO;
 import org.store.clothstar.common.mail.MailService;
 import org.store.clothstar.common.redis.RedisUtil;
+import org.store.clothstar.member.domain.Account;
+import org.store.clothstar.member.domain.Authorization;
 import org.store.clothstar.member.domain.Member;
+import org.store.clothstar.member.domain.MemberRole;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
-import org.store.clothstar.member.dto.request.ModifyMemberRequest;
+import org.store.clothstar.member.dto.request.ModifyNameRequest;
 import org.store.clothstar.member.dto.response.MemberResponse;
+import org.store.clothstar.member.repository.AccountRepository;
+import org.store.clothstar.member.repository.AuthorizationRepository;
 import org.store.clothstar.member.repository.MemberRepository;
 
 /**
@@ -32,7 +37,9 @@ import org.store.clothstar.member.repository.MemberRepository;
 @RequiredArgsConstructor
 @Transactional
 public class MemberServiceImpl implements MemberService {
+    private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
+    private final AuthorizationRepository authorizationRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailContentBuilder mailContentBuilder;
     private final MailService mailService;
@@ -60,18 +67,18 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void getMemberByEmail(String email) {
-        if (memberRepository.findByEmail(email).isPresent()) {
+        if (accountRepository.findByEmail(email).isPresent()) {
             throw new DuplicatedEmailException(ErrorCode.DUPLICATED_EMAIL);
         }
     }
 
     @Override
-    public void modifyMember(Long memberId, ModifyMemberRequest modifyMemberRequest) {
-        log.info("회원 정보 수정 memberId = {}, name = {}, role = {}", memberId, modifyMemberRequest.getName(), modifyMemberRequest.getRole());
+    public void modifyName(Long memberId, ModifyNameRequest modifyNameRequest) {
+        log.info("회원 이름 수정 memberId = {}, name = {}", memberId, modifyNameRequest.getName());
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
 
-        member.updateMember(modifyMemberRequest, member);
+        member.updateName(modifyNameRequest);
     }
 
     @Override
@@ -86,17 +93,17 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void updatePassword(Long memberId, String password) {
         log.info("회원 비밀번호 변경 memberId = {}", memberId);
-        Member member = memberRepository.findById(memberId)
+        Account account = accountRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundMemberException(ErrorCode.NOT_FOUND_MEMBER));
 
         String encodedPassword = passwordEncoder.encode(password);
-        validCheck(member, encodedPassword);
+        validCheck(account, encodedPassword);
 
-        member.updatePassword(encodedPassword);
+        account.updatePassword(encodedPassword);
     }
 
-    private void validCheck(Member member, String encodedPassword) {
-        String originalPassword = member.getPassword();
+    private void validCheck(Account account, String encodedPassword) {
+        String originalPassword = account.getPassword();
         if (passwordEncoder.matches(originalPassword, encodedPassword)) {
             throw new IllegalArgumentException("이전 비밀번호와 같은 비밀번호 입니다.");
         }
@@ -104,22 +111,27 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Long signUp(CreateMemberRequest createMemberDTO) {
-        memberRepository.findByEmail(createMemberDTO.getEmail()).ifPresent(m -> {
-            throw new IllegalArgumentException("이미 존재하는 아이디 입니다.");
+        accountRepository.findByEmail(createMemberDTO.getEmail()).ifPresent(m -> {
+            throw new DuplicatedEmailException(ErrorCode.DUPLICATED_EMAIL);
         });
 
         String encodedPassword = passwordEncoder.encode(createMemberDTO.getPassword());
-        Member member = createMemberDTO.toMember(encodedPassword);
+        Account account = createMemberDTO.toAccount(encodedPassword);
 
         //인증코드 확인
-        boolean certifyStatus = verifyEmailCertifyNum(member.getEmail(), createMemberDTO.getCertifyNum());
+        boolean certifyStatus = verifyEmailCertifyNum(createMemberDTO.getEmail(), createMemberDTO.getCertifyNum());
         if (certifyStatus) {
-            member = memberRepository.save(member);
+            account = accountRepository.save(account);
+            Member member = createMemberDTO.toMember(account.getAccountId());
+            memberRepository.save(member);
+
+            Authorization authorization = new Authorization(account, MemberRole.USER);
+            authorizationRepository.save(authorization);
         } else {
             throw new SignupCertifyNumAuthFailedException(ErrorCode.INVALID_AUTH_CERTIFY_NUM);
         }
 
-        return member.getMemberId();
+        return account.getAccountId();
     }
 
     @Override

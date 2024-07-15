@@ -11,8 +11,10 @@ import org.store.clothstar.common.error.ErrorCode;
 import org.store.clothstar.common.error.exception.DuplicatedBizNoException;
 import org.store.clothstar.common.error.exception.DuplicatedBrandNameException;
 import org.store.clothstar.common.error.exception.DuplicatedSellerException;
+import org.store.clothstar.member.domain.Account;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
+import org.store.clothstar.member.repository.AccountRepository;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.util.CreateObject;
 
@@ -29,6 +31,9 @@ class SellerCreateJpaServiceUnitTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private AccountRepository accountRepository;
+
     private Member member;
     private Long memberId;
     private Long memberId2;
@@ -38,10 +43,15 @@ class SellerCreateJpaServiceUnitTest {
     @DisplayName("회원가입과 판매자 신청을 진행 하고 memberId와 sellerId가 정상적으로 반환되는지 확인한다.")
     @BeforeEach
     public void signUp_getMemberId() {
-        member = memberRepository.save(CreateObject.getCreateMemberRequest("test1@naver.com").toMember());
+        String email1 = "test1@naver.com";
+        String email2 = "test2@naver.com";
+
+        Account account = accountRepository.save(CreateObject.getAccount(email1));
+        member = memberRepository.save(CreateObject.getCreateMemberRequest(email1).toMember(account.getAccountId()));
         memberId = member.getMemberId();
 
-        member = memberRepository.save(CreateObject.getCreateMemberRequest("test2@naver.com").toMember());
+        account = accountRepository.save(CreateObject.getAccount(email2));
+        member = memberRepository.save(CreateObject.getCreateMemberRequest(email2).toMember(account.getAccountId()));
         memberId2 = member.getMemberId();
 
         Long sellerId = sellerService.sellerSave(memberId, getCreateSellerRequest());
