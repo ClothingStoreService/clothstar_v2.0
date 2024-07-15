@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface JpaOrderSellerRepository extends JpaRepository<Order, Long>, OrderSellerRepository {
 
-    @Query("SELECT o FROM orders o WHERE o.status = 'WAITING'")
+    @Query("SELECT o FROM orders o WHERE o.status = 'WAITING' AND o.deletedAt IS NULL")
     List<Order> findWaitingOrders();
 
     @Transactional

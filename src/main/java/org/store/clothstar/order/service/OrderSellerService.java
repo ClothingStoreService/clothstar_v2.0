@@ -57,7 +57,6 @@ public class OrderSellerService {
         List<Order> waitingOrders = orderSellerRepository.findWaitingOrders();
 
         List<Order> filteredOrders = waitingOrders.stream()
-                .filter(order -> order.getDeletedAt() == null)
                 .toList();
 
         return filteredOrders.stream()

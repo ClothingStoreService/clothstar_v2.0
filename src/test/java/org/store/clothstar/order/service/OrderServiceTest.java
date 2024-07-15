@@ -301,6 +301,37 @@ class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("saveOrder: 주문 생성 - 주문 개수가 재고보다 많을 때 예외처리 테스트")
+    void saveOrder_quantity_exception_test() {
+        //given
+        OrderRequestWrapper orderRequestWrapper = mock(OrderRequestWrapper.class);
+        CreateOrderRequest createOrderRequest = mock(CreateOrderRequest.class);
+        CreateOrderDetailRequest createOrderDetailRequest = mock(CreateOrderDetailRequest.class);
+
+        given(orderRequestWrapper.getCreateOrderRequest()).willReturn(createOrderRequest);
+        given(orderRequestWrapper.getCreateOrderDetailRequest()).willReturn(createOrderDetailRequest);
+        given(createOrderRequest.getMemberId()).willReturn(1L);
+        given(createOrderRequest.getAddressId()).willReturn(2L);
+        given(memberService.getMemberByMemberId(1L)).willReturn(member);
+        given(addressService.getAddressById(2L)).willReturn(address);
+        given(createOrderRequest.toOrder(member,address)).willReturn(order);
+        given(createOrderDetailRequest.getProductLineId()).willReturn(3L);
+        given(createOrderDetailRequest.getProductId()).willReturn(4L);
+        given(productLineService.findById(3L)).willReturn(Optional.of(productLineEntity));
+        given(productService.findById(4L)).willReturn(Optional.of(productEntity));
+
+        given(createOrderDetailRequest.getQuantity()).willReturn(10);
+        given(productEntity.getStock()).willReturn(1L);
+
+        //when
+        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
+                orderService.saveOrder(orderRequestWrapper));
+
+        //then
+        assertEquals("400 BAD_REQUEST \"주문 개수가 재고보다 더 많습니다.\"", thrown.getMessage());
+    }
+
+    @Test
     @DisplayName("confirmOrder: 구매 확정 - 성공 메서드 호출 테스트")
     void confirmOrder_verify_test() {
         //given

@@ -111,13 +111,13 @@ class OrderSellerServiceTest {
         given(orderSellerRepository.findWaitingOrders()).willReturn(waitingOrders);
         given(order.getMemberId()).willReturn(memberId);
         given(order.getAddressId()).willReturn(addressId);
-        given(order.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(orderDetail.getDeletedAt()).willReturn(null);
-        given(order.getOrderDetails()).willReturn(List.of(orderDetail));
-
         given(memberService.getMemberByMemberId(memberId)).willReturn(member);
-        given(addressService.getAddressById(addressId)).willReturn(address);
         given(address.getAddressInfo()).willReturn(addressInfo);
+        given(addressService.getAddressById(addressId)).willReturn(address);
+        given(order.getCreatedAt()).willReturn(LocalDateTime.now());
+        given(order.getOrderDetails()).willReturn(List.of(orderDetail));
+        given(orderDetail.getDeletedAt()).willReturn(null);
+
         given(order.getTotalPrice()).willReturn(totalPrice);
         given(orderDetail.getPrice()).willReturn(price);
         given(orderDetail.getProductId()).willReturn(productId);
