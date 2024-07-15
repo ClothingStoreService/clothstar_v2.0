@@ -3,7 +3,6 @@ package org.store.clothstar.member.service;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
 import org.store.clothstar.member.dto.response.AddressResponse;
-import org.store.clothstar.member.domain.Address;
 
 import java.util.List;
 
