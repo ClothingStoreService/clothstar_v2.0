@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.store.clothstar.common.error.ErrorCode;
+import org.store.clothstar.common.error.exception.DuplicatedEmailException;
 import org.store.clothstar.member.domain.Account;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.ModifyNameRequest;
@@ -52,6 +54,7 @@ public class MemberServiceJpaUnitTest {
     @Test
     void modifyMemberNameUnitTest() {
         //given
+        String originPassword = member.getName();
         ModifyNameRequest modifyNameRequest = ModifyNameRequest.builder()
                 .name("아이언맨")
                 .build();
@@ -61,6 +64,7 @@ public class MemberServiceJpaUnitTest {
 
         //then
         Member modifiedMember = memberRepository.findById(memberId).get();
+        assertThat(modifiedMember.getName()).isNotEqualTo(originPassword);
     }
 
     @DisplayName("비밀번호가 변경 됐는지 확인한다.")
@@ -96,12 +100,10 @@ public class MemberServiceJpaUnitTest {
     @DisplayName("같은 아이디로 회원가입시 에러 메시지 응답한다.")
     @Test
     void signUpValid_idDuplicateCheck() {
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable exception = assertThrows(DuplicatedEmailException.class, () -> {
             memberServiceImpl.signUp(CreateObject.getCreateMemberRequest());
         });
 
-        assertThat(exception.getMessage()).isEqualTo("이미 존재하는 아이디 입니다.");
+        assertThat(exception.getMessage()).isEqualTo(ErrorCode.DUPLICATED_EMAIL.getMessage());
     }
-
-
 }

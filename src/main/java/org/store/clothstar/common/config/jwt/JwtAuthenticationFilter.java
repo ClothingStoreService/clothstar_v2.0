@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.store.clothstar.member.domain.Account;
-import org.store.clothstar.member.domain.Authorization;
 import org.store.clothstar.member.domain.CustomUserDetails;
 import org.store.clothstar.member.repository.AccountRepository;
 import org.store.clothstar.member.repository.AuthorizationRepository;
@@ -54,10 +53,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Account account = accountRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("계정정보를 찾을수 없습니다."));
 
-        Authorization authorization = authorizationRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("권한을 찾을수 없습니다."));
+        log.error("account toString : {}", account.toString());
 
-        CustomUserDetails customUserDetails = new CustomUserDetails(account, authorization);
+        CustomUserDetails customUserDetails = new CustomUserDetails(account);
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 customUserDetails, null, customUserDetails.getAuthorities());

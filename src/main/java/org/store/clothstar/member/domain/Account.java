@@ -1,9 +1,15 @@
 package org.store.clothstar.member.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@ToString
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -18,6 +24,10 @@ public class Account {
     @Column(unique = true)
     private String email;
     private String password;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Authorization> authorizations = new ArrayList<>();
 
     public void updatePassword(String password) {
         this.password = password;

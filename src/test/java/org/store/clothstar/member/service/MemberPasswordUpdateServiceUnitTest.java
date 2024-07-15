@@ -10,8 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.store.clothstar.member.domain.Account;
-import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.repository.AccountRepository;
 
 import java.util.Optional;
 
@@ -23,7 +22,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MemberPasswordUpdateServiceUnitTest {
     @Mock
-    private MemberRepository memberRepository;
+    private AccountRepository accountRepository;
 
     @InjectMocks
     private MemberServiceImpl memberServiceImpl;
@@ -37,9 +36,8 @@ class MemberPasswordUpdateServiceUnitTest {
         //given
         Long memberId = 1L;
         String password = "test1234";
-        Member member = mock(Member.class);
         Account account = mock(Account.class);
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+        given(accountRepository.findById(memberId)).willReturn(Optional.of(account));
         when(account.getPassword()).thenReturn(password);
 
         //when
@@ -48,7 +46,7 @@ class MemberPasswordUpdateServiceUnitTest {
         });
 
         //then
-        verify(memberRepository, times(1)).findById(memberId);
+        verify(accountRepository, times(1)).findById(memberId);
         assertThat(exception.getMessage()).isEqualTo("이전 비밀번호와 같은 비밀번호 입니다.");
     }
 }

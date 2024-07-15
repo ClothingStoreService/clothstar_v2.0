@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.member.domain.Account;
-import org.store.clothstar.member.repository.MemberRepository;
+import org.store.clothstar.member.repository.AccountRepository;
 import org.store.clothstar.member.util.CreateObject;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -33,14 +33,14 @@ class JwtControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private MemberRepository memberRepository;
+    private AccountRepository accountRepository;
 
     private Account account;
 
     @DisplayName("회원가입한 멤버아이디와, 인증에 필요한 access 토큰을 가져옵니다.")
     @BeforeEach
     public void getMemberId_getAccessToken() {
-        account = CreateObject.getAccount();
+        account = accountRepository.save(CreateObject.getAccount());
     }
 
     @DisplayName("refresh 토큰으로 access 토큰을 가져온다.")

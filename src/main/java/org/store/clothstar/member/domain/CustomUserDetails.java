@@ -8,18 +8,18 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 
 @Getter
 @ToString
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private final Account account;
-    private final Authorization authorization;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + String.valueOf(authorization.getRole())));
+        return account.getAuthorizations().stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .toList();
     }
 
     @Override

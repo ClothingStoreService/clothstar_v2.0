@@ -198,7 +198,7 @@ class MemberAndSellerSignUpIntegrationTest {
         Account account = accountRepository.save(CreateObject.getAccount());
         member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO(account.getAccountId()));
         Long memberId = member.getMemberId();
-        String modifyMemberURL = MEMBER_URL + "/" + memberId;
+        String modifyMemberURL = MEMBER_URL + "/name/" + account.getAccountId();
         ModifyNameRequest modifyNameRequest = ModifyNameRequest.builder()
                 .name("비왕")
                 .build();
@@ -206,12 +206,11 @@ class MemberAndSellerSignUpIntegrationTest {
         final String modifyMemberRequestBody = objectMapper.writeValueAsString(modifyNameRequest);
 
         //when
-        ResultActions actions = mockMvc.perform(put(modifyMemberURL)
+        ResultActions actions = mockMvc.perform(patch(modifyMemberURL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(modifyMemberRequestBody));
 
         //then
-        //이름과 권한이 바꼈는지 확인
         actions.andExpect(status().isOk());
         Member member = memberRepository.findById(memberId).get();
         assertThat(member.getName()).isEqualTo("비왕");
@@ -225,7 +224,7 @@ class MemberAndSellerSignUpIntegrationTest {
         Account account = accountRepository.save(CreateObject.getAccount());
         member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO(account.getAccountId()));
         final String originalPassword = account.getPassword();
-        final String modifyPasswordMemberURL = MEMBER_URL + "/" + member.getMemberId();
+        final String modifyPasswordMemberURL = MEMBER_URL + "/" + account.getAccountId();
         ModifyPasswordRequest modifyPasswordRequest = ModifyPasswordRequest.builder()
                 .password("modified123")
                 .build();

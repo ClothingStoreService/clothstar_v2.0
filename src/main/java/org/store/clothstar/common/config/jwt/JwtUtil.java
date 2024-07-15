@@ -69,7 +69,7 @@ public class JwtUtil {
                 .expiration(expireDate)
                 .claim("tokenType", tokenType)
                 .claim("id", memberId)
-//                .claim("role", member.getRole())
+                .claim("role", account.getAuthorizations())
                 .signWith(secretKey)
                 .compact();
     }
