@@ -7,7 +7,7 @@ import org.store.clothstar.member.domain.MemberGrade;
 @Getter
 public class MemberResponse {
     private Long memberId;
-    private String email;
+    //    private String email;
     private String name;
     private String telNo;
     private int totalPaymentPrice;
@@ -15,7 +15,7 @@ public class MemberResponse {
 
     public MemberResponse(Member member) {
         this.memberId = member.getMemberId();
-        this.email = member.getEmail();
+//        this.email = member.getEmail();
         this.name = member.getName();
         this.telNo = member.getTelNo();
         this.totalPaymentPrice = member.getMemberShoppingActivity().getTotalPaymentPrice();

@@ -14,21 +14,22 @@ import java.util.List;
 @ToString
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
-    private final Member member;
+    private final Account account;
+    private final Authorization authorization;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + String.valueOf(member.getRole())));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + String.valueOf(authorization.getRole())));
     }
 
     @Override
     public String getPassword() {
-        return member.getPassword();
+        return account.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return member.getEmail();
+        return account.getEmail();
     }
 
     @Override

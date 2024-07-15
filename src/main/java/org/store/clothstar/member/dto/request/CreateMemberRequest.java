@@ -2,8 +2,8 @@ package org.store.clothstar.member.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.store.clothstar.member.domain.Account;
 import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.domain.MemberRole;
 import org.store.clothstar.member.domain.vo.MemberShoppingActivity;
 
 @Getter
@@ -27,24 +27,18 @@ public class CreateMemberRequest {
     @NotNull(message = "인증번호를 입력해 주세요")
     private String certifyNum;
 
-    public Member toMember(String encryptedPassword) {
-        return Member.builder()
+    public Account toAccount(String encryptedPassword) {
+        return Account.builder()
                 .email(email)
                 .password(encryptedPassword)
-                .name(name)
-                .telNo(telNo)
-                .role(MemberRole.USER)
-                .memberShoppingActivity(new MemberShoppingActivity().init())
                 .build();
     }
 
-    public Member toMember() {
+    public Member toMember(Long memberId) {
         return Member.builder()
-                .email(email)
-                .password(password)
+                .memberId(memberId)
                 .name(name)
                 .telNo(telNo)
-                .role(MemberRole.USER)
                 .memberShoppingActivity(new MemberShoppingActivity().init())
                 .build();
     }

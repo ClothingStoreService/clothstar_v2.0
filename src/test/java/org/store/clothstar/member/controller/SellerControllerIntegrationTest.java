@@ -11,9 +11,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.store.clothstar.member.domain.Account;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateMemberRequest;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
+import org.store.clothstar.member.repository.AccountRepository;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.service.MemberServiceImpl;
 import org.store.clothstar.member.service.SellerServiceImpl;
@@ -38,6 +40,9 @@ class SellerControllerIntegrationTest {
     private MemberRepository memberRepository;
 
     @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
     MemberServiceImpl memberServiceImpl;
 
     private static final String SELLER_URL = "/v1/sellers";
@@ -52,7 +57,8 @@ class SellerControllerIntegrationTest {
     @Test
     void getSellerTest() throws Exception {
         //given
-        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO());
+        Account account = accountRepository.save(CreateObject.getAccount());
+        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO(account.getAccountId()));
         memberId = member.getMemberId();
         Long sellerId = sellerServiceImpl.sellerSave(memberId, getCreateSellerRequest());
         String sellerMemberIdURL = SELLER_URL + "/" + memberId;

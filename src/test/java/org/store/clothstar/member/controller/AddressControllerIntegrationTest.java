@@ -14,8 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import org.store.clothstar.common.config.jwt.JwtUtil;
+import org.store.clothstar.member.domain.Account;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
+import org.store.clothstar.member.repository.AccountRepository;
 import org.store.clothstar.member.repository.AddressRepository;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.service.AddressServiceImpl;
@@ -45,6 +47,9 @@ class AddressControllerIntegrationTest {
     private AddressRepository addressRepository;
 
     @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
     private AddressServiceImpl addressServiceImpl;
 
     @Autowired
@@ -59,9 +64,10 @@ class AddressControllerIntegrationTest {
     @DisplayName("회원가입한 멤버아이디와, 인증에 필요한 access 토큰을 가져옵니다.")
     @BeforeEach
     public void getMemberId_getAccessToken() {
-        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO());
+        Account account = accountRepository.save(CreateObject.getAccount());
+        member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO(account.getAccountId()));
         memberId = member.getMemberId();
-        accessToken = jwtUtil.createAccessToken(member);
+        accessToken = jwtUtil.createAccessToken(account);
     }
 
     @DisplayName("회원 배송지 저장 통합 테스트")
