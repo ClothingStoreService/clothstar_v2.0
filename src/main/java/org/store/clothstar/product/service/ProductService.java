@@ -92,4 +92,8 @@ public class ProductService {
     public List<ProductEntity> findByIdIn(List<Long> productIds) {
         return productJPARepository.findByIdIn(productIds);
     }
+
+    public List<ProductEntity> findByIdIn(List<Long> productIds) {
+        return productJPARepository.findByIdIn(productIds);
+    }
 }
