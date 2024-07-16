@@ -119,7 +119,7 @@ class AddressControllerIntegrationTest {
         return createAddressRequest;
     }
 
-    private CreateAddressRequest getCreateAddressRequest(String addressBasic) {
+    private static CreateAddressRequest getCreateAddressRequest(String addressBasic) {
         final String receiverName = "현수";
         final String zipNo = "18292";
         final String addressDetail = "양지빌라";
