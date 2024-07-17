@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 import org.store.clothstar.productLine.domain.ProductLine;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
 
 @Repository
 public interface ProductLineRepositoryCustom {

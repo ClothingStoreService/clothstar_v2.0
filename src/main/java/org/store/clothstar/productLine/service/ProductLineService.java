@@ -20,7 +20,7 @@ import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineResponse;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
+import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
 import org.store.clothstar.productLine.repository.ProductLineRepository;
 
 import java.util.Arrays;
@@ -47,13 +47,13 @@ public class ProductLineService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductLineWithProductsJPAResponse> getAllProductLinesWithProductsOffsetPaging(Pageable pageable, String keyword) {
+    public Page<ProductLineWithProductsResponse> getAllProductLinesWithProductsOffsetPaging(Pageable pageable, String keyword) {
         Page<ProductLine> allOffsetPaging = productLineRepository.findAllOffsetPaging(pageable, keyword);
         return allOffsetPaging.map(this::convertToDtoWithProducts);
     }
 
     @Transactional(readOnly = true)
-    public Slice<ProductLineWithProductsJPAResponse> getAllProductLinesWithProductsSlicePaging(Pageable pageable, String keyword) {
+    public Slice<ProductLineWithProductsResponse> getAllProductLinesWithProductsSlicePaging(Pageable pageable, String keyword) {
         Slice<ProductLine> allSlicePaging = productLineRepository.findAllSlicePaging(pageable, keyword);
         return allSlicePaging.map(this::convertToDtoWithProducts);
     }
@@ -66,7 +66,7 @@ public class ProductLineService {
 
     @Deprecated
     @Transactional(readOnly = true)
-    public ProductLineWithProductsJPAResponse getProductLineWithProducts(Long productLineId) {
+    public ProductLineWithProductsResponse getProductLineWithProducts(Long productLineId) {
         ProductLine productLineWithProducts =
                 productLineRepository.findProductLineWithOptionsById(productLineId)
                         .orElseThrow(() -> new ResponseStatusException(
@@ -77,13 +77,13 @@ public class ProductLineService {
     }
 
     @Transactional
-    public Page<ProductLineWithProductsJPAResponse> getProductLinesByCategoryWithOffsetPaging(Long categoryId, Pageable pageable, String keyword) {
+    public Page<ProductLineWithProductsResponse> getProductLinesByCategoryWithOffsetPaging(Long categoryId, Pageable pageable, String keyword) {
         Page<ProductLine> productLineEntities = productLineRepository.findEntitiesByCategoryWithOffsetPaging(categoryId, pageable, keyword);
         return productLineEntities.map(this::convertToDtoWithProducts);
     }
 
     @Transactional
-    public Slice<ProductLineWithProductsJPAResponse> getProductLinesByCategoryWithSlicePaging(Long categoryId, Pageable pageable, String keyword) {
+    public Slice<ProductLineWithProductsResponse> getProductLinesByCategoryWithSlicePaging(Long categoryId, Pageable pageable, String keyword) {
         Slice<ProductLine> productLineEntities = productLineRepository.findEntitiesByCategoryWithSlicePaging(categoryId, pageable, keyword);
         return productLineEntities.map(this::convertToDtoWithProducts);
     }
@@ -119,12 +119,12 @@ public class ProductLineService {
         productLine.delete();
     }
 
-    private ProductLineWithProductsJPAResponse convertToDtoWithProducts(ProductLine productLine) {
+    private ProductLineWithProductsResponse convertToDtoWithProducts(ProductLine productLine) {
         // 전체 재고량 계산
         Long totalStock = productLine.getProducts().stream().mapToLong(Product::getStock).sum();
 
         // ProductLineWithProductsJPAResponse 객체 생성
-        ProductLineWithProductsJPAResponse dto = new ProductLineWithProductsJPAResponse(
+        ProductLineWithProductsResponse dto = new ProductLineWithProductsResponse(
                 productLine,
                 productLine.getSeller(),
                 totalStock

@@ -17,7 +17,7 @@ import org.store.clothstar.category.dto.response.CategoryResponse;
 import org.store.clothstar.category.service.CategoryService;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.common.util.URIBuilder;
-import org.store.clothstar.productLine.dto.response.ProductLineDetailResponse;
+import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
 import org.store.clothstar.productLine.service.ProductLineService;
 
 import java.net.URI;
@@ -68,21 +68,21 @@ public class CategoryController {
 
     @Operation(summary = "카테고리별 상품 조회 (Offset Paging)", description = "카테고리 ID로 해당 카테고리에 속하는 모든 상품을 Offset Paging을 통해 조회한다.")
     @GetMapping("/{categoryId}/productLines/offset")
-    public ResponseEntity<Page<ProductLineDetailResponse>> getProductLinesByCategory(
+    public ResponseEntity<Page<ProductLineWithProductsResponse>> getProductLinesByCategory(
             @PathVariable Long categoryId,
             @PageableDefault(size = 18) Pageable pageable,
             @RequestParam(required = false) String keyword) {
-        Page<ProductLineDetailResponse> productLineResponses = productLineService.getProductLinesByCategoryWithOffsetPaging(categoryId, pageable, keyword);
+        Page<ProductLineWithProductsResponse> productLineResponses = productLineService.getProductLinesByCategoryWithOffsetPaging(categoryId, pageable, keyword);
         return ResponseEntity.ok().body(productLineResponses);
     }
 
     @Operation(summary = "카테고리별 상품 조회 (Slice Paging)", description = "카테고리 ID로 해당 카테고리에 속하는 모든 상품을 Slice Paging을 통해 조회한다.")
     @GetMapping("/{categoryId}/productLines/slice")
-    public ResponseEntity<Slice<ProductLineDetailResponse>> getProductLinesByCategorySlice(
+    public ResponseEntity<Slice<ProductLineWithProductsResponse>> getProductLinesByCategorySlice(
             @PathVariable Long categoryId,
             @PageableDefault(size = 18) Pageable pageable,
             @RequestParam(required = false) String keyword) {
-        Slice<ProductLineDetailResponse> productLineResponses = productLineService.getProductLinesByCategoryWithSlicePaging(categoryId, pageable, keyword);
+        Slice<ProductLineWithProductsResponse> productLineResponses = productLineService.getProductLinesByCategoryWithSlicePaging(categoryId, pageable, keyword);
         return ResponseEntity.ok().body(productLineResponses);
     }
 }
