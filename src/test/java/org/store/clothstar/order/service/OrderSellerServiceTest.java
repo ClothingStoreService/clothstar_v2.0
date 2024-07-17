@@ -107,6 +107,7 @@ class OrderSellerServiceTest {
         Long productId = 3L;
         Long productLineId = 4L;
 
+        //TODO 추후 개선 예정
         List<Order> waitingOrders = List.of(order);
         given(orderSellerRepository.findWaitingOrders()).willReturn(waitingOrders);
         given(order.getMemberId()).willReturn(memberId);

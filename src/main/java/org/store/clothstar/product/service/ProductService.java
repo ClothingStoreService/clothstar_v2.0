@@ -97,4 +97,10 @@ public class ProductService {
     public Optional<ProductEntity> findById(Long productId) {
         return productRepository.findById(productId);
     }
+
+    @Transactional
+    public void updateProductStock(ProductEntity productEntity, int quantity) {
+        long updatedStock = productEntity.getStock() - quantity;
+        productEntity.updateStock(updatedStock);
+    }
 }
