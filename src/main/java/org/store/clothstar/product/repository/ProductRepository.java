@@ -1,19 +1,15 @@
 package org.store.clothstar.product.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import org.store.clothstar.product.domain.Product;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface ProductRepository {
+@Repository
+public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
 
-    List<Product> selectAllProductByProductLineId(Long productId);
+    List<Product> findAllByProductId(Long productId);
 
-    Optional<Product> selectByProductId(Long productId);
-
-    int save(Product product);
-
-    int updateProduct(Product product);
-
-    int deleteProduct(Long productId);
+    List<Product> findByIdIn(List<Long> productIds);
 }

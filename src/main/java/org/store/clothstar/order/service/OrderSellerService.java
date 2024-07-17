@@ -16,9 +16,12 @@ import org.store.clothstar.order.domain.vo.OrderDetailDTO;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
-import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.vo.OrderDetailDTO;
+import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.service.ProductService;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
+import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.service.ProductLineService;
 
 import java.util.List;
@@ -71,16 +74,16 @@ public class OrderSellerService {
                     List<Long> productIds = orderDetails.stream().map(OrderDetail::getProductId).collect(Collectors.toList());
                     List<Long> productLineIds = orderDetails.stream().map(OrderDetail::getProductLineId).collect(Collectors.toList());
 
-                    List<ProductEntity> products = productService.findByIdIn(productIds);
-                    List<ProductLineEntity> productLines = productLineService.findByIdIn(productLineIds);
+                    List<Product> products = productService.findByIdIn(productIds);
+                    List<ProductLine> productLines = productLineService.findByIdIn(productLineIds);
 
-                    Map<Long, ProductEntity> productMap = products.stream().collect(Collectors.toMap(ProductEntity::getId, product -> product));
-                    Map<Long, ProductLineEntity> productLineMap = productLines.stream().collect(Collectors.toMap(ProductLineEntity::getId, productLine -> productLine));
+                    Map<Long, Product> productMap = products.stream().collect(Collectors.toMap(Product::getId, product -> product));
+                    Map<Long, ProductLine> productLineMap = productLines.stream().collect(Collectors.toMap(ProductLine::getId, productLine -> productLine));
 
                     List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream().map(orderDetail -> {
-                        ProductEntity productEntity = productMap.get(orderDetail.getProductId());
-                        ProductLineEntity productLineEntity = productLineMap.get(orderDetail.getProductLineId());
-                        return OrderDetailDTO.from(orderDetail, productEntity, productLineEntity);
+                        Product product = productMap.get(orderDetail.getProductId());
+                        ProductLine productLine = productLineMap.get(orderDetail.getProductLineId());
+                        return OrderDetailDTO.from(orderDetail, product, productLine);
                     }).collect(Collectors.toList());
 
                     orderResponse.setterOrderDetailList(orderDetailDTOList);

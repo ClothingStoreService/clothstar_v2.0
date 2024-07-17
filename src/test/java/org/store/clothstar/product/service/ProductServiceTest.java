@@ -10,13 +10,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.category.repository.CategoryJpaRepository;
 import org.store.clothstar.member.repository.SellerRepository;
+import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.dto.response.ProductResponse;
-import org.store.clothstar.product.entity.ProductEntity;
-import org.store.clothstar.product.repository.ProductJPARepository;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
-import org.store.clothstar.productLine.repository.ProductLineJPARepository;
+import org.store.clothstar.product.repository.ProductRepository;
+import org.store.clothstar.productLine.domain.ProductLine;
+import org.store.clothstar.productLine.repository.ProductLineRepository;
 import org.store.clothstar.productLine.service.ProductLineService;
 
 import java.util.Optional;
@@ -38,10 +38,10 @@ class ProductServiceTest {
     ProductLineService productLineService;
 
     @Mock
-    private ProductJPARepository productRepository;
+    private ProductRepository productRepository;
 
     @Mock
-    private ProductLineJPARepository productLineRepository;
+    private ProductLineRepository productLineRepository;
 
     @Mock
     private CategoryJpaRepository categoryRepository;
@@ -54,10 +54,10 @@ class ProductServiceTest {
     public void givenProductId_whenGetProductById_thenProductReturned() {
         // given
         Long productId = 1L;
-        ProductLineEntity productLine = mock(ProductLineEntity.class);
+        ProductLine productLine = mock(ProductLine.class);
         when(productLine.getProductLineId()).thenReturn(1L);
 
-        ProductEntity product = ProductEntity.builder()
+        Product product = Product.builder()
                 .productId(productId)
                 .productLine(productLine)
                 .name("곰돌이 블랙")
@@ -105,12 +105,12 @@ class ProductServiceTest {
                 .stock(100L)
                 .build();
 
-        ProductLineEntity mockProductLine = mock(ProductLineEntity.class);
-        ProductEntity mockProduct = mock(ProductEntity.class);
+        ProductLine mockProductLine = mock(ProductLine.class);
+        Product mockProduct = mock(Product.class);
         when(mockProduct.getProductId()).thenReturn(expectedProductId);
 
         when(productLineRepository.findById(eq(productLineId))).thenReturn(Optional.of(mockProductLine));
-        when(productRepository.save(any(ProductEntity.class))).thenReturn(mockProduct);
+        when(productRepository.save(any(Product.class))).thenReturn(mockProduct);
 
         // when
         Long actualProductId = productService.createProduct(createProductRequest);
@@ -118,7 +118,7 @@ class ProductServiceTest {
         // then
         assertThat(actualProductId).isEqualTo(expectedProductId);
         verify(productLineRepository).findById(eq(productLineId));
-        verify(productRepository).save(any(ProductEntity.class));
+        verify(productRepository).save(any(Product.class));
     }
 
     @DisplayName("유효한 productId와 UpdateProductRequest 가 들어오면 product 수정에 성공한다.")
@@ -126,7 +126,7 @@ class ProductServiceTest {
     void givenValidProductIdWithUpdateProductRequest_whenUpdateProduct_thenUpdateProductSuccess() {
         // given
         Long productId = 1L;
-        ProductEntity product = ProductEntity.builder()
+        Product product = Product.builder()
                 .productId(productId)
                 .name("곰돌이 블랙")
                 .extraCharge(1000)
