@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.OrderDetail;
 import org.store.clothstar.order.domain.vo.Price;
-import org.store.clothstar.product.entity.ProductEntity;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
+import org.store.clothstar.product.domain.Product;
+import org.store.clothstar.productLine.domain.ProductLine;
 
 @Getter
 @AllArgsConstructor
@@ -34,16 +34,16 @@ public class CreateOrderDetailRequest {
     private int quantity;
 
 
-    public OrderDetail toOrderDetail(Order order, ProductLineEntity productLineEntity, ProductEntity productEntity) {
+    public OrderDetail toOrderDetail(Order order, ProductLine productLine, Product product) {
         Price price = Price.builder()
-                .fixedPrice(productLineEntity.getPrice())
-                .oneKindTotalPrice(quantity * productLineEntity.getPrice())
+                .fixedPrice(productLine.getPrice())
+                .oneKindTotalPrice(quantity * productLine.getPrice())
                 .build();
 
         return OrderDetail.builder()
                 .order(order)
-                .productLineId(productLineEntity.getProductLineId())
-                .productId(productEntity.getProductId())
+                .productLineId(productLine.getProductLineId())
+                .productId(product.getProductId())
                 .quantity(quantity)
                 .price(price)
                 .build();

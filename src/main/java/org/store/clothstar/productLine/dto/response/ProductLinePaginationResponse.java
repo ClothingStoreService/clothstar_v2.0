@@ -8,8 +8,8 @@ import lombok.*;
 import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.dto.response.SellerSimpleResponse;
 import org.store.clothstar.product.dto.response.ProductResponse;
+import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -56,7 +56,8 @@ public class ProductLinePaginationResponse {
     @Schema(description = "수정일시")
     private LocalDateTime modifiedAt;
 
-    public ProductLinePaginationResponse(ProductLineEntity productLine, Seller seller, Long totalStock) {
+    @QueryProjection
+    public ProductLineWithProductsJPAResponse(ProductLine productLine, Seller seller, Long totalStock) {
         this.productLineId = productLine.getProductLineId();
         this.name = productLine.getName();
         this.content = productLine.getContent();
