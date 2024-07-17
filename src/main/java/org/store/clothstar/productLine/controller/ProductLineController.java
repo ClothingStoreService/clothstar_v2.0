@@ -16,7 +16,7 @@ import org.store.clothstar.common.util.URIBuilder;
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineResponse;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsJPAResponse;
+import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
 import org.store.clothstar.productLine.service.ProductLineService;
 
 import java.net.URI;
@@ -39,26 +39,26 @@ public class ProductLineController {
 
     @Operation(summary = "전체 상품 Offset Paging 조회", description = "삭제되지 않은 모든 상품을 조회한다.")
     @GetMapping("/v1/productLines/offset")
-    public ResponseEntity<Page<ProductLineWithProductsJPAResponse>> getAllProductLinesOffsetPaging(
+    public ResponseEntity<Page<ProductLineWithProductsResponse>> getAllProductLinesOffsetPaging(
             @PageableDefault(size = 18) Pageable pageable,
             @RequestParam(required = false) String keyword){
-        Page<ProductLineWithProductsJPAResponse> productLineResponses = productLineService.getAllProductLinesWithProductsOffsetPaging(pageable, keyword);
+        Page<ProductLineWithProductsResponse> productLineResponses = productLineService.getAllProductLinesWithProductsOffsetPaging(pageable, keyword);
         return ResponseEntity.ok().body(productLineResponses);
     }
 
     @Operation(summary = "전체 상품 Slice Paging 조회", description = "삭제되지 않은 모든 상품을 조회한다.")
     @GetMapping("/v1/productLines/slice")
-    public ResponseEntity<Slice<ProductLineWithProductsJPAResponse>> getAllProductLinesSlicePaging(
+    public ResponseEntity<Slice<ProductLineWithProductsResponse>> getAllProductLinesSlicePaging(
             @PageableDefault(size = 18) Pageable pageable,
             @RequestParam(required = false) String keyword) {
-        Slice<ProductLineWithProductsJPAResponse> productLineResponses = productLineService.getAllProductLinesWithProductsSlicePaging(pageable, keyword);
+        Slice<ProductLineWithProductsResponse> productLineResponses = productLineService.getAllProductLinesWithProductsSlicePaging(pageable, keyword);
         return ResponseEntity.ok().body(productLineResponses);
     }
 
     @Operation(summary = "상품 상세 조회", description = "productLineId로 상품과 하위 옵션들을 상세 조회한다.")
     @GetMapping("/v1/productLines/{productLineId}")
-    public ResponseEntity<ProductLineWithProductsJPAResponse> getProductLine(@PathVariable("productLineId") Long productLineId) {
-        ProductLineWithProductsJPAResponse productLineWithProducts = productLineService.getProductLineWithProducts(productLineId);
+    public ResponseEntity<ProductLineWithProductsResponse> getProductLine(@PathVariable("productLineId") Long productLineId) {
+        ProductLineWithProductsResponse productLineWithProducts = productLineService.getProductLineWithProducts(productLineId);
         return ResponseEntity.ok().body(productLineWithProducts);
     }
 
