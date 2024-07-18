@@ -7,9 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
-import org.store.clothstar.productLine.domain.ProductLine;
+import org.store.clothstar.product.entity.ProductEntity;
 
-@Entity
+@Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,6 +31,9 @@ public class Product {
     private int extraCharge;
 
     private Long stock;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Option> Options;
 
     public void updateOption(UpdateProductRequest updateProductRequest) {
         this.name = updateProductRequest.getName();
