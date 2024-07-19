@@ -11,6 +11,7 @@ import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.common.entity.BaseTimeEntity;
 import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.product.domain.Product;
+import org.store.clothstar.productLine.domain.type.ImageType;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 
@@ -39,15 +40,17 @@ public class ProductLine extends BaseTimeEntity {
     private CategoryEntity category;
 
     private String name;
-
     private String content;
-
     private int price;
+
+    @ElementCollection
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_line_id"))
+    private List<ProductImage> imageList;
+
+    private Long saleCount; // 판매량
 
     @Enumerated(EnumType.STRING)
     private ProductLineStatus status;
-
-    private Long saleCount;
 
     @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
