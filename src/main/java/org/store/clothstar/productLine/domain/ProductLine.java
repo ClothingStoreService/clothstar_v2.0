@@ -44,17 +44,20 @@ public class ProductLine extends BaseTimeEntity {
 
     private int price;
 
-//    private Long totalStock;
-
     @Enumerated(EnumType.STRING)
     private ProductLineStatus status;
 
     private Long saleCount;
 
     @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JsonBackReference
     @JsonIgnore
     private List<Product> products;
+
+    @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ProductOption> productOptions;
+
+    @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Item> items;
 
     public void updateProductLine(UpdateProductLineRequest updateProductLineRequest) {
         this.name = updateProductLineRequest.getName();
