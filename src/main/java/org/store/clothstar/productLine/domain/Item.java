@@ -6,12 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.productLine.domain.type.DeliveryType;
-<<<<<<< Updated upstream
-=======
 import org.store.clothstar.productLine.domain.type.DisplayStatus;
 import org.store.clothstar.productLine.domain.type.SaleStatus;
->>>>>>> Stashed changes
-
 import java.util.List;
 
 /**
@@ -46,19 +42,11 @@ public class Item {
     private int price;
     private Integer stock;
     private SaleStatus saleStatus;
-<<<<<<< Updated upstream
-    private displayStatus displayStatus;
-
-    @Enumerated(EnumType.STRING)
-    private DeliveryType deliveryType;
-
-
-=======
     private DisplayStatus displayStatus;
+
     @Enumerated(EnumType.STRING)
     private DeliveryType deliveryType;
 
->>>>>>> Stashed changes
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_line_id")
     private ProductLine productLine;
