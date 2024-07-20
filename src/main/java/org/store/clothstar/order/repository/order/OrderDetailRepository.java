@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface OrderDetailRepository {
     Optional<OrderDetail> findById(Long orderDetailId);
 
-    OrderDetail save(OrderDetail orderdetailEntity);
+    OrderDetail save(OrderDetail orderdetail);
 
     List<OrderDetail> findOrderDetailListByOrderId(Long orderId);
 }

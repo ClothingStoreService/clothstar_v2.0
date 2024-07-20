@@ -8,7 +8,9 @@ public interface OrderSellerRepository {
 
     List<Order> findWaitingOrders();
 
-    void approveOrder(Long orderId);
+//    void approveOrder(Long orderId);
 
     void cancelOrder(Long orderId);
+
+    Order save(Order order);
 }

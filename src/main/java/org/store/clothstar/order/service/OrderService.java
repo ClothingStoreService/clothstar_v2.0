@@ -173,7 +173,8 @@ public class OrderService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 상태가 '배송완료'가 아니기 때문에 주문확정이 불가능합니다.");
         }
 
-        orderUserRepository.confirmOrder(orderId);
+        order.setterStatus(Status.CONFIRM);
+        orderUserRepository.save(order);
     }
 
     public void cancelOrder(Long orderId) {
@@ -185,7 +186,8 @@ public class OrderService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'승인대기' 또는 '주문승인' 상태가 아니기 때문에 주문을 취소할 수 없습니다.");
         }
 
-        orderUserRepository.cancelOrder(orderId);
+        order.setterStatus(Status.CANCEL);
+        orderUserRepository.save(order);
     }
 
     @Transactional

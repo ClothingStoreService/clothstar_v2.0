@@ -50,6 +50,8 @@ select *
 from product_line;
 select *
 from product;
+select *
+from seller;
 
 select *
 from order_detail

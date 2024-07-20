@@ -55,4 +55,8 @@ public class Order extends BaseEntity {
     public void updateDeletedAt() {
         this.deletedAt = LocalDateTime.now();
     }
+
+    public void setterStatus(Status status) {
+        this.status = status;
+    }
 }

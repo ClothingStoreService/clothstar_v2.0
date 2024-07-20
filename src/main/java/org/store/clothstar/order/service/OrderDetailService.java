@@ -49,10 +49,10 @@ public class OrderDetailService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 정보를 찾을 수 없습니다."));
 
         ProductLineEntity productLineEntity = productLineJPARepository.findById(addOrderDetailRequest.getProductLineId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
 
         ProductEntity productEntity = productJPARepository.findById(addOrderDetailRequest.getProductId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
 
         if (addOrderDetailRequest.getQuantity() > productEntity.getStock()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 개수가 재고보다 더 많습니다.");
