@@ -13,7 +13,7 @@ public class ItemAttributeResponse {
     private String value;
     private Long valueId;
 
-    public ItemAttributeDTO(ItemAttribute itemAttribute) {
+    public ItemAttributeResponse(ItemAttribute itemAttribute) {
         this.optionId = itemAttribute.getOptionId();
         this.name = itemAttribute.getName();
         this.value = itemAttribute.getValue();

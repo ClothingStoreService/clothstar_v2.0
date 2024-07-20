@@ -8,16 +8,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.store.clothstar.category.entity.CategoryEntity;
-import org.store.clothstar.member.domain.Seller;
-import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
+
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateProductLineRequest {
+public class CreateProductLineRequestV2 {
     @Schema(description = "카테고리 아이디", nullable = false)
     @Positive(message = "카테고리 id는 0보다 큰 양수입니다.")
     private Long categoryId;
@@ -39,16 +38,11 @@ public class CreateProductLineRequest {
     @Builder.Default
     private ProductLineStatus status = ProductLineStatus.ON_SALE;
 
-    public ProductLine toProductLineEntity(Seller seller, CategoryEntity category) {
-        return ProductLine.builder()
-                .seller(seller)
-                .category(category)
-                .name(name)
-                .content(content)
-                .price(price)
-//                .totalStock(0L)
-                .status(status)
-                .saleCount(0L)
-                .build();
-    }
+    private List<ProductImageRequest> images;
+
+    private List<ProductOptionRequest> productOptions;
+
+    private List<ItemRequest> items;
+
+
 }

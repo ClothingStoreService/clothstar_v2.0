@@ -71,6 +71,12 @@ public class ProductLineController {
         return ResponseEntity.created(location).build();
     }
 
+    @PostMapping("/v2/productLines/")
+    public ResponseEntity<MessageDTO> createProductLineV2(@Validated @RequestBody CreateProductLineRequest createProductLineRequest) {
+        Long productLineId = productLineService.createProductLine(createProductLineRequest);
+        return ResponseEntity.ok().body(new MessageDTO(HttpStatus.CREATED.value(), "ProductLine created successfully"));
+    }
+
     @Operation(summary = "상품 수정", description = "상품 이름, 가격, 재고, 상태를 입력하여 상품 정보를 수정한다.")
     @PutMapping("/v1/productLines/{productLineId}")
     public ResponseEntity<MessageDTO> updateProductLine(
