@@ -24,11 +24,10 @@ import org.store.clothstar.order.domain.vo.OrderDetailDTO;
 import org.store.clothstar.order.domain.vo.Price;
 import org.store.clothstar.order.domain.vo.TotalPrice;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
-import org.store.clothstar.order.dto.request.CreateOrderDetailRequest;
-import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
 import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
+import org.store.clothstar.order.service.OrderSave.OrderSaveFacade;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
@@ -64,6 +63,9 @@ class OrderServiceTest {
 
     @Mock
     private ProductService productService;
+
+    @Mock
+    private OrderSaveFacade orderSaveFacade;
 
     @Mock
     private Member member;
@@ -261,74 +263,16 @@ class OrderServiceTest {
     void saveOrder_verify_test() {
         //given
         OrderRequestWrapper orderRequestWrapper = mock(OrderRequestWrapper.class);
-        CreateOrderRequest createOrderRequest = mock(CreateOrderRequest.class);
-        CreateOrderDetailRequest createOrderDetailRequest = mock(CreateOrderDetailRequest.class);
+        Long expectedOrderId = 1L;
 
-        given(order.getOrderId()).willReturn(1L);
-
-        given(orderRequestWrapper.getCreateOrderRequest()).willReturn(createOrderRequest);
-        given(orderRequestWrapper.getCreateOrderDetailRequest()).willReturn(createOrderDetailRequest);
-        given(createOrderRequest.getMemberId()).willReturn(1L);
-        given(createOrderRequest.getAddressId()).willReturn(2L);
-        given(memberService.getMemberByMemberId(1L)).willReturn(member);
-        given(addressService.getAddressById(2L)).willReturn(address);
-        given(createOrderRequest.toOrder(member,address)).willReturn(order);
-
-        given(order.getTotalPrice()).willReturn(totalPrice);
-        given(orderDetail.getPrice()).willReturn(price);
-
-        given(createOrderDetailRequest.getProductLineId()).willReturn(3L);
-        given(createOrderDetailRequest.getProductId()).willReturn(4L);
-        given(productLineService.findById(3L)).willReturn(Optional.of(productLineEntity));
-        given(productService.findById(4L)).willReturn(Optional.of(productEntity));
-
-        given(createOrderDetailRequest.getQuantity()).willReturn(5);
-        given(productEntity.getStock()).willReturn(10L);
-
-        given(createOrderDetailRequest.toOrderDetail(order, productLineEntity, productEntity)).willReturn(orderDetail);
+        given(orderSaveFacade.saveOrder(orderRequestWrapper)).willReturn(expectedOrderId);
 
         // when
         Long orderId = orderService.saveOrder(orderRequestWrapper);
 
         // then
-        then(memberService).should(times(1)).getMemberByMemberId(createOrderRequest.getMemberId());
-        then(addressService).should(times(1)).getAddressById(createOrderRequest.getAddressId());
-        then(productLineService).should(times(1)).findById(createOrderDetailRequest.getProductLineId());
-        then(productService).should(times(1)).findById(createOrderDetailRequest.getProductId());
-        then(orderUserRepository).should(times(1)).save(order);
-        verify(order).getOrderId();
-        assertThat(orderId).isEqualTo(1L);
-    }
-
-    @Test
-    @DisplayName("saveOrder: 주문 생성 - 주문 개수가 재고보다 많을 때 예외처리 테스트")
-    void saveOrder_quantity_exception_test() {
-        //given
-        OrderRequestWrapper orderRequestWrapper = mock(OrderRequestWrapper.class);
-        CreateOrderRequest createOrderRequest = mock(CreateOrderRequest.class);
-        CreateOrderDetailRequest createOrderDetailRequest = mock(CreateOrderDetailRequest.class);
-
-        given(orderRequestWrapper.getCreateOrderRequest()).willReturn(createOrderRequest);
-        given(orderRequestWrapper.getCreateOrderDetailRequest()).willReturn(createOrderDetailRequest);
-        given(createOrderRequest.getMemberId()).willReturn(1L);
-        given(createOrderRequest.getAddressId()).willReturn(2L);
-        given(memberService.getMemberByMemberId(1L)).willReturn(member);
-        given(addressService.getAddressById(2L)).willReturn(address);
-        given(createOrderRequest.toOrder(member,address)).willReturn(order);
-        given(createOrderDetailRequest.getProductLineId()).willReturn(3L);
-        given(createOrderDetailRequest.getProductId()).willReturn(4L);
-        given(productLineService.findById(3L)).willReturn(Optional.of(productLineEntity));
-        given(productService.findById(4L)).willReturn(Optional.of(productEntity));
-
-        given(createOrderDetailRequest.getQuantity()).willReturn(10);
-        given(productEntity.getStock()).willReturn(1L);
-
-        //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
-                orderService.saveOrder(orderRequestWrapper));
-
-        //then
-        assertEquals("400 BAD_REQUEST \"주문 개수가 재고보다 더 많습니다.\"", thrown.getMessage());
+        then(orderSaveFacade).should(times(1)).saveOrder(orderRequestWrapper);
+        assertThat(orderId).isEqualTo(expectedOrderId);
     }
 
     @Test
@@ -381,7 +325,8 @@ class OrderServiceTest {
 
         //then
         then(orderUserRepository).should(times(1)).findById(orderId);
-        then(orderUserRepository).should().save(order);
+        then(orderUserRepository).should(times(1)).save(order);
+        then(orderDetailService).should(times(1)).restoreStockByOrder(orderId);
     }
 
     @Test

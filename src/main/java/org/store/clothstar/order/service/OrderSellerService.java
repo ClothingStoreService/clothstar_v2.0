@@ -101,7 +101,6 @@ public class OrderSellerService {
 
         order.setterStatus(Status.APPROVE);
         orderSellerRepository.save(order);
-//        orderSellerRepository.approveOrder(orderId);
         messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.");
 
         return messageDTO;

@@ -20,7 +20,7 @@ import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
 import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
-import org.store.clothstar.order.service.OrderSave.*;
+import org.store.clothstar.order.service.OrderSave.OrderSaveFacade;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
@@ -188,6 +188,8 @@ public class OrderService {
 
         order.setterStatus(Status.CANCEL);
         orderUserRepository.save(order);
+
+        orderDetailService.restoreStockByOrder(orderId);
     }
 
     @Transactional
