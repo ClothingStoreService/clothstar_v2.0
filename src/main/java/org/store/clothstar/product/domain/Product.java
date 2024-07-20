@@ -8,8 +8,11 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.productLine.domain.Option;
+import org.store.clothstar.productLine.domain.ProductLine;
 
-@Builder
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,7 +26,6 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_line_id", nullable = false)
-//    @JsonManagedReference
     private ProductLine productLine;
 
     private String name;

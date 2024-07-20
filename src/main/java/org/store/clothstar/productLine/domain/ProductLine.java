@@ -17,7 +17,6 @@ import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,30 +44,18 @@ public class ProductLine extends BaseTimeEntity {
 
     private int price;
 
-//    private Long totalStock;
-
     @Enumerated(EnumType.STRING)
     private ProductLineStatus status;
 
     private Long saleCount;
 
     @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JsonBackReference
     @JsonIgnore
     private List<Product> products;
-
-    @Enumerated(EnumType.STRING)
-    private ProductLineStatus status;
 
     @OneToMany(mappedBy = "productLine", cascade = CascadeType.ALL)
     private List<OptionGroup> productOptionGroups;
 
-
-    @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JsonBackReference
-    @JsonIgnore
-    private List<Product> products;
->>>>>>> Stashed changes
 
     public void updateProductLine(UpdateProductLineRequest updateProductLineRequest) {
         this.name = updateProductLineRequest.getName();
