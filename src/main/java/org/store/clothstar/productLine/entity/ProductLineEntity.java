@@ -16,6 +16,7 @@ import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -95,5 +96,13 @@ public class ProductLineEntity extends BaseTimeEntity {
 
     public Long getId() {
         return productLineId;
+    }
+
+    public void addProduct(ProductEntity product) {
+        if (products == null) {
+            products = new ArrayList<>();
+        }
+        products.add(product);
+        product.setterProductLine(this);
     }
 }

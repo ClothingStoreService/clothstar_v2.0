@@ -74,4 +74,8 @@ public class ProductEntity {
     public Long getId() {
         return productId;
     }
+
+    public void setterProductLine(ProductLineEntity productLineEntity) {
+        this.productLine = productLineEntity;
+    }
 }

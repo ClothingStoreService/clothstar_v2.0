@@ -346,7 +346,7 @@ class OrderServiceTest {
 
         //then
         then(orderUserRepository).should(times(1)).findById(orderId);
-        then(orderUserRepository).should().confirmOrder(orderId);
+        then(orderUserRepository).should().save(order);
     }
 
     @Test
@@ -381,7 +381,7 @@ class OrderServiceTest {
 
         //then
         then(orderUserRepository).should(times(1)).findById(orderId);
-        then(orderUserRepository).should().cancelOrder(orderId);
+        then(orderUserRepository).should().save(order);
     }
 
     @Test

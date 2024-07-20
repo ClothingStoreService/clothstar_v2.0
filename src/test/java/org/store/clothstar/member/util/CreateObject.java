@@ -43,6 +43,15 @@ public class CreateObject {
         return createMemberRequest;
     }
 
+    public static Member getMemberByCreateMemberRequestDTO(int i) {
+        return Member.builder()
+                .email("test" + i + "@test.com") // 유니크한 이메일 주소 생성
+                .name("Test User" + i)
+                .password("password")
+                .telNo("010-1234-567" + i)
+                .build();
+    }
+
     public static Member getMemberByCreateMemberRequestDTO() {
         return getCreateMemberRequest().toMember();
     }

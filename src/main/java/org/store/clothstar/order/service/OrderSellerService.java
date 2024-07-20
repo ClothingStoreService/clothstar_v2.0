@@ -21,6 +21,7 @@ import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.service.ProductLineService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -95,11 +96,13 @@ public class OrderSellerService {
         MessageDTO messageDTO;
 
         // 주문 유효성 검사
-        orderUserRepository.findById(orderId)
+        Order order = orderUserRepository.findById(orderId)
                 .filter(Order -> Order.getStatus() == Status.WAITING)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문이 존재하지 않거나 상태가 'WAITING'이 아니어서 처리할 수 없습니다."));
 
-        orderSellerRepository.approveOrder(orderId);
+        order.setterStatus(Status.APPROVE);
+        orderSellerRepository.save(order);
+//        orderSellerRepository.approveOrder(orderId);
         messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.");
 
         return messageDTO;
@@ -110,11 +113,12 @@ public class OrderSellerService {
         MessageDTO messageDTO;
 
         // 주문 유효성 검사
-        orderUserRepository.findById(orderId)
+        Order order = orderUserRepository.findById(orderId)
                 .filter(Order -> Order.getStatus() == Status.WAITING)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문이 존재하지 않거나 상태가 'WAITING'이 아니어서 처리할 수 없습니다."));
 
-        orderSellerRepository.cancelOrder(orderId);
+        order.setterStatus(Status.CANCEL);
+        orderSellerRepository.save(order);
         orderDetailService.restoreStockByOrder(orderId);
         messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.");
 
