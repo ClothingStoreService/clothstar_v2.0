@@ -44,21 +44,18 @@ public class ProductLineDetailResponse {
     @Schema(description = "상품 판매량", example = "10")
     private Long saleCount;  // ~개 판매중
 
-    @Builder.Default
     @Schema(description = "상품 옵션")
-    private List<ProductResponse> productList = new ArrayList<>();
+    private List<ProductResponse> productList;
 
     @Schema(description = "판매자 정보")
     private SellerSimpleResponse seller;
 
     @Schema(description = "생성일시")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createdAt;
 
     @Schema(description = "수정일시")
     private LocalDateTime modifiedAt;
 
-    @QueryProjection
     public ProductLineDetailResponse(ProductLineEntity productLine) {
         this.productLineId = productLine.getProductLineId();
         this.name = productLine.getName();
