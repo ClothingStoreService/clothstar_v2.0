@@ -246,7 +246,6 @@ public class OrderUserControllerIntegrationTest {
     public void createOrderWithStatus(Status status) {
         Member member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO());
         member = memberRepository.findById(member.getMemberId()).get();
-//        entityManager.merge(member);
         Address address = addressRepository.save(CreateOrder.getCreateAddressRequest().toAddress(member));
         CategoryEntity category = categoryJpaRepository.save(CreateOrder.getCreateCategoryRequest().toCategoryEntity());
         Seller seller = sellerRepository.save(new Seller(CreateOrder.getCreateSellerRequest(),member));
@@ -259,8 +258,71 @@ public class OrderUserControllerIntegrationTest {
 
         order.setterStatus(status);
         order.addOrderDetail(orderDetail);
-//        entityManager.flush();
-//        entityManager.clear();
+    }
+
+    @DisplayName("주문상세 추가 저장 통합테스트")
+    @Test
+    public void testAddOrderDetail() throws Exception {
+        //give
+        Member member = memberRepository.save(CreateObject.getMemberByCreateMemberRequestDTO());
+        Address address = addressRepository.save(CreateOrder.getCreateAddressRequest().toAddress(member));
+        CreateOrderRequest createOrderRequest = CreateOrder.getCreateOrderRequest(member.getMemberId(),address.getAddressId());
+        order = orderUserRepository.save(CreateOrder.getCreateOrderRequest(member.getMemberId(),address.getAddressId()).toOrder(member,address));
+        CategoryEntity category = categoryJpaRepository.save(CreateOrder.getCreateCategoryRequest().toCategoryEntity());
+        Seller seller = sellerRepository.save(new Seller(CreateOrder.getCreateSellerRequest(),member));
+        ProductLineEntity productLine = productLineJPARepository.save(CreateOrder.getCreateProductLineRequest().toProductLineEntity(seller,category));
+        ProductEntity product = productJPARepository.save(CreateOrder.getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine));
+        System.out.println("productLine: "+productLine.getProductLineId());
+        OrderDetail orderDetail = orderDetailRepository.save(CreateOrder.getCreateOrderDetailRequest(productLine.getProductLineId(),product.getProductId()).toOrderDetail(order,productLine,product));
+
+        order.setterStatus(Status.WAITING);
+        order.addOrderDetail(orderDetail);
+
+        productLine.addProduct(product);
+
+        AddOrderDetailRequest addOrderDetailRequest = CreateOrder.getAddOrderDetailRequest(order.getOrderId(),productLine.getProductLineId(),product.getProductId());
+
+        //when
+        System.out.println("orderId="+order.getOrderId());
+        ResultActions actions = mockMvc.perform(post("/v1/orderdetails")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(addOrderDetailRequest)));
+
+        //then
+        actions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("주문상세가 정상적으로 생성되었습니다."));
+
+        // 데이터베이스에서 주문 상세 조회하여 검증
+        Long orderDetailId = objectMapper.readValue(actions.andReturn().getResponse().getContentAsString(), SaveResponseDTO.class).getId();
+        assertNotNull(orderDetailRepository.findById(orderDetailId).orElse(null));
+    }
+
+    @DisplayName("주문 생성 통합테스트")
+    @Test
+    public void testSaveOrder() throws Exception {
+        //given
+        Member member = memberRepository.save(CreateObject.getCreateMemberRequest().toMember());
+        Address address = addressRepository.save(CreateOrder.getCreateAddressRequest().toAddress(member));
+        CreateOrderRequest createOrderRequest = CreateOrder.getCreateOrderRequest(member.getMemberId(),address.getAddressId());
+        CategoryEntity category = categoryJpaRepository.save(CreateOrder.getCreateCategoryRequest().toCategoryEntity());
+        Seller seller = sellerRepository.save(new Seller(CreateOrder.getCreateSellerRequest(),member));
+        ProductLineEntity productLine = productLineJPARepository.save(CreateOrder.getCreateProductLineRequest().toProductLineEntity(seller,category));
+        ProductEntity product = productJPARepository.save(CreateOrder.getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine));
+        CreateOrderDetailRequest createOrderDetailRequest = CreateOrder.getCreateOrderDetailRequest(productLine.getProductLineId(),product.getProductId());
+        productLine.addProduct(product);
+
+        OrderRequestWrapper orderRequestWrapper = getOrderRequestWrapper(createOrderRequest,createOrderDetailRequest);
+
+        //when
+        System.out.println("productLineId" + productLine.getProductLineId());
+        System.out.println("productId" + product.getProductId());
+        ResultActions actions = mockMvc.perform(post(ORDER_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(orderRequestWrapper)));
+
+        //then
+        actions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("주문이 정상적으로 생성되었습니다."));
     }
 }
 
