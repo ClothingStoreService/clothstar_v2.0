@@ -25,4 +25,12 @@ class JasyptConfigTest {
         pbeEnc.setPassword(key);
         return pbeEnc.encrypt(value);
     }
+
+    public String jasyptDecoding(String value) {
+        String key = "my_jasypt_key";
+        StandardPBEStringEncryptor pbeEnc = new StandardPBEStringEncryptor();
+        pbeEnc.setAlgorithm("PBEWithMD5AndDES");
+        pbeEnc.setPassword(key);
+        return pbeEnc.decrypt(value);
+    }
 }
