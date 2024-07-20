@@ -1,4 +1,4 @@
-package org.store.clothstar.orderDetail.service;
+package org.store.clothstar.order.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,15 +8,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.order.domain.Order;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.domain.vo.Price;
 import org.store.clothstar.order.domain.vo.TotalPrice;
-import org.store.clothstar.order.repository.order.OrderUserRepository;
-import org.store.clothstar.order.domain.type.Status;
-import org.store.clothstar.order.service.OrderDetailService;
-import org.store.clothstar.order.domain.OrderDetail;
 import org.store.clothstar.order.dto.request.AddOrderDetailRequest;
-import org.store.clothstar.order.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.order.repository.order.OrderDetailRepository;
+import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.repository.ProductJPARepository;
 import org.store.clothstar.product.service.ProductService;
@@ -70,53 +68,6 @@ class OrderDetailServiceTest {
     @Mock
     private Price price;
 
-    @DisplayName("saveOrderDetailWithOrder: 주문상세 생성 - 메서드 호출 테스트")
-    @Test
-    void saveOrderDetailWithOrder_verify_test() {
-        //given
-        long orderId = 1L;
-        CreateOrderDetailRequest mockRequest = mock(CreateOrderDetailRequest.class);
-
-        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
-        given(productLineJPARepository.findById(mockRequest.getProductLineId())).willReturn(Optional.of(productLine));
-        given(productJPARepository.findById(mockRequest.getProductId())).willReturn(Optional.of(product));
-        given(order.getTotalPrice()).willReturn(totalPrice);
-        given(orderDetail.getPrice()).willReturn(price);
-        given(mockRequest.toOrderDetail(order, productLine, product)).willReturn(orderDetail);
-
-        //when
-        orderDetailService.saveOrderDetailWithOrder(mockRequest, orderId);
-
-        //then
-        then(orderUserRepository).should(times(1)).findById(orderId);
-        then(productLineJPARepository).should(times(1)).findById(mockRequest.getProductLineId());
-        then(productJPARepository).should(times(1)).findById(mockRequest.getProductId());
-        then(orderDetailRepository).should(times(1)).save(orderDetail);
-    }
-
-    @DisplayName("saveOrderDetailWithOrder: 주문상세 생성 - 주문 수량이 상품 재고보다 클 때 예외처리 테스트")
-    @Test
-    void saveOrderDetailWithOrder_exception_test() {
-        //given
-        long orderId = 1L;
-        CreateOrderDetailRequest mockRequest = mock(CreateOrderDetailRequest.class);
-        ProductLineEntity mockProductLine = mock(ProductLineEntity.class);
-        ProductEntity mockProduct = mock(ProductEntity.class);
-
-        given(orderUserRepository.findById(orderId)).willReturn(Optional.of(order));
-        given(productLineJPARepository.findById(mockRequest.getProductLineId())).willReturn(Optional.of(mockProductLine));
-        given(productJPARepository.findById(mockRequest.getProductId())).willReturn(Optional.of(mockProduct));
-        given(mockRequest.getQuantity()).willReturn(10);
-        given(mockProduct.getStock()).willReturn(1L);
-
-        //when
-        ResponseStatusException thrown = assertThrows(ResponseStatusException.class, () ->
-                orderDetailService.saveOrderDetailWithOrder(mockRequest, orderId));
-
-        //then
-        assertEquals("400 BAD_REQUEST \"주문 개수가 재고보다 더 많습니다.\"", thrown.getMessage());
-    }
-
     @DisplayName("addOrderDetail: 주문상세 추가 - 주문 유효성 검사 예외처리 테스트")
     @Test
     void getOrderDetail_quantityZero_exception_test() {
@@ -138,7 +89,6 @@ class OrderDetailServiceTest {
         //then
         assertEquals("400 BAD_REQUEST \"주문 개수가 재고보다 더 많습니다.\"", thrown.getMessage());
     }
-
 
     @DisplayName("addOrderDetail: 주문상세 추가 - 반환값 테스트")
     @Test

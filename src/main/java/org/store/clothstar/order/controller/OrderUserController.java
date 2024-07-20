@@ -15,7 +15,6 @@ import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.common.dto.SaveResponseDTO;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
-import org.store.clothstar.order.service.OrderApplicationService;
 import org.store.clothstar.order.service.OrderService;
 
 @Tag(name = "Order", description = "주문(Order) 정보 관리에 대한 API 입니다.")
@@ -25,7 +24,6 @@ import org.store.clothstar.order.service.OrderService;
 public class OrderUserController {
 
     private final OrderService orderService;
-    private final OrderApplicationService orderApplicationService;
 
     @Operation(summary = "단일 주문 조회", description = "단일 주문의 정보를 조회한다.")
     @GetMapping("/{orderId}")
@@ -53,7 +51,7 @@ public class OrderUserController {
     @Operation(summary = "주문 생성", description = "단일 주문을 생성한다.")
     @PostMapping
     public ResponseEntity<SaveResponseDTO> saveOrder(@RequestBody @Validated OrderRequestWrapper orderRequestWrapper) {
-        Long orderId = orderApplicationService.saveOrderWithTransaction(orderRequestWrapper);
+        Long orderId = orderService.saveOrder(orderRequestWrapper);
         return ResponseEntity.ok(new SaveResponseDTO(
                 orderId, HttpStatus.OK.value(), "주문이 정상적으로 생성되었습니다."));
     }

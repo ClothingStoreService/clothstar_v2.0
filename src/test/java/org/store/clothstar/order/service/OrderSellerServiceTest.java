@@ -17,14 +17,14 @@ import org.store.clothstar.member.domain.vo.AddressInfo;
 import org.store.clothstar.member.service.AddressService;
 import org.store.clothstar.member.service.MemberService;
 import org.store.clothstar.order.domain.Order;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.vo.OrderDetailDTO;
 import org.store.clothstar.order.domain.vo.Price;
 import org.store.clothstar.order.domain.vo.TotalPrice;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
-import org.store.clothstar.order.domain.type.Status;
-import org.store.clothstar.order.domain.OrderDetail;
-import org.store.clothstar.order.domain.vo.OrderDetailDTO;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
@@ -107,17 +107,18 @@ class OrderSellerServiceTest {
         Long productId = 3L;
         Long productLineId = 4L;
 
+        //TODO 추후 개선 예정
         List<Order> waitingOrders = List.of(order);
         given(orderSellerRepository.findWaitingOrders()).willReturn(waitingOrders);
         given(order.getMemberId()).willReturn(memberId);
         given(order.getAddressId()).willReturn(addressId);
-        given(order.getCreatedAt()).willReturn(LocalDateTime.now());
-        given(orderDetail.getDeletedAt()).willReturn(null);
-        given(order.getOrderDetails()).willReturn(List.of(orderDetail));
-
         given(memberService.getMemberByMemberId(memberId)).willReturn(member);
-        given(addressService.getAddressById(addressId)).willReturn(address);
         given(address.getAddressInfo()).willReturn(addressInfo);
+        given(addressService.getAddressById(addressId)).willReturn(address);
+        given(order.getCreatedAt()).willReturn(LocalDateTime.now());
+        given(order.getOrderDetails()).willReturn(List.of(orderDetail));
+        given(orderDetail.getDeletedAt()).willReturn(null);
+
         given(order.getTotalPrice()).willReturn(totalPrice);
         given(orderDetail.getPrice()).willReturn(price);
         given(orderDetail.getProductId()).willReturn(productId);

@@ -13,13 +13,14 @@ import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.service.AddressService;
 import org.store.clothstar.member.service.MemberService;
 import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.dto.reponse.OrderResponse;
-import org.store.clothstar.order.dto.request.CreateOrderRequest;
-import org.store.clothstar.order.repository.order.OrderUserRepository;
-import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.domain.vo.OrderDetailDTO;
+import org.store.clothstar.order.dto.reponse.OrderResponse;
+import org.store.clothstar.order.dto.request.OrderRequestWrapper;
 import org.store.clothstar.order.repository.order.OrderDetailRepository;
+import org.store.clothstar.order.repository.order.OrderUserRepository;
+import org.store.clothstar.order.service.OrderSave.*;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
@@ -40,12 +41,16 @@ public class OrderService {
     private final OrderDetailService orderDetailService;
     private final ProductService productService;
     private final ProductLineService productLineService;
+    private final OrderSaveFacade orderSaveFacade;
+
 
     public OrderService(
             OrderUserRepository orderUserRepository
             , MemberService memberService, AddressService addressService
-            , OrderDetailService orderDetailService, OrderDetailRepository orderDetailRepository,
-            ProductService productService, ProductLineService productLineService) {
+            , OrderDetailService orderDetailService, OrderDetailRepository orderDetailRepository
+            , ProductService productService, ProductLineService productLineService
+            , OrderSaveFacade orderSaveFacade
+    ) {
         this.orderUserRepository = orderUserRepository;
         this.memberService = memberService;
         this.addressService = addressService;
@@ -53,16 +58,13 @@ public class OrderService {
         this.orderDetailService = orderDetailService;
         this.productService = productService;
         this.productLineService = productLineService;
+        this.orderSaveFacade=orderSaveFacade;
     }
 
     @Transactional(readOnly = true)
     public OrderResponse getOrder(Long orderId) {
-        Order order = orderUserRepository.findById(orderId)
+        Order order = orderUserRepository.findByOrderIdAndDeletedAtIsNull(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다"));
-
-        if (order.getDeletedAt() != null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제된 주문입니다.");
-        }
 
         Member member = memberService.getMemberByMemberId(order.getMemberId());
         Address address = addressService.getAddressById(order.getAddressId());
@@ -157,15 +159,8 @@ public class OrderService {
     }
 
     @Transactional
-    public Long saveOrder(CreateOrderRequest createOrderRequest) {
-
-        Member member = memberService.getMemberByMemberId(createOrderRequest.getMemberId());
-        Address address = addressService.getAddressById(createOrderRequest.getAddressId());
-
-        Order order = createOrderRequest.toOrder(member, address);
-        orderUserRepository.save(order);
-
-        return order.getOrderId();
+    public Long saveOrder(OrderRequestWrapper orderRequestWrapper) {
+        return orderSaveFacade.saveOrder(orderRequestWrapper);
     }
 
     @Transactional

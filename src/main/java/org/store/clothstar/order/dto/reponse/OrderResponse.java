@@ -12,7 +12,6 @@ import org.store.clothstar.order.domain.type.PaymentMethod;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.domain.vo.AddressDTO;
 import org.store.clothstar.order.domain.vo.OrderDetailDTO;
-import org.store.clothstar.order.domain.vo.Price;
 import org.store.clothstar.order.domain.vo.TotalPrice;
 
 import java.time.LocalDate;

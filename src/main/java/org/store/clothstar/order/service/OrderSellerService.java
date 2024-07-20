@@ -10,12 +10,12 @@ import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.service.AddressService;
 import org.store.clothstar.member.service.MemberService;
 import org.store.clothstar.order.domain.Order;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.vo.OrderDetailDTO;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
-import org.store.clothstar.order.domain.type.Status;
-import org.store.clothstar.order.domain.OrderDetail;
-import org.store.clothstar.order.domain.vo.OrderDetailDTO;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
@@ -57,7 +57,6 @@ public class OrderSellerService {
         List<Order> waitingOrders = orderSellerRepository.findWaitingOrders();
 
         List<Order> filteredOrders = waitingOrders.stream()
-                .filter(order -> order.getDeletedAt() == null)
                 .toList();
 
         return filteredOrders.stream()

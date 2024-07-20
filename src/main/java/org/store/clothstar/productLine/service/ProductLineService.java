@@ -138,4 +138,8 @@ public class ProductLineService {
     public List<ProductLineEntity> findByIdIn(List<Long> productLineIds) {
         return productLineRepository.findByIdIn(productLineIds);
     }
+
+    public Optional<ProductLineEntity> findById(Long productLineId) {
+        return productLineRepository.findById(productLineId);
+    }
 }

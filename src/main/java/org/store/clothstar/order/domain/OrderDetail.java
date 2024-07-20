@@ -38,4 +38,8 @@ public class OrderDetail extends BaseEntity {
     public void updateDeletedAt() {
         this.deletedAt = LocalDateTime.now();
     }
+
+    public void setterOrder(Order order) {
+        this.order = order;
+    }
 }
