@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductLineWithProductsJPAResponse {
+public class ProductLinePaginationResponse {
 
     @Schema(description = "상품 id", example = "1")
     private Long productLineId;
@@ -41,7 +41,7 @@ public class ProductLineWithProductsJPAResponse {
     private ProductLineStatus status;
 
     @Schema(description = "상품 옵션")
-    private List<ProductResponse> productList = new ArrayList<>();
+    private List<ProductResponse> productList;
 
     @Schema(description = "상품 판매량", example = "10")
     private Long saleCount;  // ~개 판매중
@@ -56,8 +56,7 @@ public class ProductLineWithProductsJPAResponse {
     @Schema(description = "수정일시")
     private LocalDateTime modifiedAt;
 
-    @QueryProjection
-    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Seller seller, Long totalStock) {
+    public ProductLinePaginationResponse(ProductLineEntity productLine, Seller seller, Long totalStock) {
         this.productLineId = productLine.getProductLineId();
         this.name = productLine.getName();
         this.content = productLine.getContent();

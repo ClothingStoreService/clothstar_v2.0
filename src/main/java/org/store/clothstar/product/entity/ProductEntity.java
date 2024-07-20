@@ -10,28 +10,23 @@ import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.dto.request.UpdateProductRequest;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 
-@Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@BatchSize(size = 100)
-@Table(name = "product")
+//@BatchSize(size = 100)
+@Entity(name = "product")
 public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
+    private String name;
+    private int extraCharge;
+    private Long stock;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_line_id", nullable = false)
-//    @JsonManagedReference
     private ProductLineEntity productLine;
-
-    private String name;
-
-    private int extraCharge;
-
-    private Long stock;
 
     public void updateOption(UpdateProductRequest updateProductRequest) {
         this.name = updateProductRequest.getName();

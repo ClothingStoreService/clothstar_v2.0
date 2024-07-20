@@ -23,40 +23,32 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@BatchSize(size = 100)
 @Entity(name = "product_line")
-//@Table(name = "product_line")
 public class ProductLineEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productLineId;
+    private String name;
+    private String content;
+    private int price;
+    private Long saleCount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Seller seller;
+    @Enumerated(EnumType.STRING)
+    private ProductLineStatus status;
+
+
+    @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<ProductEntity> products;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity category;
 
-    private String name;
-
-    private String content;
-
-    private int price;
-
-//    private Long totalStock;
-
-    @Enumerated(EnumType.STRING)
-    private ProductLineStatus status;
-
-    private Long saleCount;
-
-    @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JsonBackReference
-    @JsonIgnore
-    private List<ProductEntity> products;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Seller seller;
 
     public void updateProductLine(UpdateProductLineRequest updateProductLineRequest) {
         this.name = updateProductLineRequest.getName();
