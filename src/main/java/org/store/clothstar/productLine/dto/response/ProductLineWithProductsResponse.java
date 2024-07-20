@@ -8,8 +8,8 @@ import lombok.*;
 import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.dto.response.SellerSimpleResponse;
 import org.store.clothstar.product.dto.response.ProductResponse;
+import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductLineWithProductsJPAResponse {
+public class ProductLineWithProductsResponse {
 
     @Schema(description = "상품 id", example = "1")
     private Long productLineId;
@@ -41,7 +41,7 @@ public class ProductLineWithProductsJPAResponse {
     private ProductLineStatus status;
 
     @Schema(description = "상품 옵션")
-    private List<ProductResponse> productList = new ArrayList<>();
+    private List<ProductResponse> productList;
 
     @Schema(description = "상품 판매량", example = "10")
     private Long saleCount;  // ~개 판매중
@@ -57,7 +57,7 @@ public class ProductLineWithProductsJPAResponse {
     private LocalDateTime modifiedAt;
 
     @QueryProjection
-    public ProductLineWithProductsJPAResponse(ProductLineEntity productLine, Seller seller, Long totalStock) {
+    public ProductLineWithProductsResponse(ProductLine productLine, Seller seller, Long totalStock) {
         this.productLineId = productLine.getProductLineId();
         this.name = productLine.getName();
         this.content = productLine.getContent();
