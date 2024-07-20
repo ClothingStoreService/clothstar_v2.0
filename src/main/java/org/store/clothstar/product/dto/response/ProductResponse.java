@@ -2,7 +2,7 @@ package org.store.clothstar.product.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.product.domain.Product;
 
 @Getter
 @Builder
@@ -14,7 +14,7 @@ public class ProductResponse {
     private Long stock;
 
 
-    public static ProductResponse from(ProductEntity product) {
+    public static ProductResponse from(Product product) {
         return ProductResponse.builder()
                 .productId(product.getProductId())
                 .productLineId(product.getProductLine().getProductLineId())

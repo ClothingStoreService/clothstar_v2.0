@@ -10,12 +10,17 @@ import org.store.clothstar.order.domain.OrderDetail;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.order.repository.order.OrderDetailRepository;
+<<<<<<< HEAD
 import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.repository.ProductJPARepository;
+=======
+import org.store.clothstar.product.domain.Product;
+import org.store.clothstar.product.repository.ProductRepository;
+>>>>>>> a7a8e09 (refactor: productLine, product 엔티티, 레포지토리 클래스 이름 변경, Paging 개선)
 import org.store.clothstar.product.service.ProductService;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
-import org.store.clothstar.productLine.repository.ProductLineJPARepository;
+import org.store.clothstar.productLine.domain.ProductLine;
+import org.store.clothstar.productLine.repository.ProductLineRepository;
 
 import java.util.List;
 
@@ -25,22 +30,57 @@ public class OrderDetailService {
     private final OrderUserRepository orderUserRepository;
     private final ProductService productService;
     private final OrderDetailRepository orderDetailRepository;
-    private final ProductJPARepository productJPARepository;
-    private final ProductLineJPARepository productLineJPARepository;
+    private final ProductRepository productRepository;
+    private final ProductLineRepository productLineRepository;
 
     public OrderDetailService(
             OrderDetailRepository orderDetailRepository,
             OrderUserRepository orderUserRepository, ProductService productService
-            , ProductJPARepository productJPARepository
-            , ProductLineJPARepository productLineJPARepository
+            , ProductRepository productRepository
+            , ProductLineRepository productLineRepository
     ) {
         this.orderUserRepository = orderUserRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.productService = productService;
-        this.productJPARepository = productJPARepository;
-        this.productLineJPARepository = productLineJPARepository;
+        this.productRepository = productRepository;
+        this.productLineRepository = productLineRepository;
     }
 
+<<<<<<< HEAD
+=======
+    // 주문 생성시 같이 호출되는 주문 상세 생성 메서드 - 하나의 트랜잭션으로 묶임
+    @Transactional
+    public void saveOrderDetailWithOrder(CreateOrderDetailRequest createOrderDetailRequest, long orderId) {
+
+        Order order = orderUserRepository.findById(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 정보를 찾을 수 없습니다."));
+
+        ProductLine productLine = productLineRepository.findById(createOrderDetailRequest.getProductLineId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
+
+        Product product = productRepository.findById(createOrderDetailRequest.getProductId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
+
+        // 주문상세 생성 유효성 검사: 주문 수량이 상품 재고보다 클 경우, 주문이 생성되지 않는다.
+        if (createOrderDetailRequest.getQuantity() > product.getStock()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 개수가 재고보다 더 많습니다.");
+        }
+
+        OrderDetail orderDetail = createOrderDetailRequest.toOrderDetail(order, productLine, product);
+        orderDetailRepository.save(orderDetail);
+
+        // 주문 정보 업데이트: 주문 상세 생성에 따른, 총 상품 금액과 총 결제 금액 업데이트
+        int newTotalProductsPrice = order.getTotalPrice().getProducts() + orderDetail.getPrice().getOneKindTotalPrice();
+        int newTotalPaymentPrice =
+                order.getTotalPrice().getProducts() + order.getTotalPrice().getShipping() + orderDetail.getPrice().getOneKindTotalPrice();
+
+        order.getTotalPrice().updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
+
+        // 주문 수량만큼 상품 재고 차감
+        updateProductStock(product, orderDetail.getQuantity());
+    }
+
+>>>>>>> a7a8e09 (refactor: productLine, product 엔티티, 레포지토리 클래스 이름 변경, Paging 개선)
     // 주문 상세 추가 생성
     @Transactional
     public Long addOrderDetail(AddOrderDetailRequest addOrderDetailRequest) {
@@ -48,13 +88,21 @@ public class OrderDetailService {
         Order order = orderUserRepository.findById(addOrderDetailRequest.getOrderId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 정보를 찾을 수 없습니다."));
 
+<<<<<<< HEAD
         ProductLineEntity productLineEntity = productLineJPARepository.findById(addOrderDetailRequest.getProductLineId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
 
         ProductEntity productEntity = productJPARepository.findById(addOrderDetailRequest.getProductId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
+=======
+        ProductLine productLine = productLineRepository.findById(addOrderDetailRequest.getProductLineId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
 
-        if (addOrderDetailRequest.getQuantity() > productEntity.getStock()) {
+        Product product = productRepository.findById(addOrderDetailRequest.getProductId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
+>>>>>>> a7a8e09 (refactor: productLine, product 엔티티, 레포지토리 클래스 이름 변경, Paging 개선)
+
+        if (addOrderDetailRequest.getQuantity() > product.getStock()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 개수가 재고보다 더 많습니다.");
         }
 
@@ -62,7 +110,7 @@ public class OrderDetailService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문이 이미 처리된 상태에서는 추가 주문이 불가능합니다.");
         }
 
-        OrderDetail orderDetail = addOrderDetailRequest.toOrderDetail(order, productLineEntity, productEntity);
+        OrderDetail orderDetail = addOrderDetailRequest.toOrderDetail(order, productLine, product);
         orderDetailRepository.save(orderDetail);
 
         int newTotalProductsPrice = order.getTotalPrice().getProducts() + orderDetail.getPrice().getOneKindTotalPrice();
@@ -71,7 +119,7 @@ public class OrderDetailService {
 
         order.getTotalPrice().updatePrices(newTotalProductsPrice, newTotalPaymentPrice);
 
-        updateProductStock(productEntity, orderDetail.getQuantity());
+        updateProductStock(product, orderDetail.getQuantity());
 
         return orderDetail.getOrderDetailId();
     }
@@ -90,9 +138,9 @@ public class OrderDetailService {
     }
 
     @Transactional
-    public void updateProductStock(ProductEntity productEntity, int quantity) {
-        long updatedStock = productEntity.getStock() - quantity;
-        productEntity.updateStock(updatedStock);
+    public void updateProductStock(Product product, int quantity) {
+        long updatedStock = product.getStock() - quantity;
+        product.updateStock(updatedStock);
     }
 
     @Transactional
