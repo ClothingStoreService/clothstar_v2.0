@@ -1,36 +1,15 @@
 package org.store.clothstar.order.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.store.clothstar.category.dto.request.CreateCategoryRequest;
-import org.store.clothstar.category.entity.CategoryEntity;
-import org.store.clothstar.category.repository.CategoryJpaRepository;
-import org.store.clothstar.member.domain.Address;
-import org.store.clothstar.member.domain.Member;
-import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.dto.request.CreateAddressRequest;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
-import org.store.clothstar.member.repository.AddressRepository;
-import org.store.clothstar.member.repository.MemberRepository;
-import org.store.clothstar.member.repository.SellerRepository;
-import org.store.clothstar.member.util.CreateObject;
-import org.store.clothstar.order.domain.Order;
-import org.store.clothstar.order.domain.OrderDetail;
 import org.store.clothstar.order.domain.type.PaymentMethod;
-import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.order.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
-import org.store.clothstar.order.repository.order.OrderDetailRepository;
-import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
-import org.store.clothstar.product.entity.ProductEntity;
-import org.store.clothstar.product.repository.ProductJPARepository;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
-import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
 
 public class CreateOrder {

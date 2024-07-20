@@ -1,35 +1,28 @@
 package org.store.clothstar.order.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-import org.store.clothstar.category.dto.request.CreateCategoryRequest;
 import org.store.clothstar.category.entity.CategoryEntity;
 import org.store.clothstar.category.repository.CategoryJpaRepository;
 import org.store.clothstar.common.dto.SaveResponseDTO;
 import org.store.clothstar.member.domain.Address;
 import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.domain.Seller;
-import org.store.clothstar.member.dto.request.CreateAddressRequest;
-import org.store.clothstar.member.dto.request.CreateSellerRequest;
 import org.store.clothstar.member.repository.AddressRepository;
 import org.store.clothstar.member.repository.MemberRepository;
 import org.store.clothstar.member.repository.SellerRepository;
 import org.store.clothstar.member.util.CreateObject;
 import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.OrderDetail;
-import org.store.clothstar.order.domain.type.PaymentMethod;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.request.AddOrderDetailRequest;
 import org.store.clothstar.order.dto.request.CreateOrderDetailRequest;
@@ -37,21 +30,17 @@ import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
 import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
-import org.store.clothstar.order.service.OrderDetailService;
-import org.store.clothstar.order.service.OrderService;
 import org.store.clothstar.order.util.CreateOrder;
-import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.entity.ProductEntity;
 import org.store.clothstar.product.repository.ProductJPARepository;
-import org.store.clothstar.productLine.domain.type.ProductLineStatus;
-import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.entity.ProductLineEntity;
 import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc

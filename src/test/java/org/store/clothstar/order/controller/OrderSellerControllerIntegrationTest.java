@@ -31,7 +31,6 @@ import org.store.clothstar.order.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
-import org.store.clothstar.order.service.OrderDetailService;
 import org.store.clothstar.order.service.OrderSellerService;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
 import org.store.clothstar.product.entity.ProductEntity;
@@ -43,8 +42,10 @@ import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
