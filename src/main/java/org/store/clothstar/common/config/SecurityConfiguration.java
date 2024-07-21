@@ -5,6 +5,8 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -45,6 +47,14 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    public RoleHierarchy roleHierarchy() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        //이 부분에서 큰 권한 순서로 ' > ' 를 사용하여 입력해준다. 띄어쓰기도 중요하다.
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_SELLER > ROLE_USER");
+        return roleHierarchy;
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -58,7 +68,7 @@ public class SecurityConfiguration {
                         "/productLinePagingSlice", "/productLinePagingOffset",
                         "/v1/orderdetails", "/v1/orders", "membersPagingOffset", "membersPagingSlice",
                         "/v1/orderdetails", "/v1/orders", "/v2/orders", "/v3/orders", "/v1/orders/list",
-                        "/v1/orders/list","/ordersPagingOffset","/ordersPagingSlice","/v2/orders/list",
+                        "/v1/orders/list", "/ordersPagingOffset", "/ordersPagingSlice", "/v2/orders/list",
                         "/v1/seller/orders/**", "/v1/seller/orders", "/v1/orders/**", "/v1/orderdetails/**",
                         "/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs/**", "/v1/members/auth/**"
                 ).permitAll()

@@ -37,23 +37,24 @@ spring:
     activate:
       on-profile: "db-local"
   datasource:
-    url: jdbc:h2:mem:localdb
-  h2:
-    console:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/clothstar82
+    username: root
+    password: qwerasdf
+    p6spy:
       enabled: true
-  thymeleaf:
-    cache: false
+      appender: com.p6spy.engine.spy.appender.Slf4JLogger
+      logMessageFormat:
+        p6spy: "%(currentTime)|%(executionTime)|%(category)|%(sqlSingleLine)"
   jpa:
     show-sql: true
-    database-platform: H2
+    database-platform: org.hibernate.dialect.MySQLDialect
     properties:
       hibernate:
+        ddl-auto: create
         format_sql: true
 
-
 --- # dev 공통 설정
-
-
 spring:
   config:
     activate:
