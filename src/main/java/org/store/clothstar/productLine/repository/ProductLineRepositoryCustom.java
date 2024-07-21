@@ -6,6 +6,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 import org.store.clothstar.productLine.domain.ProductLine;
 
+import java.util.Optional;
+
 @Repository
 public interface ProductLineRepositoryCustom {
     Page<ProductLine> getProductLinesWithOptions(Pageable pageable);

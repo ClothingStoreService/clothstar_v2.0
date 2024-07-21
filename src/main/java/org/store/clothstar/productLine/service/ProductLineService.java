@@ -58,12 +58,6 @@ public class ProductLineService {
         return allSlicePaging.map(this::convertToDtoWithProducts);
     }
 
-    @Transactional(readOnly = true)
-    public Slice<ProductLineDetailResponse> getAllProductLinesWithProductsSlicePaging(Pageable pageable, String keyword) {
-        Slice<ProductLineEntity> allSlicePaging = productLineRepository.findAllSlicePaging(pageable, keyword);
-        return allSlicePaging.map(this::convertToDtoWithProducts);
-    }
-
     @Deprecated
     @Transactional(readOnly = true)
     public ProductLineWithProductsResponse getProductLineWithProducts(Long productLineId) {
@@ -143,7 +137,7 @@ public class ProductLineService {
         return productLineRepository.findByIdIn(productLineIds);
     }
 
-    public Optional<ProductLineEntity> findById(Long productLineId) {
+    public Optional<ProductLine> findById(Long productLineId) {
         return productLineRepository.findById(productLineId);
     }
 }

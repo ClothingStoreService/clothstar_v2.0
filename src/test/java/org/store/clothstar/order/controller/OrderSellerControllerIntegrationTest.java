@@ -33,12 +33,8 @@ import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.order.service.OrderSellerService;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
-import org.store.clothstar.product.entity.ProductEntity;
-import org.store.clothstar.product.repository.ProductJPARepository;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
-import org.store.clothstar.productLine.repository.ProductLineJPARepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

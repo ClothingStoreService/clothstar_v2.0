@@ -91,12 +91,12 @@ public class ProductService {
         return productRepository.findByIdIn(productIds);
     }
 
-    public Optional<ProductEntity> findById(Long productId) {
+    public Optional<Product> findById(Long productId) {
         return productRepository.findById(productId);
     }
 
     @Transactional
-    public void updateProductStock(ProductEntity productEntity, int quantity) {
+    public void updateProductStock(Product productEntity, int quantity) {
         long updatedStock = productEntity.getStock() - quantity;
         productEntity.updateStock(updatedStock);
     }

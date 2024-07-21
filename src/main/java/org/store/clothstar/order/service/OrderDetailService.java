@@ -9,7 +9,9 @@ import org.store.clothstar.order.domain.Order;
 import org.store.clothstar.order.domain.OrderDetail;
 import org.store.clothstar.order.domain.type.Status;
 import org.store.clothstar.order.dto.request.AddOrderDetailRequest;
+import org.store.clothstar.order.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.order.repository.order.OrderDetailRepository;
+import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.repository.ProductRepository;
 import org.store.clothstar.product.service.ProductService;
@@ -17,6 +19,8 @@ import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.repository.ProductLineRepository;
 
 import java.util.List;
+
+import static org.store.clothstar.product.domain.QProduct.product;
 
 @Slf4j
 @Service
@@ -47,10 +51,10 @@ public class OrderDetailService {
         Order order = orderUserRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 정보를 찾을 수 없습니다."));
 
-        ProductLineEntity productLineEntity = productLineJPARepository.findById(createOrderDetailRequest.getProductLineId())
+        ProductLine productLineEntity = productLineRepository.findById(createOrderDetailRequest.getProductLineId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
 
-        ProductEntity productEntity = productJPARepository.findById(createOrderDetailRequest.getProductId())
+        Product productEntity = productRepository.findById(createOrderDetailRequest.getProductId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
 
         // 주문상세 생성 유효성 검사: 주문 수량이 상품 재고보다 클 경우, 주문이 생성되지 않는다.
@@ -79,10 +83,10 @@ public class OrderDetailService {
         Order order = orderUserRepository.findById(addOrderDetailRequest.getOrderId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "주문 정보를 찾을 수 없습니다."));
 
-        ProductLineEntity productLineEntity = productLineJPARepository.findById(addOrderDetailRequest.getProductLineId())
+        ProductLine productLine = productLineRepository.findById(addOrderDetailRequest.getProductLineId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션 정보를 찾을 수 없습니다."));
 
-        ProductEntity productEntity = productJPARepository.findById(addOrderDetailRequest.getProductId())
+        Product product = productRepository.findById(addOrderDetailRequest.getProductId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
 
         if (addOrderDetailRequest.getQuantity() > product.getStock()) {

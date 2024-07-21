@@ -13,9 +13,9 @@ import org.store.clothstar.order.domain.OrderDetail;
 import org.store.clothstar.order.dto.request.CreateOrderDetailRequest;
 import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
-import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.service.ProductService;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
+import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.service.ProductLineService;
 
 @Service
@@ -64,19 +64,19 @@ public class OrderSaveFacade {
         CreateOrderDetailRequest createOrderDetailRequest = orderRequestWrapper.getCreateOrderDetailRequest();
         Member member = memberService.getMemberByMemberId(createOrderRequest.getMemberId());
         Address address = addressService.getAddressById(createOrderRequest.getAddressId());
-        ProductLineEntity productLineEntity = productLineService.findById(createOrderDetailRequest.getProductLineId())
+        ProductLine productLine = productLineService.findById(createOrderDetailRequest.getProductLineId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다"));
-        ProductEntity productEntity = productService.findById(createOrderDetailRequest.getProductId())
+        Product product = productService.findById(createOrderDetailRequest.getProductId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품 옵션을 찾을 수 없습니다"));
 
         // 요청 DTO로부터 주문 생성
         Order order = orderCreator.createOrder(createOrderRequest,member,address);
 
         // 주문상세 생성 유효성 검사
-        orderDetailValidator.validateOrderDetail(createOrderDetailRequest,productEntity);
+        orderDetailValidator.validateOrderDetail(createOrderDetailRequest,product);
 
         // 주문상세 생성
-        OrderDetail orderDetail = orderDetailCreator.createOrderDetail(createOrderDetailRequest, order, productLineEntity, productEntity);
+        OrderDetail orderDetail = orderDetailCreator.createOrderDetail(createOrderDetailRequest, order, productLine, product);
 
         // 주문에 주문상세 추가
         orderDetailAdder.addOrderDetail(order, orderDetail);
@@ -88,7 +88,7 @@ public class OrderSaveFacade {
         orderPriceUpdater.updateOrderPrice(order,orderDetail);
 
         // 주문 수량만큼 상품 재고 차감
-        stockUpdater.updateStock(productEntity,orderDetail.getQuantity());
+        stockUpdater.updateStock(product,orderDetail.getQuantity());
 
         return order.getOrderId();
     }

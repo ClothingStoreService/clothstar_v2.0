@@ -20,11 +20,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-<<<<<<<< HEAD:src/main/java/org/store/clothstar/productLine/dto/response/ProductLinePaginationResponse.java
-public class ProductLinePaginationResponse {
-========
 public class ProductLineWithProductsResponse {
->>>>>>>> f719425 (refactor: Response 네이밍 변경):src/main/java/org/store/clothstar/productLine/dto/response/ProductLineWithProductsResponse.java
 
     @Schema(description = "상품 id", example = "1")
     private Long productLineId;

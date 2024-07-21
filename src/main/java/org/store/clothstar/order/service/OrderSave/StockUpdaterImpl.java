@@ -1,7 +1,7 @@
 package org.store.clothstar.order.service.OrderSave;
 
 import org.springframework.stereotype.Service;
-import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.service.ProductService;
 
 @Service
@@ -14,7 +14,7 @@ public class StockUpdaterImpl implements StockUpdater {
     }
 
     @Override
-    public void updateStock(ProductEntity product, int quantity) {
+    public void updateStock(Product product, int quantity) {
         productService.updateProductStock(product, quantity);
     }
 }
