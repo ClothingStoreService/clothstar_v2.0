@@ -1,44 +1,95 @@
 package org.store.clothstar.order.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.store.clothstar.common.dto.MessageDTO;
+import org.store.clothstar.member.domain.Address;
+import org.store.clothstar.member.domain.Member;
+import org.store.clothstar.member.service.AddressService;
+import org.store.clothstar.member.service.MemberService;
+import org.store.clothstar.order.domain.Order;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.vo.OrderDetailDTO;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
-import org.store.clothstar.order.entity.OrderEntity;
-import org.store.clothstar.order.repository.order.OrderRepository;
-import org.store.clothstar.order.repository.orderSeller.JpaOrderSellerRepository;
+import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.order.repository.orderSeller.OrderSellerRepository;
-import org.store.clothstar.order.type.Status;
-import org.store.clothstar.orderDetail.service.OrderDetailService;
+import org.store.clothstar.order.domain.type.Status;
+import org.store.clothstar.order.domain.OrderDetail;
+import org.store.clothstar.order.domain.vo.OrderDetailDTO;
+import org.store.clothstar.product.domain.Product;
+import org.store.clothstar.product.service.ProductService;
+import org.store.clothstar.productLine.domain.ProductLine;
+import org.store.clothstar.productLine.service.ProductLineService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderSellerService {
 
-
     private final OrderSellerRepository orderSellerRepository;
-    private final OrderRepository orderRepository;
+    private final OrderUserRepository orderUserRepository;
     private final OrderDetailService orderDetailService;
+    private final MemberService memberService;
+    private final AddressService addressService;
+    private final ProductService productService;
+    private final ProductLineService productLineService;
 
     public OrderSellerService(
-            @Qualifier("jpaOrderSellerRepository") OrderSellerRepository orderSellerRepository,
-            @Qualifier("jpaOrderRepository") OrderRepository orderRepository
-            ,OrderDetailService orderDetailService
+            OrderSellerRepository orderSellerRepository
+            , OrderUserRepository orderUserRepository
+            , OrderDetailService orderDetailService
+            , MemberService memberService, AddressService addressService
+            , ProductService productService, ProductLineService productLineService
     ) {
         this.orderSellerRepository = orderSellerRepository;
-        this.orderRepository = orderRepository;
+        this.orderUserRepository = orderUserRepository;
         this.orderDetailService=orderDetailService;
+        this.memberService = memberService;
+        this.addressService = addressService;
+        this.productService = productService;
+        this.productLineService = productLineService;
     }
 
     @Transactional(readOnly = true)
-    public List<OrderEntity> getWaitingOrder() {
+    public List<OrderResponse> getWaitingOrder() {
+        List<Order> waitingOrders = orderSellerRepository.findWaitingOrders();
 
-        return orderSellerRepository.findWaitingOrders().stream()
+        List<Order> filteredOrders = waitingOrders.stream()
+                .toList();
+
+        return filteredOrders.stream()
+                .map(order -> {
+                    Member member = memberService.getMemberByMemberId(order.getMemberId());
+                    Address address = addressService.getAddressById(order.getAddressId());
+                    OrderResponse orderResponse = OrderResponse.from(order, member, address);
+
+                    List<OrderDetail> orderDetails = order.getOrderDetails().stream()
+                            .filter(orderDetail -> orderDetail.getDeletedAt() == null)
+                            .toList();
+                    List<Long> productIds = orderDetails.stream().map(OrderDetail::getProductId).collect(Collectors.toList());
+                    List<Long> productLineIds = orderDetails.stream().map(OrderDetail::getProductLineId).collect(Collectors.toList());
+
+                    List<Product> products = productService.findByIdIn(productIds);
+                    List<ProductLine> productLines = productLineService.findByIdIn(productLineIds);
+
+                    Map<Long, Product> productMap = products.stream().collect(Collectors.toMap(Product::getProductId, product -> product));
+                    Map<Long, ProductLine> productLineMap = productLines.stream().collect(Collectors.toMap(ProductLine::getProductLineId, productLine -> productLine));
+
+                    List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream().map(orderDetail -> {
+                        Product product = productMap.get(orderDetail.getProductId());
+                        ProductLine productLine = productLineMap.get(orderDetail.getProductLineId());
+                        return OrderDetailDTO.from(orderDetail, product, productLine);
+                    }).collect(Collectors.toList());
+
+                    orderResponse.setterOrderDetailList(orderDetailDTOList);
+
+                    return orderResponse;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -47,16 +98,13 @@ public class OrderSellerService {
         MessageDTO messageDTO;
 
         // 주문 유효성 검사
-        orderRepository.findById(orderId)
-                .filter(OrderEntity -> OrderEntity.getStatus() == Status.WAITING)
+        Order order = orderUserRepository.findById(orderId)
+                .filter(Order -> Order.getStatus() == Status.WAITING)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문이 존재하지 않거나 상태가 'WAITING'이 아니어서 처리할 수 없습니다."));
 
-        orderSellerRepository.approveOrder(orderId);
+        order.setterStatus(Status.APPROVE);
+        orderSellerRepository.save(order);
         messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 승인 되었습니다.");
-
-        orderRepository.findById(orderId)
-                .map(OrderResponse::fromOrderEntity)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "처리 후 주문 정보를 찾을 수 없습니다."));
 
         return messageDTO;
     }
@@ -66,17 +114,14 @@ public class OrderSellerService {
         MessageDTO messageDTO;
 
         // 주문 유효성 검사
-        orderRepository.findById(orderId)
+        Order order = orderUserRepository.findById(orderId)
                 .filter(Order -> Order.getStatus() == Status.WAITING)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문이 존재하지 않거나 상태가 'WAITING'이 아니어서 처리할 수 없습니다."));
 
-        orderSellerRepository.cancelOrder(orderId);
+        order.setterStatus(Status.CANCEL);
+        orderSellerRepository.save(order);
         orderDetailService.restoreStockByOrder(orderId);
         messageDTO = new MessageDTO(HttpStatus.OK.value(), "주문이 정상적으로 취소 되었습니다.");
-
-        orderRepository.findById(orderId)
-                .map(OrderResponse::fromOrderEntity)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "처리 후 주문 정보를 찾을 수 없습니다."));
 
         return messageDTO;
     }

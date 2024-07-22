@@ -2,18 +2,28 @@ package org.store.clothstar.productLine.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.store.clothstar.category.entity.CategoryEntity;
+import org.store.clothstar.category.repository.CategoryJpaRepository;
+import org.store.clothstar.member.domain.Seller;
+import org.store.clothstar.member.repository.SellerRepository;
+import org.store.clothstar.product.dto.response.ProductResponse;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.productLine.domain.ProductLine;
+import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
 import org.store.clothstar.productLine.dto.response.ProductLineResponse;
 import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
 import org.store.clothstar.productLine.repository.ProductLineRepository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,68 +34,110 @@ import java.util.stream.Collectors;
 public class ProductLineService {
 
     private final ProductLineRepository productLineRepository;
+    private final SellerRepository sellerRepository;
+    private final CategoryJpaRepository categoryRepository;
 
     @Transactional(readOnly = true)
     public List<ProductLineResponse> getAllProductLines() {
-        return productLineRepository.selectAllProductLinesNotDeleted().stream()
+        return productLineRepository.findByDeletedAtIsNullAndStatusNotIn(
+                        Arrays.asList(ProductLineStatus.HIDDEN))
+                .stream()
                 .map(ProductLineResponse::from)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public Optional<ProductLineResponse> getProductLine(Long productLineId) {
-        return productLineRepository.selectByProductLineId(productLineId)
-                .map(ProductLineResponse::from);
+    public Page<ProductLineWithProductsResponse> getAllProductLinesWithProductsOffsetPaging(Pageable pageable, String keyword) {
+        Page<ProductLine> allOffsetPaging = productLineRepository.findAllOffsetPaging(pageable, keyword);
+        return allOffsetPaging.map(this::convertToDtoWithProducts);
     }
 
     @Transactional(readOnly = true)
+    public Slice<ProductLineWithProductsResponse> getAllProductLinesWithProductsSlicePaging(Pageable pageable, String keyword) {
+        Slice<ProductLine> allSlicePaging = productLineRepository.findAllSlicePaging(pageable, keyword);
+        return allSlicePaging.map(this::convertToDtoWithProducts);
+    }
+
+    @Deprecated
+    @Transactional(readOnly = true)
     public ProductLineWithProductsResponse getProductLineWithProducts(Long productLineId) {
-        ProductLineWithProductsResponse productLineWithProducts = productLineRepository.selectProductLineWithOptions(productLineId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "productLineId :" + productLineId + "인 상품 및 옵션 정보를 찾을 수 없습니다."));
-        List<Product> productList = productLineWithProducts.getProductList();
+        ProductLine productLineWithProducts =
+                productLineRepository.findProductLineWithOptionsById(productLineId)
+                        .orElseThrow(() -> new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST, "productLineId :" + productLineId + "인 상품 및 옵션 정보를 찾을 수 없습니다."));
 
-        Long totalStock = 0L;
-        for (Product product : productList) {
-            totalStock += product.getStock();
-        }
 
-        productLineWithProducts.setTotalStock(totalStock);
+        return convertToDtoWithProducts(productLineWithProducts);
+    }
 
-        return productLineWithProducts;
+    @Transactional
+    public Page<ProductLineWithProductsResponse> getProductLinesByCategoryWithOffsetPaging(Long categoryId, Pageable pageable, String keyword) {
+        Page<ProductLine> productLineEntities = productLineRepository.findEntitiesByCategoryWithOffsetPaging(categoryId, pageable, keyword);
+        return productLineEntities.map(this::convertToDtoWithProducts);
+    }
+
+    @Transactional
+    public Slice<ProductLineWithProductsResponse> getProductLinesByCategoryWithSlicePaging(Long categoryId, Pageable pageable, String keyword) {
+        Slice<ProductLine> productLineEntities = productLineRepository.findEntitiesByCategoryWithSlicePaging(categoryId, pageable, keyword);
+        return productLineEntities.map(this::convertToDtoWithProducts);
     }
 
     @Transactional
     public Long createProductLine(CreateProductLineRequest createProductLineRequest) {
         Long memberId = 1L;
-        ProductLine product = createProductLineRequest.toProductLine(memberId);
-        productLineRepository.save(product);
-        return product.getProductLineId();
+
+        Seller seller = sellerRepository.findById(memberId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "판매자 정보를 찾을 수 없습니다."));
+
+        CategoryEntity category = categoryRepository.findById(createProductLineRequest.getCategoryId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "카테고리를 찾을 수 없습니다."));
+
+        ProductLine productLine = createProductLineRequest.toProductLineEntity(seller, category);
+        ProductLine savedProductLine = productLineRepository.save(productLine);
+        return savedProductLine.getProductLineId();
     }
 
     @Transactional
     public void updateProductLine(Long productLineId, UpdateProductLineRequest updateProductLineRequest) {
-        ProductLine productLine = productLineRepository.selectByProductLineId(productLineId)
+        ProductLine productLine = productLineRepository.findById(productLineId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품 정보를 찾을 수 없습니다."));
 
         productLine.updateProductLine(updateProductLineRequest);
-
-        productLineRepository.updateProductLine(productLine);
     }
 
     @Transactional
     public void setDeletedAt(Long productId) {
-        ProductLine productLine = productLineRepository.selectByProductLineId(productId)
+        ProductLine productLine = productLineRepository.findById(productId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품 정보를 찾을 수 없습니다."));
 
-        productLine.setDeletedAt();
+        productLine.delete();
+    }
 
-        ProductLine prodcutLine = productLineRepository.selectByProductLineId(productId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품 정보를 찾을 수 없습니다."));
+    private ProductLineWithProductsResponse convertToDtoWithProducts(ProductLine productLine) {
+        // 전체 재고량 계산
+        Long totalStock = productLine.getProducts().stream().mapToLong(Product::getStock).sum();
 
-        prodcutLine.setDeletedAt();
+        // ProductLineWithProductsJPAResponse 객체 생성
+        ProductLineWithProductsResponse dto = new ProductLineWithProductsResponse(
+                productLine,
+                productLine.getSeller(),
+                totalStock
+        );
 
-        productLineRepository.setDeletedAt(prodcutLine);
+        // productList 설정
+        List<ProductResponse> productResponses = productLine.getProducts().stream()
+                .map(ProductResponse::from)
+                .collect(Collectors.toList());
+        dto.setProductList(productResponses);
+
+        return dto;
+    }
+
+    public List<ProductLine> findByIdIn(List<Long> productLineIds) {
+        return productLineRepository.findByProductLineIdIn(productLineIds);
+    }
+
+    public Optional<ProductLine> findById(Long productLineId) {
+        return productLineRepository.findById(productLineId);
     }
 }

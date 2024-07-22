@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.product.domain.Product;
+import org.store.clothstar.productLine.domain.ProductLine;
 
 @Getter
 @AllArgsConstructor
@@ -30,9 +31,9 @@ public class CreateProductRequest {
     @PositiveOrZero(message = "0이상 양수를 입력해주세요")
     private Long stock;
 
-    public Product toProduct() {
+    public Product toProductEntity(ProductLine productLine) {
         return Product.builder()
-                .productLineId(productLineId)
+                .productLine(productLine)
                 .name(name)
                 .extraCharge(extraCharge)
                 .stock(stock)

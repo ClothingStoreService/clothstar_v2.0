@@ -12,7 +12,7 @@ class JasyptConfigTest {
         String url = "";
         String username = "";
         String password = "";
-        
+
         System.out.println(jasyptEncoding(url));
         System.out.println(jasyptEncoding(username));
         System.out.println(jasyptEncoding(password));
@@ -24,5 +24,13 @@ class JasyptConfigTest {
         pbeEnc.setAlgorithm("PBEWithMD5AndDES");
         pbeEnc.setPassword(key);
         return pbeEnc.encrypt(value);
+    }
+
+    public String jasyptDecoding(String value) {
+        String key = "my_jasypt_key";
+        StandardPBEStringEncryptor pbeEnc = new StandardPBEStringEncryptor();
+        pbeEnc.setAlgorithm("PBEWithMD5AndDES");
+        pbeEnc.setPassword(key);
+        return pbeEnc.decrypt(value);
     }
 }

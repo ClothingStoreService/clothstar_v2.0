@@ -1,22 +1,16 @@
 package org.store.clothstar.productLine.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import org.store.clothstar.productLine.domain.ProductLine;
-import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
+import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface ProductLineRepository {
+@Repository
+public interface ProductLineRepository extends JpaRepository<ProductLine, Long>, ProductLineRepositoryCustom {
 
-    List<ProductLine> selectAllProductLinesNotDeleted();
+    List<ProductLine> findByDeletedAtIsNullAndStatusNotIn(List<ProductLineStatus> statuses);
 
-    Optional<ProductLine> selectByProductLineId(Long productId);
-
-    Optional<ProductLineWithProductsResponse> selectProductLineWithOptions(Long productId);
-
-    int save(ProductLine productLine);
-
-    int updateProductLine(ProductLine productLine);
-
-    int setDeletedAt(ProductLine productLine);
+    List<ProductLine> findByProductLineIdIn(List<Long> productLineIds);
 }

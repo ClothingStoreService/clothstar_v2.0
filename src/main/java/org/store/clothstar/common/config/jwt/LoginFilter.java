@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -15,8 +17,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.common.util.MessageDTOBuilder;
 import org.store.clothstar.member.domain.CustomUserDetails;
+import org.store.clothstar.member.domain.Member;
 import org.store.clothstar.member.dto.request.MemberLoginRequest;
-import org.store.clothstar.member.entity.MemberEntity;
 
 import java.io.IOException;
 
@@ -69,12 +71,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                                             Authentication authentication) throws IOException, ServletException {
         log.info("로그인 성공");
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        MemberEntity memberEntity = customUserDetails.getMemberEntity();
-        log.info("member: {}", memberEntity.toString());
+        Member member = customUserDetails.getMember();
+        log.info("member: {}", member.toString());
 
-        String accessToken = jwtUtil.createAccessToken(memberEntity);
+        String accessToken = jwtUtil.createAccessToken(member);
         log.info("생성 accessToken: Bearer {}", accessToken);
-        String refreshToken = jwtUtil.createRefreshToken(memberEntity);
+        String refreshToken = jwtUtil.createRefreshToken(member);
         log.info("생성 refreshToken: Bearer {}", refreshToken);
 
         response.addHeader("Authorization", "Bearer " + accessToken);
@@ -93,13 +95,26 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
         log.info("로그인 실패");
+
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
 
-        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(HttpServletResponse.SC_UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다. 다시 확인해주세요.");
+        MessageDTO messageDTO = MessageDTOBuilder.buildMessage(HttpServletResponse.SC_UNAUTHORIZED, errorMessage(failed));
         ObjectMapper om = new ObjectMapper();
 
         response.getWriter().print(om.writeValueAsString(messageDTO));
+    }
+
+    private String errorMessage(AuthenticationException failed) {
+        String errorMessage = null;
+
+        if (failed instanceof BadCredentialsException) {
+            errorMessage = "이메일 또는 비밀번호가 올바르지 않습니다. 다시 확인해주세요.";
+        } else if (failed instanceof DisabledException) {
+            errorMessage = "계정이 비활성화 되어있습니다. 이메일 인증을 완료해주세요";
+        }
+
+        return errorMessage;
     }
 }

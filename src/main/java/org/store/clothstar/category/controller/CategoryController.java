@@ -2,6 +2,10 @@ package org.store.clothstar.category.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,6 +17,8 @@ import org.store.clothstar.category.dto.response.CategoryResponse;
 import org.store.clothstar.category.service.CategoryService;
 import org.store.clothstar.common.dto.MessageDTO;
 import org.store.clothstar.common.util.URIBuilder;
+import org.store.clothstar.productLine.dto.response.ProductLineWithProductsResponse;
+import org.store.clothstar.productLine.service.ProductLineService;
 
 import java.net.URI;
 import java.util.List;
@@ -23,6 +29,7 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final ProductLineService  productLineService;
 
     @Operation(summary = "전체 카테고리 조회", description = "모든 카테고리를 조회한다.")
     @GetMapping
@@ -57,5 +64,25 @@ public class CategoryController {
         categoryService.updateCategory(categoryId, updateCategoryRequest);
 
         return ResponseEntity.ok().body(new MessageDTO(HttpStatus.OK.value(), "Category updated successfully"));
+    }
+
+    @Operation(summary = "카테고리별 상품 조회 (Offset Paging)", description = "카테고리 ID로 해당 카테고리에 속하는 모든 상품을 Offset Paging을 통해 조회한다.")
+    @GetMapping("/{categoryId}/productLines/offset")
+    public ResponseEntity<Page<ProductLineWithProductsResponse>> getProductLinesByCategory(
+            @PathVariable Long categoryId,
+            @PageableDefault(size = 18) Pageable pageable,
+            @RequestParam(required = false) String keyword) {
+        Page<ProductLineWithProductsResponse> productLineResponses = productLineService.getProductLinesByCategoryWithOffsetPaging(categoryId, pageable, keyword);
+        return ResponseEntity.ok().body(productLineResponses);
+    }
+
+    @Operation(summary = "카테고리별 상품 조회 (Slice Paging)", description = "카테고리 ID로 해당 카테고리에 속하는 모든 상품을 Slice Paging을 통해 조회한다.")
+    @GetMapping("/{categoryId}/productLines/slice")
+    public ResponseEntity<Slice<ProductLineWithProductsResponse>> getProductLinesByCategorySlice(
+            @PathVariable Long categoryId,
+            @PageableDefault(size = 18) Pageable pageable,
+            @RequestParam(required = false) String keyword) {
+        Slice<ProductLineWithProductsResponse> productLineResponses = productLineService.getProductLinesByCategoryWithSlicePaging(categoryId, pageable, keyword);
+        return ResponseEntity.ok().body(productLineResponses);
     }
 }

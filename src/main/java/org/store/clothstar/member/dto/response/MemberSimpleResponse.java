@@ -2,7 +2,7 @@ package org.store.clothstar.member.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.store.clothstar.member.entity.MemberEntity;
+import org.store.clothstar.member.domain.Member;
 
 @Getter
 @Builder
@@ -12,7 +12,7 @@ public class MemberSimpleResponse {
     private String name;
     private String telNo;
 
-    public static MemberSimpleResponse from(MemberEntity member) {
+    public static MemberSimpleResponse from(Member member) {
         return MemberSimpleResponse.builder()
                 .memberId(member.getMemberId())
                 .email(member.getEmail())

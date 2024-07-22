@@ -15,13 +15,12 @@ public class ProductLineResponse {
     private String name;
     private String content;
     private int price;
-    //    private Long totalStock;
     private ProductLineStatus productLineStatus;
 
     public static ProductLineResponse from(ProductLine productLine) {
         return ProductLineResponse.builder()
                 .productLineId(productLine.getProductLineId())
-                .brandName(productLine.getBrandName())
+                .brandName(productLine.getSeller().getBrandName())
                 .name(productLine.getName())
                 .content(productLine.getContent())
                 .price(productLine.getPrice())

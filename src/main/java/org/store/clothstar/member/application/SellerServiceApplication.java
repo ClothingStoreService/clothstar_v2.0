@@ -1,8 +1,8 @@
 package org.store.clothstar.member.application;
 
 import org.springframework.stereotype.Service;
+import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.member.dto.request.CreateSellerRequest;
-import org.store.clothstar.member.entity.SellerEntity;
 import org.store.clothstar.member.service.SellerService;
 
 @Service
@@ -13,7 +13,7 @@ public class SellerServiceApplication {
         this.sellerService = sellerService;
     }
 
-    public SellerEntity getSellerById(Long memberId) {
+    public Seller getSellerById(Long memberId) {
         return sellerService.getSellerById(memberId);
     }
 

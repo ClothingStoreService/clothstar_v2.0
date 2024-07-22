@@ -5,9 +5,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-import org.store.clothstar.order.entity.OrderEntity;
+import org.store.clothstar.order.domain.Order;
 
-public interface JpaOrderSellerRepository extends JpaRepository<OrderEntity, Long>, OrderEntityRepositoryCustom, OrderSellerRepository {
+import java.util.List;
+
+public interface JpaOrderSellerRepository extends JpaRepository<Order, Long>, OrderSellerRepository {
+
+    @Query("SELECT o FROM orders o WHERE o.status = 'WAITING' AND o.deletedAt IS NULL")
+    List<Order> findWaitingOrders();
 
     @Transactional
     @Modifying

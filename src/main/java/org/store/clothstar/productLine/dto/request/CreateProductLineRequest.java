@@ -8,13 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.store.clothstar.category.domain.Category;
-import org.store.clothstar.member.entity.SellerEntity;
+import org.store.clothstar.category.entity.CategoryEntity;
+import org.store.clothstar.member.domain.Seller;
 import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
-
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -42,23 +39,8 @@ public class CreateProductLineRequest {
     @Builder.Default
     private ProductLineStatus status = ProductLineStatus.COMING_SOON;
 
-
-    public ProductLine toProductLine(Long memberId) {
+    public ProductLine toProductLineEntity(Seller seller, CategoryEntity category) {
         return ProductLine.builder()
-                .memberId(memberId)
-                .categoryId(categoryId)
-                .name(name)
-                .content(content)
-                .price(price)
-                .totalStock(0L)
-                .status(status)
-                .createdAt(LocalDateTime.now())
-                .saleCount(0L)
-                .build();
-    }
-
-    public ProductLineEntity toProductLineEntity(Long memberId, SellerEntity seller, Category category) {
-        return ProductLineEntity.builder()
                 .seller(seller)
                 .category(category)
                 .name(name)
