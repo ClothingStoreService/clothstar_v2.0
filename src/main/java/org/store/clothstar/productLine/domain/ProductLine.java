@@ -1,73 +1,91 @@
 package org.store.clothstar.productLine.domain;
 
-import lombok.*;
-import org.store.clothstar.product.entity.ProductEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
+import org.store.clothstar.category.entity.CategoryEntity;
+import org.store.clothstar.common.entity.BaseTimeEntity;
+import org.store.clothstar.member.domain.Seller;
+import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.UpdateProductLineRequest;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 @Getter
-@Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ProductLine {
+@AllArgsConstructor
+@Builder
+@Entity(name = "product_line")
+//@Table(name = "product_line")
+public class ProductLine extends BaseTimeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productLineId;
-    private Long memberId;
-    private Long categoryId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Seller seller;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private CategoryEntity category;
+
     private String name;
+
     private String content;
+
     private int price;
-    private Long totalStock;
+
+    @Enumerated(EnumType.STRING)
     private ProductLineStatus status;
+
     private Long saleCount;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
-    private LocalDateTime deletedAt;
-    private String brandName;
-    private String biz_no;
+
+    @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Product> products;
 
     public void updateProductLine(UpdateProductLineRequest updateProductLineRequest) {
         this.name = updateProductLineRequest.getName();
         this.content = updateProductLineRequest.getContent();
         this.price = updateProductLineRequest.getPrice();
         this.status = updateProductLineRequest.getStatus();
-        this.modifiedAt = LocalDateTime.now();
     }
 
     public void changeProductStatus(ProductLineStatus productLineStatus) {
         this.status = productLineStatus;
     }
 
-    public void setDeletedAt() {
-        this.deletedAt = LocalDateTime.now();
+    // 상품 전체 재고 계산
+    public long calculateTotalStock() {
+        return products.stream().mapToLong(Product::getStock).sum();
     }
 
-    public static ProductLine from(ProductLineEntity productLine) {
-        List<ProductEntity> products = productLine.getProducts();
-
-        Long totalStock = 0L;
-        for (ProductEntity product : products) {
-            totalStock += product.getStock();
+    // 상품 전체 재고 확인 및 상태 업데이트
+    public void checkAndUpdateStatus() {
+        long totalStock = calculateTotalStock();
+        if (totalStock == 0 && this.status != ProductLineStatus.SOLD_OUT) {
+            this.status = ProductLineStatus.SOLD_OUT;
         }
+    }
 
-        return ProductLine.builder()
-                .productLineId(productLine.getProductLineId())
-                .memberId(productLine.getSeller().getMemberId())
-                .categoryId(productLine.getCategory().getCategoryId())
-                .name(productLine.getName())
-                .content(productLine.getContent())
-                .price(productLine.getPrice())
-                .totalStock(totalStock)
-                .status(productLine.getStatus())
-                .saleCount(productLine.getSaleCount())
-                .createdAt(productLine.getCreatedAt())
-                .deletedAt(productLine.getDeletedAt())
-                .brandName(productLine.getSeller().getBrandName())
-                .biz_no(productLine.getSeller().getBizNo())
-                .build();
+    public void delete() {
+        this.setDeletedAt(LocalDateTime.now());
+    }
+
+    public void addProduct(Product product) {
+        if (products == null) {
+            products = new ArrayList<>();
+        }
+        products.add(product);
+        product.setterProductLine(this);
     }
 }

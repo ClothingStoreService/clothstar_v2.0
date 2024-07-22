@@ -8,13 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import org.store.clothstar.member.domain.QSeller;
-import org.store.clothstar.product.entity.QProductEntity;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
-import org.store.clothstar.productLine.entity.QProductLineEntity;
+import org.store.clothstar.productLine.domain.ProductLine;
+import org.store.clothstar.productLine.domain.QProductLine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,13 +21,35 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    QProductLineEntity qProductLine = QProductLineEntity.productLineEntity;
-    QProductEntity qProduct = QProductEntity.productEntity;
-    QSeller qSeller = QSeller.seller;
+    QProductLine qProductLine = QProductLine.productLine;
 
     @Override
-    public Page<ProductLineEntity> findAllOffsetPaging(Pageable pageable, String keyword) {
-        List<ProductLineEntity> content = getProductLines(pageable, keyword);
+    public Page<ProductLine> getProductLinesWithOptions(Pageable pageable) {
+        List<ProductLine> content = getProductLines(pageable, null);
+
+        JPAQuery<Long> totalCount = jpaQueryFactory
+                .select(qProductLine.count())
+                .from(qProductLine)
+                .where(qProductLine.deletedAt.isNull());
+
+        return PageableExecutionUtils.getPage(content, pageable, totalCount::fetchOne);
+    }
+
+    @Override
+    public Optional<ProductLine> findProductLineWithOptionsById(Long productLineId) {
+
+        ProductLine result = jpaQueryFactory
+                .select(qProductLine)
+                .from(qProductLine)
+                .where(qProductLine.productLineId.eq(productLineId))
+                .fetchOne();
+
+        return Optional.ofNullable(result);
+    }
+
+    @Override
+    public Page<ProductLine> findAllOffsetPaging(Pageable pageable, String keyword) {
+        List<ProductLine> content = getProductLines(pageable, keyword);
 
         boolean hasNext = false;
         if (content.size() > pageable.getPageSize()) {
@@ -46,8 +67,8 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
     }
 
     @Override
-    public Slice<ProductLineEntity> findAllSlicePaging(Pageable pageable, String keyword) {
-        List<ProductLineEntity> content = getProductLines(pageable, keyword);
+    public Slice<ProductLine> findAllSlicePaging(Pageable pageable, String keyword) {
+        List<ProductLine> content = getProductLines(pageable, keyword);
 
         boolean hasNext = false;
         if (content.size() > pageable.getPageSize()) {
@@ -59,8 +80,8 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
     }
 
     @Override
-    public Page<ProductLineEntity> findEntitiesByCategoryWithOffsetPaging(Long categoryId, Pageable pageable, String keyword) {
-        List<ProductLineEntity> content = getProductLineEntitiesByCategory(categoryId, pageable, keyword);
+    public Page<ProductLine> findEntitiesByCategoryWithOffsetPaging(Long categoryId, Pageable pageable, String keyword) {
+        List<ProductLine> content = getProductLineEntitiesByCategory(categoryId, pageable, keyword);
 
         boolean hasNext = false;
         if (content.size() > pageable.getPageSize()) {
@@ -79,8 +100,8 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
     }
 
     @Override
-    public Slice<ProductLineEntity> findEntitiesByCategoryWithSlicePaging(Long categoryId, Pageable pageable, String keyword) {
-        List<ProductLineEntity> content = getProductLineEntitiesByCategory(categoryId, pageable, keyword);
+    public Slice<ProductLine> findEntitiesByCategoryWithSlicePaging(Long categoryId, Pageable pageable, String keyword) {
+        List<ProductLine> content = getProductLineEntitiesByCategory(categoryId, pageable, keyword);
 
         boolean hasNext = false;
         if (content.size() > pageable.getPageSize()) {
@@ -91,7 +112,7 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
         return new SliceImpl<>(content, pageable, hasNext);
     }
 
-    private List<ProductLineEntity> getProductLines(Pageable pageable, String keyword) {
+    private List<ProductLine> getProductLines(Pageable pageable, String keyword) {
         List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable.getSort());
 
         // 카테고리별로 ProductLine 엔티티를 가져옴
@@ -106,7 +127,7 @@ public class ProductLineRepositoryCustomImpl implements ProductLineRepositoryCus
                 .fetch();
     }
 
-    private List<ProductLineEntity> getProductLineEntitiesByCategory(Long categoryId, Pageable pageable, String keyword) {
+    private List<ProductLine> getProductLineEntitiesByCategory(Long categoryId, Pageable pageable, String keyword) {
         List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable.getSort());
 
         // 카테고리별로 ProductLine 엔티티를 가져옴

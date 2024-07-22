@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.store.clothstar.order.domain.OrderDetail;
-import org.store.clothstar.product.entity.ProductEntity;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
+import org.store.clothstar.product.domain.Product;
+import org.store.clothstar.productLine.domain.ProductLine;
 
 @Getter
 @AllArgsConstructor
@@ -23,15 +23,15 @@ public class OrderDetailDTO {
     private int quantity;
     private int totalPrice; // 상품 종류 하나당 총 가격
 
-    public static OrderDetailDTO from(OrderDetail orderDetail, ProductEntity productEntity, ProductLineEntity productLineEntity){
+    public static OrderDetailDTO from(OrderDetail orderDetail, Product product, ProductLine productLine){
 
         return OrderDetailDTO.builder()
                 .orderDetailId(orderDetail.getOrderDetailId())
-                .productName(productLineEntity.getName())
-                .optionName(productEntity.getName())
-                .brandName(productLineEntity.getSeller().getBrandName())
-                .productPrice(productLineEntity.getPrice())
-                .extraCharge(productEntity.getExtraCharge())
+                .productName(productLine.getName())
+                .optionName(product.getName())
+                .brandName(productLine.getSeller().getBrandName())
+                .productPrice(productLine.getPrice())
+                .extraCharge(product.getExtraCharge())
                 .quantity(orderDetail.getQuantity())
                 .totalPrice(orderDetail.getPrice().getOneKindTotalPrice())
                 .build();

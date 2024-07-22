@@ -31,10 +31,10 @@ import org.store.clothstar.order.dto.request.OrderRequestWrapper;
 import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.order.util.CreateOrder;
-import org.store.clothstar.product.entity.ProductEntity;
-import org.store.clothstar.product.repository.ProductJPARepository;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
-import org.store.clothstar.productLine.repository.ProductLineJPARepository;
+import org.store.clothstar.product.domain.Product;
+import org.store.clothstar.product.repository.ProductRepository;
+import org.store.clothstar.productLine.domain.ProductLine;
+import org.store.clothstar.productLine.repository.ProductLineRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -66,10 +66,10 @@ public class OrderUserControllerIntegrationTest {
     private AddressRepository addressRepository;
 
     @Autowired
-    private ProductJPARepository productJPARepository;
+    private ProductRepository productRepository;
 
     @Autowired
-    private ProductLineJPARepository productLineJPARepository;
+    private ProductLineRepository productLineRepository;
 
     @Autowired
     private CategoryJpaRepository categoryJpaRepository;
@@ -88,8 +88,8 @@ public class OrderUserControllerIntegrationTest {
         Address address = addressRepository.save(CreateOrder.getCreateAddressRequest().toAddress(member));
         CategoryEntity category = categoryJpaRepository.save(CreateOrder.getCreateCategoryRequest().toCategoryEntity());
         Seller seller = sellerRepository.save(new Seller(CreateOrder.getCreateSellerRequest(),member));
-        ProductLineEntity productLine = productLineJPARepository.save(CreateOrder.getCreateProductLineRequest().toProductLineEntity(seller,category));
-        ProductEntity product = productJPARepository.save(CreateOrder.getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine));
+        ProductLine productLine = productLineRepository.save(CreateOrder.getCreateProductLineRequest().toProductLineEntity(seller,category));
+        Product product = productRepository.save(CreateOrder.getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine));
         OrderDetail orderDetail = orderDetailRepository.save(CreateOrder.getCreateOrderDetailRequest(productLine.getProductLineId(),product.getProductId()).toOrderDetail(order,productLine,product));
 
         order = orderUserRepository.save(CreateOrder.getCreateOrderRequest(member.getMemberId(),address.getAddressId()).toOrder(member,address));
@@ -223,8 +223,8 @@ public class OrderUserControllerIntegrationTest {
             Address address = addressRepository.save(CreateOrder.getCreateAddressRequest().toAddress(member));
             CategoryEntity category = categoryJpaRepository.save(CreateOrder.getCreateCategoryRequest(i).toCategoryEntity()); // 수정된 부분
             Seller seller = sellerRepository.save(new Seller(CreateOrder.getCreateSellerRequest(i), member));
-            ProductLineEntity productLine = productLineJPARepository.save(CreateOrder.getCreateProductLineRequest(category.getCategoryId()).toProductLineEntity(seller, category)); // 수정된 부분
-            ProductEntity product = productJPARepository.save(CreateOrder.getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine)); // 수정된 부분
+            ProductLine productLine = productLineRepository.save(CreateOrder.getCreateProductLineRequest(category.getCategoryId()).toProductLineEntity(seller, category)); // 수정된 부분
+            Product product = productRepository.save(CreateOrder.getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine)); // 수정된 부분
             Order order = orderUserRepository.save(CreateOrder.getCreateOrderRequest(member.getMemberId(), address.getAddressId()).toOrder(member, address)); // 수정된 부분
             OrderDetail orderDetail = orderDetailRepository.save(CreateOrder.getCreateOrderDetailRequest(productLine.getProductLineId(), product.getProductId()).toOrderDetail(order, productLine, product)); // 수정된 부분
 
@@ -238,8 +238,8 @@ public class OrderUserControllerIntegrationTest {
         Address address = addressRepository.save(CreateOrder.getCreateAddressRequest().toAddress(member));
         CategoryEntity category = categoryJpaRepository.save(CreateOrder.getCreateCategoryRequest().toCategoryEntity());
         Seller seller = sellerRepository.save(new Seller(CreateOrder.getCreateSellerRequest(),member));
-        ProductLineEntity productLine = productLineJPARepository.save(CreateOrder.getCreateProductLineRequest().toProductLineEntity(seller,category));
-        ProductEntity product = productJPARepository.save(CreateOrder.getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine));
+        ProductLine productLine = productLineRepository.save(CreateOrder.getCreateProductLineRequest().toProductLineEntity(seller,category));
+        Product product = productRepository.save(CreateOrder.getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine));
         order = orderUserRepository.save(CreateOrder.getCreateOrderRequest(member.getMemberId(),address.getAddressId()).toOrder(member,address));
         OrderDetail orderDetail = orderDetailRepository.save(CreateOrder.getCreateOrderDetailRequest(productLine.getProductLineId(),product.getProductId()).toOrderDetail(order,productLine,product));
         productLine.addProduct(product);
@@ -259,8 +259,8 @@ public class OrderUserControllerIntegrationTest {
         order = orderUserRepository.save(CreateOrder.getCreateOrderRequest(member.getMemberId(),address.getAddressId()).toOrder(member,address));
         CategoryEntity category = categoryJpaRepository.save(CreateOrder.getCreateCategoryRequest().toCategoryEntity());
         Seller seller = sellerRepository.save(new Seller(CreateOrder.getCreateSellerRequest(),member));
-        ProductLineEntity productLine = productLineJPARepository.save(CreateOrder.getCreateProductLineRequest().toProductLineEntity(seller,category));
-        ProductEntity product = productJPARepository.save(CreateOrder.getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine));
+        ProductLine productLine = productLineRepository.save(CreateOrder.getCreateProductLineRequest().toProductLineEntity(seller,category));
+        Product product = productRepository.save(CreateOrder.getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine));
         System.out.println("productLine: "+productLine.getProductLineId());
         OrderDetail orderDetail = orderDetailRepository.save(CreateOrder.getCreateOrderDetailRequest(productLine.getProductLineId(),product.getProductId()).toOrderDetail(order,productLine,product));
 
@@ -295,8 +295,8 @@ public class OrderUserControllerIntegrationTest {
         CreateOrderRequest createOrderRequest = CreateOrder.getCreateOrderRequest(member.getMemberId(),address.getAddressId());
         CategoryEntity category = categoryJpaRepository.save(CreateOrder.getCreateCategoryRequest().toCategoryEntity());
         Seller seller = sellerRepository.save(new Seller(CreateOrder.getCreateSellerRequest(),member));
-        ProductLineEntity productLine = productLineJPARepository.save(CreateOrder.getCreateProductLineRequest().toProductLineEntity(seller,category));
-        ProductEntity product = productJPARepository.save(CreateOrder.getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine));
+        ProductLine productLine = productLineRepository.save(CreateOrder.getCreateProductLineRequest().toProductLineEntity(seller,category));
+        Product product = productRepository.save(CreateOrder.getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine));
         CreateOrderDetailRequest createOrderDetailRequest = CreateOrder.getCreateOrderDetailRequest(productLine.getProductLineId(),product.getProductId());
         productLine.addProduct(product);
 

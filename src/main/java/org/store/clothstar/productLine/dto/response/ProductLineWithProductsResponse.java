@@ -17,8 +17,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+public class ProductLineWithProductsResponse {
 
-public class ProductLinePaginationResponse {
     @Schema(description = "상품 id", example = "1")
     private Long productLineId;
 
@@ -52,7 +52,7 @@ public class ProductLinePaginationResponse {
     @Schema(description = "수정일시")
     private LocalDateTime modifiedAt;
 
-    public ProductLinePaginationResponse(ProductLine productLine, Seller seller, Long totalStock) {
+    public ProductLineWithProductsResponse(ProductLine productLine, Seller seller, Long totalStock) {
         this.productLineId = productLine.getProductLineId();
         this.name = productLine.getName();
         this.content = productLine.getContent();

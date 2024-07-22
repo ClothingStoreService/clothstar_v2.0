@@ -28,9 +28,9 @@ import org.store.clothstar.order.dto.request.OrderRequestWrapper;
 import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.order.service.OrderSave.OrderSaveFacade;
-import org.store.clothstar.product.entity.ProductEntity;
+import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.service.ProductService;
-import org.store.clothstar.productLine.entity.ProductLineEntity;
+import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.service.ProductLineService;
 
 import java.time.LocalDateTime;
@@ -80,10 +80,10 @@ class OrderServiceTest {
     private OrderDetail orderDetail;
 
     @Mock
-    private ProductLineEntity productLineEntity;
+    private ProductLine productLine;
 
     @Mock
-    private ProductEntity productEntity;
+    private Product product;
 
     @Mock
     private AddressInfo addressInfo;
@@ -127,14 +127,14 @@ class OrderServiceTest {
         given(orderDetail.getDeletedAt()).willReturn(null);
         given(orderDetail.getProductId()).willReturn(productId);
         given(orderDetail.getProductLineId()).willReturn(productLineId);
-        given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
-        given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLineEntity));
-        given(productEntity.getId()).willReturn(productId);
-        given(productLineEntity.getId()).willReturn(productLineId);
-        given(productLineEntity.getSeller()).willReturn(seller);
+        given(productService.findByIdIn(List.of(productId))).willReturn(List.of(product));
+        given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLine));
+        given(product.getProductId()).willReturn(productId);
+        given(productLine.getProductLineId()).willReturn(productLineId);
+        given(productLine.getSeller()).willReturn(seller);
 
         OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
-        expectedOrderResponse.setterOrderDetailList(List.of(OrderDetailDTO.from(orderDetail, productEntity, productLineEntity)));
+        expectedOrderResponse.setterOrderDetailList(List.of(OrderDetailDTO.from(orderDetail, product, productLine)));
 
         // when
         OrderResponse orderResponse = orderService.getOrder(orderId);
@@ -177,16 +177,16 @@ class OrderServiceTest {
         given(orderDetail.getDeletedAt()).willReturn(null);
         given(orderDetail.getProductId()).willReturn(productId);
         given(orderDetail.getProductLineId()).willReturn(productLineId);
-        given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
-        given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLineEntity));
-        given(productEntity.getId()).willReturn(productId);
-        given(productLineEntity.getId()).willReturn(productLineId);
-        given(productLineEntity.getSeller()).willReturn(seller);
+        given(productService.findByIdIn(List.of(productId))).willReturn(List.of(product));
+        given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLine));
+        given(product.getProductId()).willReturn(productId);
+        given(productLine.getProductLineId()).willReturn(productLineId);
+        given(productLine.getSeller()).willReturn(seller);
 
         OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
         List<OrderDetail> orderDetails = List.of(orderDetail);
         List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream()
-                .map(orderDetail -> OrderDetailDTO.from(orderDetail, productEntity, productLineEntity))
+                .map(orderDetail -> OrderDetailDTO.from(orderDetail, product, productLine))
                 .collect(Collectors.toList());
         expectedOrderResponse.setterOrderDetailList(orderDetailDTOList);
 
@@ -231,16 +231,16 @@ class OrderServiceTest {
         given(orderDetail.getDeletedAt()).willReturn(null);
         given(orderDetail.getProductId()).willReturn(productId);
         given(orderDetail.getProductLineId()).willReturn(productLineId);
-        given(productService.findByIdIn(List.of(productId))).willReturn(List.of(productEntity));
-        given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLineEntity));
-        given(productEntity.getId()).willReturn(productId);
-        given(productLineEntity.getId()).willReturn(productLineId);
-        given(productLineEntity.getSeller()).willReturn(seller);
+        given(productService.findByIdIn(List.of(productId))).willReturn(List.of(product));
+        given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLine));
+        given(product.getProductId()).willReturn(productId);
+        given(productLine.getProductLineId()).willReturn(productLineId);
+        given(productLine.getSeller()).willReturn(seller);
 
         OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
         List<OrderDetail> orderDetails = List.of(orderDetail);
         List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream()
-                .map(orderDetail -> OrderDetailDTO.from(orderDetail, productEntity, productLineEntity))
+                .map(orderDetail -> OrderDetailDTO.from(orderDetail, product, productLine))
                 .collect(Collectors.toList());
         expectedOrderResponse.setterOrderDetailList(orderDetailDTOList);
 

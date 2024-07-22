@@ -29,7 +29,6 @@ public class UpdateProductLineRequest {
     private int price;
 
     @Schema(description = "상품 상태", nullable = false)
-    @Builder.Default
     private ProductLineStatus status = ProductLineStatus.COMING_SOON;
 
 }

@@ -1,7 +1,8 @@
 package org.store.clothstar.order.service.OrderSave;
 
-import org.store.clothstar.product.entity.ProductEntity;
+
+import org.store.clothstar.product.domain.Product;
 
 public interface StockUpdater {
-    void updateStock(ProductEntity product, int quantity);
+    void updateStock(Product product, int quantity);
 }
