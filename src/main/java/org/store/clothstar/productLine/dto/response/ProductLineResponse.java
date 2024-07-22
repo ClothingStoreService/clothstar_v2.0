@@ -15,7 +15,6 @@ public class ProductLineResponse {
     private String name;
     private String content;
     private int price;
-    //    private Long totalStock;
     private ProductLineStatus productLineStatus;
 
     public static ProductLineResponse from(ProductLine productLine) {

@@ -88,7 +88,7 @@ public class ProductService {
     }
 
     public List<Product> findByIdIn(List<Long> productIds) {
-        return productRepository.findByIdIn(productIds);
+        return productRepository.findByProductIdIn(productIds);
     }
 
     public Optional<Product> findById(Long productId) {

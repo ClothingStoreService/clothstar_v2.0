@@ -23,7 +23,6 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_line_id", nullable = false)
-//    @JsonManagedReference
     private ProductLine productLine;
 
     private String name;

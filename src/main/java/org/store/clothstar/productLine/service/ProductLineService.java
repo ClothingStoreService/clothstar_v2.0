@@ -134,7 +134,7 @@ public class ProductLineService {
     }
 
     public List<ProductLine> findByIdIn(List<Long> productLineIds) {
-        return productLineRepository.findByIdIn(productLineIds);
+        return productLineRepository.findByProductLineIdIn(productLineIds);
     }
 
     public Optional<ProductLine> findById(Long productLineId) {

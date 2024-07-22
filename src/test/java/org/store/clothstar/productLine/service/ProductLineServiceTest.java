@@ -108,7 +108,7 @@ class ProductLineServiceTest {
         when(productLine.getPrice()).thenReturn(69000);
         when(productLine.getStatus()).thenReturn(ProductLineStatus.ON_SALE);
 
-        given(productLineRepository.findById(productLineId)).willReturn(Optional.of(productLine));
+        given(productLineRepository.findProductLineWithOptionsById(productLineId)).willReturn(Optional.of(productLine));
 
         // when
         Optional<ProductLineWithProductsResponse> response = Optional.ofNullable(productLineService.getProductLineWithProducts(productLineId));

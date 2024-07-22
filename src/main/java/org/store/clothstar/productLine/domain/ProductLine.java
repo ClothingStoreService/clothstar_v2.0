@@ -45,15 +45,12 @@ public class ProductLine extends BaseTimeEntity {
 
     private int price;
 
-//    private Long totalStock;
-
     @Enumerated(EnumType.STRING)
     private ProductLineStatus status;
 
     private Long saleCount;
 
     @OneToMany(mappedBy = "productLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JsonBackReference
     @JsonIgnore
     private List<Product> products;
 

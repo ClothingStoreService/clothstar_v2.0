@@ -12,5 +12,5 @@ public interface ProductLineRepository extends JpaRepository<ProductLine, Long>,
 
     List<ProductLine> findByDeletedAtIsNullAndStatusNotIn(List<ProductLineStatus> statuses);
 
-    List<ProductLine> findByIdIn(List<Long> productLineIds);
+    List<ProductLine> findByProductLineIdIn(List<Long> productLineIds);
 }
