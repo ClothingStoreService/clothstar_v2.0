@@ -1,8 +1,5 @@
 package org.store.clothstar.productLine.dto.response;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.store.clothstar.member.domain.Seller;
@@ -50,13 +47,11 @@ public class ProductLineWithProductsResponse {
     private SellerSimpleResponse seller;
 
     @Schema(description = "생성일시")
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createdAt;
 
     @Schema(description = "수정일시")
     private LocalDateTime modifiedAt;
 
-    @QueryProjection
     public ProductLineWithProductsResponse(ProductLine productLine, Seller seller, Long totalStock) {
         this.productLineId = productLine.getProductLineId();
         this.name = productLine.getName();

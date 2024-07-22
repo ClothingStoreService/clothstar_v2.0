@@ -14,7 +14,6 @@ import org.store.clothstar.productLine.domain.ProductLine;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@BatchSize(size = 100)
 @Table(name = "product")
 public class Product {
     @Id

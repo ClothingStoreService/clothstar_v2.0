@@ -22,7 +22,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@BatchSize(size = 100)
 @Entity(name = "product_line")
 //@Table(name = "product_line")
 public class ProductLine extends BaseTimeEntity {
