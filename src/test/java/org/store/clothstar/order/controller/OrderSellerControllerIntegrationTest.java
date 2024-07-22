@@ -32,9 +32,13 @@ import org.store.clothstar.order.dto.request.CreateOrderRequest;
 import org.store.clothstar.order.repository.order.OrderDetailRepository;
 import org.store.clothstar.order.repository.order.OrderUserRepository;
 import org.store.clothstar.order.service.OrderSellerService;
+import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.dto.request.CreateProductRequest;
+import org.store.clothstar.product.repository.ProductRepository;
+import org.store.clothstar.productLine.domain.ProductLine;
 import org.store.clothstar.productLine.domain.type.ProductLineStatus;
 import org.store.clothstar.productLine.dto.request.CreateProductLineRequest;
+import org.store.clothstar.productLine.repository.ProductLineRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -71,10 +75,10 @@ public class OrderSellerControllerIntegrationTest {
     private AddressRepository addressRepository;
 
     @Autowired
-    private ProductJPARepository productJPARepository;
+    private ProductRepository productJPARepository;
 
     @Autowired
-    private ProductLineJPARepository productLineJPARepository;
+    private ProductLineRepository productLineJPARepository;
 
     @Autowired
     private CategoryJpaRepository categoryJpaRepository;
@@ -235,8 +239,8 @@ public class OrderSellerControllerIntegrationTest {
         Address address = addressRepository.save(getCreateAddressRequest().toAddress(member));
         CategoryEntity category = categoryJpaRepository.save(getCreateCategoryRequest().toCategoryEntity());
         Seller seller = sellerRepository.save(new Seller(getCreateSellerRequest(),member));
-        ProductLineEntity productLine = productLineJPARepository.save(getCreateProductLineRequest().toProductLineEntity(seller,category));
-        ProductEntity product = productJPARepository.save(getCreateProductRequest().toProductEntity(productLine));
+        ProductLine productLine = productLineJPARepository.save(getCreateProductLineRequest().toProductLineEntity(seller,category));
+        Product product = productJPARepository.save(getCreateProductRequest().toProductEntity(productLine));
         OrderDetail orderDetail = orderDetailRepository.save(getCreateOrderDetailRequest().toOrderDetail(order,productLine,product));
 
         order = orderUserRepository.save(getCreateOrderRequest().toOrder(member,address));
@@ -250,8 +254,8 @@ public class OrderSellerControllerIntegrationTest {
             Address address = addressRepository.save(getCreateAddressRequest().toAddress(member));
             CategoryEntity category = categoryJpaRepository.save(getCreateCategoryRequest(i).toCategoryEntity()); // 수정된 부분
             Seller seller = sellerRepository.save(new Seller(getCreateSellerRequest(i), member));
-            ProductLineEntity productLine = productLineJPARepository.save(getCreateProductLineRequest(category.getCategoryId()).toProductLineEntity(seller, category)); // 수정된 부분
-            ProductEntity product = productJPARepository.save(getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine)); // 수정된 부분
+            ProductLine productLine = productLineJPARepository.save(getCreateProductLineRequest(category.getCategoryId()).toProductLineEntity(seller, category)); // 수정된 부분
+            Product product = productJPARepository.save(getCreateProductRequest(productLine.getProductLineId()).toProductEntity(productLine)); // 수정된 부분
             OrderDetail orderDetail = orderDetailRepository.save(getCreateOrderDetailRequest(productLine.getProductLineId(), product.getProductId()).toOrderDetail(order, productLine, product)); // 수정된 부분
 
             order = orderUserRepository.save(getCreateOrderRequest(member.getMemberId(), address.getAddressId()).toOrder(member, address)); // 수정된 부분

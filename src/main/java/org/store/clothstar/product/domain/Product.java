@@ -70,7 +70,7 @@ public class Product {
         this.stock += quantity;
     }
 
-    public Long getId() {
-        return productId;
+    public void setterProductLine(ProductLine productLineEntity) {
+        this.productLine = productLineEntity;
     }
 }

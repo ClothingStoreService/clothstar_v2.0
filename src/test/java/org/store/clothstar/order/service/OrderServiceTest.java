@@ -26,6 +26,8 @@ import org.store.clothstar.order.domain.vo.TotalPrice;
 import org.store.clothstar.order.dto.reponse.OrderResponse;
 import org.store.clothstar.order.dto.request.OrderRequestWrapper;
 import org.store.clothstar.order.repository.order.OrderDetailRepository;
+import org.store.clothstar.order.repository.order.OrderUserRepository;
+import org.store.clothstar.order.service.OrderSave.OrderSaveFacade;
 import org.store.clothstar.product.domain.Product;
 import org.store.clothstar.product.service.ProductService;
 import org.store.clothstar.productLine.domain.ProductLine;
@@ -127,8 +129,8 @@ class OrderServiceTest {
         given(orderDetail.getProductLineId()).willReturn(productLineId);
         given(productService.findByIdIn(List.of(productId))).willReturn(List.of(product));
         given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLine));
-        given(product.getId()).willReturn(productId);
-        given(productLine.getId()).willReturn(productLineId);
+        given(product.getProductId()).willReturn(productId);
+        given(productLine.getProductLineId()).willReturn(productLineId);
         given(productLine.getSeller()).willReturn(seller);
 
         OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
@@ -177,8 +179,8 @@ class OrderServiceTest {
         given(orderDetail.getProductLineId()).willReturn(productLineId);
         given(productService.findByIdIn(List.of(productId))).willReturn(List.of(product));
         given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLine));
-        given(product.getId()).willReturn(productId);
-        given(productLine.getId()).willReturn(productLineId);
+        given(product.getProductId()).willReturn(productId);
+        given(productLine.getProductLineId()).willReturn(productLineId);
         given(productLine.getSeller()).willReturn(seller);
 
         OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);
@@ -231,8 +233,8 @@ class OrderServiceTest {
         given(orderDetail.getProductLineId()).willReturn(productLineId);
         given(productService.findByIdIn(List.of(productId))).willReturn(List.of(product));
         given(productLineService.findByIdIn(List.of(productLineId))).willReturn(List.of(productLine));
-        given(product.getId()).willReturn(productId);
-        given(productLine.getId()).willReturn(productLineId);
+        given(product.getProductId()).willReturn(productId);
+        given(productLine.getProductLineId()).willReturn(productLineId);
         given(productLine.getSeller()).willReturn(seller);
 
         OrderResponse expectedOrderResponse = OrderResponse.from(order, member, address);

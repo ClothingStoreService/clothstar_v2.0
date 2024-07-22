@@ -77,8 +77,8 @@ public class OrderSellerService {
                     List<Product> products = productService.findByIdIn(productIds);
                     List<ProductLine> productLines = productLineService.findByIdIn(productLineIds);
 
-                    Map<Long, Product> productMap = products.stream().collect(Collectors.toMap(Product::getId, product -> product));
-                    Map<Long, ProductLine> productLineMap = productLines.stream().collect(Collectors.toMap(ProductLine::getId, productLine -> productLine));
+                    Map<Long, Product> productMap = products.stream().collect(Collectors.toMap(Product::getProductId, product -> product));
+                    Map<Long, ProductLine> productLineMap = productLines.stream().collect(Collectors.toMap(ProductLine::getProductLineId, productLine -> productLine));
 
                     List<OrderDetailDTO> orderDetailDTOList = orderDetails.stream().map(orderDetail -> {
                         Product product = productMap.get(orderDetail.getProductId());
